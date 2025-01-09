@@ -12,7 +12,7 @@ import {
 
 @Entity('rooms')
 export class Room {
-    
+
     @PrimaryGeneratedColumn('uuid')
     @ApiProperty({
         description: 'Unique identifier for the room',
@@ -38,7 +38,7 @@ export class Room {
         example: ['https://example.com/product-image.jpg', 'https://example.com/product-image2.jpg'],
     })
     @IsArray()
-    @IsString()
+    @IsString(({ each: true }))
     imgs: string;
 
     @Column({ type: 'text' })
@@ -72,7 +72,10 @@ export class Room {
     @IsBoolean()
     available: boolean;
 
-    @Column({ type: 'timestamp', nullable: true })
+    @Column({
+        type: 'timestamp',
+        nullable: true
+    })
     @ApiProperty({
         description: 'Timestamp when the room was deleted, if applicable',
         example: '2025-01-09T00:00:00.000Z'
@@ -81,11 +84,10 @@ export class Room {
     @IsOptional() 
     deleted_at?: Date;
 
-     @OneToMany(() => Registration, (registration) => registration.room)
+    @OneToMany(() => Registration, (registration) => registration.room)
     @ApiProperty({
         description: 'List of registrations associated with the room',
         type: () => [Registration]
     })
-     registrations: Registration[];
-    
+        registrations: Registration[];
 }
