@@ -35,7 +35,7 @@ export class Room {
     })
     @ApiProperty({
         description: 'Images URLs for the room',
-        example: ['https://example.com/product-image.jpg', 'https://example.com/product-image2.jpg'],
+        example: ['https://example.com/room-image.jpg', 'https://example.com/room-image2.jpg'],
     })
     @IsArray()
     @IsString(({ each: true }))
