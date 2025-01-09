@@ -77,7 +77,7 @@ export class Room {
         nullable: true
     })
     @ApiProperty({
-        description: 'Timestamp when the room was deleted, if applicable',
+        description: 'Timestamp when the room was deleted',
         example: '2025-01-09T00:00:00.000Z'
     })
     @IsDate()
