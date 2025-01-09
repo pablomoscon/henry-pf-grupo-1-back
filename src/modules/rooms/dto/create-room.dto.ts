@@ -22,7 +22,7 @@ export class CreateRoomDto {
 
     @ApiProperty({
         description: 'Description of the room',
-        example: 'A luxurious suite with a sea view.',
+        example: 'A comfortable suite designed for cats with cozy spaces and a peaceful environment.',
     })
     @IsString()
     description: string;
