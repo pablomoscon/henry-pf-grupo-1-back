@@ -10,10 +10,10 @@ export class CreateRoomDto {
     name: string;
 
     @ApiProperty({
-        description: 'Images URLs for the room',
+        description: 'Image URLs for the rooms',
         example: [
-            'https://example.com/product-image.jpg',
-            'https://example.com/product-image2.jpg',
+            'https://example.com/room-image.jpg',
+            'https://example.com/room-image2.jpg',
         ],
     })
     @IsArray()
