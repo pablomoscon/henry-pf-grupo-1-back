@@ -7,6 +7,7 @@ import {
     IsUUID,
     IsDecimal,
     IsOptional,
+    IsArray,
 } from 'class-validator';
 
 @Entity('rooms')
@@ -33,9 +34,10 @@ export class Room {
         default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWz9tftw9qculFH1gxieWkxL6rbRk_hrXTSg&s'
     })
     @ApiProperty({
-        description: 'Images URL for the room',
-        example: 'https://example.com/product-image.jpg'
+        description: 'Images URLs for the room',
+        example: ['https://example.com/product-image.jpg', 'https://example.com/product-image2.jpg'],
     })
+    @IsArray()
     @IsString()
     imgs: string;
 
