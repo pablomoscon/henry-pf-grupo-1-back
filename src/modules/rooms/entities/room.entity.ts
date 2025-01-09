@@ -34,7 +34,7 @@ export class Room {
         default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWz9tftw9qculFH1gxieWkxL6rbRk_hrXTSg&s'
     })
     @ApiProperty({
-        description: 'Images URLs for the room',
+        description: 'Image URLs for the rooms',
         example: ['https://example.com/room-image.jpg', 'https://example.com/room-image2.jpg'],
     })
     @IsArray()
@@ -44,7 +44,7 @@ export class Room {
     @Column({ type: 'text' })
     @ApiProperty({
         description: 'Description of the room',
-        example: 'A luxurious suite with a sea view.'
+        example: 'A comfortable suite designed for cats with cozy spaces and a peaceful environment.'
     })
     @IsString()
     description: string;
