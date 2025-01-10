@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNumber, IsBoolean, IsArray } from 'class-validator';
+import { IsString, IsArray, IsEnum, IsDecimal, IsInt } from 'class-validator';
+import { RoomFeatures } from '../../../enums/rooms-features.enum';
 
 export class CreateRoomDto {
     @ApiProperty({
@@ -31,6 +32,21 @@ export class CreateRoomDto {
         description: 'Price of the room',
         example: 150.0,
     })
-    @IsNumber()
+    @IsDecimal()
     price: number;
+
+    @ApiProperty({
+        description: 'Number of cats',
+        example: 3,
+    })
+    @IsInt()
+    number_of_cats: number;
+
+    @ApiProperty({
+        description: 'Features of the room',
+        example: RoomFeatures.HidingPlace
+    })
+    @IsEnum(RoomFeatures)
+    features: RoomFeatures;
+
 }

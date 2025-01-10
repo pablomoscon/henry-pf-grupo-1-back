@@ -5,10 +5,14 @@ import {
     IsBoolean,
     IsDate,
     IsUUID,
-    IsDecimal,
     IsOptional,
     IsArray,
+    IsEnum,
+    IsDecimal,
+    IsInt,
 } from 'class-validator';
+import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
+import { RoomFeatures } from '../../../enums/rooms-features.enum';
 
 @Entity('rooms')
 export class Room {
@@ -16,12 +20,15 @@ export class Room {
     @PrimaryGeneratedColumn('uuid')
     @ApiProperty({
         description: 'Unique identifier for the room',
-        example: '123e4567-e89b-12d3-a456-426614174000' 
+        example: '123e4567-e89b-12d3-a456-426614174000'
     })
     @IsUUID()
     id: string;
 
-    @Column({ type: 'varchar', length: 100 })
+    @Column({
+        type: 'varchar',
+        length: 100
+    })
     @ApiProperty({
         description: 'Name of the room',
         example: 'Luxury Suite'
@@ -30,18 +37,20 @@ export class Room {
     name: string;
 
     @Column({
-        type: 'text',
-        default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWz9tftw9qculFH1gxieWkxL6rbRk_hrXTSg&s'
+        type: 'simple-array',
+        default: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWz9tftw9qculFH1gxieWkxL6rbRk_hrXTSg&s'],
     })
     @ApiProperty({
         description: 'Image URLs for the rooms',
         example: ['https://example.com/room-image.jpg', 'https://example.com/room-image2.jpg'],
     })
     @IsArray()
-    @IsString(({ each: true }))
-    imgs: string;
+    @IsString({ each: true })
+    imgs: string[];
 
-    @Column({ type: 'text' })
+    @Column({
+        type: 'text'
+    })
     @ApiProperty({
         description: 'Description of the room',
         example: 'A comfortable suite designed for cats with cozy spaces and a peaceful environment.'
@@ -51,8 +60,6 @@ export class Room {
 
     @Column({
         type: 'decimal',
-        precision: 10,
-        scale: 2
     })
     @ApiProperty({
         description: 'Price of the room',
@@ -80,14 +87,35 @@ export class Room {
         description: 'Timestamp when the room was deleted',
         example: '2025-01-09T00:00:00.000Z'
     })
+    @IsOptional()
     @IsDate()
-    @IsOptional() 
     deleted_at?: Date;
 
-    @OneToMany(() => Registration, (registration) => registration.room)
-    @ApiProperty({
-        description: 'List of registrations associated with the room',
-        type: () => [Registration]
+    @Column({
+        type: 'int'
     })
-        registrations: Registration[];
+    @ApiProperty({
+        description: 'Number of cats',
+        example: 3,
+    })
+    @IsInt()
+    number_of_cats: number;
+
+    @Column({
+        type: 'enum',
+        enum: RoomFeatures,
+    })
+    @ApiProperty({
+        description: 'Features of the room',
+        example: RoomFeatures.HidingPlace
+    })
+    @IsEnum(RoomFeatures)
+    features: RoomFeatures;
+
+    @OneToMany(() => Reservation, (reservation) => reservation.room)
+    @ApiProperty({
+        description: 'List of reservations associated with the room',
+        type: () => [Reservation]
+    })
+    reservations: Reservation[];
 }
