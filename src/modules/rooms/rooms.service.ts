@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { Room } from './entities/room.entity';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -45,7 +45,28 @@ export class RoomsService {
       throw new NotFoundException(`Room with ID ${id} not found`);
     }
     room.deleted_at = new Date();
-
     return this.roomsRepository.save(room);
   }
+
+  async findAvailableRooms(checkInDate: Date, checkOutDate: Date): Promise<Room[]> {
+    return this.roomsRepository.find({
+      relations: ['reservations'],
+      where: [
+        { deleted_at: null, reservations: [] },
+        {
+          deleted_at: null,
+          reservations: {
+            ending_date: LessThanOrEqual(checkInDate),
+          },
+        },
+        {
+          deleted_at: null,
+          reservations: {
+            initial_date: MoreThanOrEqual(checkOutDate),
+          },
+        },
+      ],
+    });
+  }
+
 }
