@@ -44,9 +44,10 @@ export class CreateRoomDto {
 
     @ApiProperty({
         description: 'Features of the room',
-        example: RoomFeatures.HidingPlace
+        example: [RoomFeatures.HidingPlace, RoomFeatures.Hammocks],
     })
-    @IsEnum(RoomFeatures)
-    features: RoomFeatures;
+    @IsArray()
+    @IsEnum(RoomFeatures, { each: true }) 
+    features: RoomFeatures[];
 
 }

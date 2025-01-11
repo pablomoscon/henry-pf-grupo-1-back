@@ -37,7 +37,8 @@ export class Room {
     name: string;
 
     @Column({
-        type: 'simple-array',
+        type: 'text',
+        array: true,
         default: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWz9tftw9qculFH1gxieWkxL6rbRk_hrXTSg&s'],
     })
     @ApiProperty({
@@ -104,13 +105,14 @@ export class Room {
     @Column({
         type: 'enum',
         enum: RoomFeatures,
+        array: true, 
     })
     @ApiProperty({
         description: 'Features of the room',
-        example: RoomFeatures.HidingPlace
+        example: [RoomFeatures.HidingPlace, RoomFeatures.Hammocks],
     })
-    @IsEnum(RoomFeatures)
-    features: RoomFeatures;
+    @IsEnum(RoomFeatures, { each: true }) 
+    features: RoomFeatures[];
 
     @OneToMany(() => Reservation, (reservation) => reservation.room)
     @ApiProperty({
