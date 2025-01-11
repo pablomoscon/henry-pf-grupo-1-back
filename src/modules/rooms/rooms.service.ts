@@ -20,9 +20,33 @@ export class RoomsService {
   async findAll(pageNumber: number, limitNumber: number) {
     return await this.roomsRepository.find({
       where: { deleted_at: IsNull() },
+      relations: ['reservations'],
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
     });
+  }
+
+  async findAvailableRooms(
+    checkInDate?: Date,
+    checkOutDate?: Date,
+    numberOfCats?: number
+  ): Promise<Room[]> {
+    const availableRooms = await this.roomsRepository.find({
+      relations: ['reservations'],
+      where: {
+        deleted_at: IsNull(),
+        ...(numberOfCats && { number_of_cats: numberOfCats }),
+      },
+    });
+
+    return checkInDate && checkOutDate
+      ? availableRooms.filter((availableRoom) =>
+        availableRoom.reservations.every(
+          ({ initial_date, ending_date }) =>
+            new Date(ending_date) < checkInDate || new Date(initial_date) > checkOutDate
+        )
+      )
+      : availableRooms;
   }
 
   async findOne(id: string) {
@@ -47,25 +71,4 @@ export class RoomsService {
     room.deleted_at = new Date();
     return this.roomsRepository.save(room);
   }
-
-  async findAvailableRooms(
-    checkInDate?: Date,
-    checkOutDate?: Date,
-    numberOfCats?: number
-  ): Promise<Room[]> {
-    return this.roomsRepository.find({
-      relations: ['reservations'],
-      where: {
-        deleted_at: IsNull() ,
-        ...(numberOfCats && { number_of_cats: numberOfCats }),
-        ...(checkInDate && checkOutDate && {
-          reservations: [
-            { ending_date: LessThanOrEqual(checkInDate) },
-            { initial_date: MoreThanOrEqual(checkOutDate) },
-          ],
-        }),
-      },
-    });
-  }
-
 }
