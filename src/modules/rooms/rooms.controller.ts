@@ -81,5 +81,4 @@ export class RoomsController {
     }
     return await this.roomsService.findAvailableRooms(checkIn, checkOut);
   }
-
 }

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { Room } from './entities/room.entity';
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class RoomsService {
 
   async findAll(pageNumber: number, limitNumber: number) {
     return await this.roomsRepository.find({
-      where: { deleted_at: null },
+      where: { deleted_at: IsNull() },
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
     });
@@ -48,24 +48,23 @@ export class RoomsService {
     return this.roomsRepository.save(room);
   }
 
-  async findAvailableRooms(checkInDate: Date, checkOutDate: Date): Promise<Room[]> {
+  async findAvailableRooms(
+    checkInDate?: Date,
+    checkOutDate?: Date,
+    numberOfCats?: number
+  ): Promise<Room[]> {
     return this.roomsRepository.find({
       relations: ['reservations'],
-      where: [
-        { deleted_at: null, reservations: [] },
-        {
-          deleted_at: null,
-          reservations: {
-            ending_date: LessThanOrEqual(checkInDate),
-          },
-        },
-        {
-          deleted_at: null,
-          reservations: {
-            initial_date: MoreThanOrEqual(checkOutDate),
-          },
-        },
-      ],
+      where: {
+        deleted_at: IsNull() ,
+        ...(numberOfCats && { number_of_cats: numberOfCats }),
+        ...(checkInDate && checkOutDate && {
+          reservations: [
+            { ending_date: LessThanOrEqual(checkInDate) },
+            { initial_date: MoreThanOrEqual(checkOutDate) },
+          ],
+        }),
+      },
     });
   }
 
