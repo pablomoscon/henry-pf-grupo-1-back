@@ -1,0 +1,53 @@
+import { Room } from '../../modules/rooms/entities/room.entity';
+import { RoomFeatures } from '../../enums/rooms-features.enum';
+
+export const roomsMock: Room[] = [
+  {
+    id: '123e4567-e89b-12d3-a456-426614174000',
+    name: 'Luxury Suite',
+    imgs: ['https://example.com/luxury-suite.jpg'],
+    description: 'A luxurious suite with all amenities for your cat.',
+    price: 200.0,
+    available: true,
+    deleted_at: null,
+    number_of_cats: 2,
+    features: [RoomFeatures.HidingPlace, RoomFeatures.Hammocks],
+    reservations: [],
+  },
+  {
+    id: '123e4567-e89b-12d3-a456-426614174001',
+    name: 'Cozy Corner',
+    imgs: ['https://example.com/cozy-corner.jpg'],
+    description: 'A cozy corner for your cat to relax and play.',
+    price: 150.0,
+    available: true,
+    deleted_at: null,
+    number_of_cats: 3,
+    features: [RoomFeatures.Scratchers],
+    reservations: [],
+  },
+  {
+    id: '123e4567-e89b-12d3-a456-426614174002',
+    name: 'Playful Paradise',
+    imgs: ['https://example.com/playful-paradise.jpg'],
+    description: 'A paradise for playful cats with lots of toys.',
+    price: 180.0,
+    available: true,
+    deleted_at: null,
+    number_of_cats: 4,
+    features: [RoomFeatures.Hammocks, RoomFeatures.SuspensionBridges],
+    reservations: [],
+  },
+  {
+    id: '123e4567-e89b-12d3-a456-426614174003',
+    name: 'Serene Retreat',
+    imgs: ['https://example.com/serene-retreat.jpg'],
+    description: 'A serene retreat for cats who love peace and quiet.',
+    price: 220.0,
+    available: true,
+    deleted_at: null,
+    number_of_cats: 1,
+    features: [RoomFeatures.HidingPlace],
+    reservations: [],
+  },
+];
