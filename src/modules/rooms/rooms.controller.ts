@@ -45,6 +45,22 @@ export class RoomsController {
     return await this.roomsService.findAll(pageNumber, limitNumber);
   }
 
+  @Get('available')
+  async findAvailableRooms(
+    @Query('checkInDate') checkInDate: string,
+    @Query('checkOutDate') checkOutDate: string,
+    @Query('numberOfCats') numberOfCats?: number,
+  ): Promise<Room[]> {
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+
+    if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime())) {
+      throw new BadRequestException('Invalid check-in or check-out date');
+    }
+
+    return await this.roomsService.findAvailableRooms(checkIn, checkOut, numberOfCats);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const room = await this.roomsService.findOne(id);
@@ -65,21 +81,6 @@ export class RoomsController {
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.roomsService.remove(id);
-  }
-
-  @Get('available')
-  async findAvailableRooms(
-    @Query('checkInDate') checkInDate: string,
-    @Query('checkOutDate') checkOutDate: string,
-  ): Promise<Room[]> {
-
-    const checkIn = new Date(checkInDate);
-    const checkOut = new Date(checkOutDate);
-
-    if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime())) {
-      throw new BadRequestException('Invalid check-in or check-out date');
-    }
-    return await this.roomsService.findAvailableRooms(checkIn, checkOut);
   }
 
 }

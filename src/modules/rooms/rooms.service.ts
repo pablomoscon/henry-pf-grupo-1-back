@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { Room } from './entities/room.entity';
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -19,10 +19,34 @@ export class RoomsService {
 
   async findAll(pageNumber: number, limitNumber: number) {
     return await this.roomsRepository.find({
-      where: { deleted_at: null },
+      where: { deleted_at: IsNull() },
+      relations: ['reservations'],
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
     });
+  }
+
+  async findAvailableRooms(
+    checkInDate?: Date,
+    checkOutDate?: Date,
+    numberOfCats?: number
+  ): Promise<Room[]> {
+    const availableRooms = await this.roomsRepository.find({
+      relations: ['reservations'],
+      where: {
+        deleted_at: IsNull(),
+        ...(numberOfCats && { number_of_cats: numberOfCats }),
+      },
+    });
+
+    return checkInDate && checkOutDate
+      ? availableRooms.filter((availableRoom) =>
+        availableRoom.reservations.every(
+          ({ initial_date, ending_date }) =>
+            new Date(ending_date) < checkInDate || new Date(initial_date) > checkOutDate
+        )
+      )
+      : availableRooms;
   }
 
   async findOne(id: string) {
@@ -47,26 +71,4 @@ export class RoomsService {
     room.deleted_at = new Date();
     return this.roomsRepository.save(room);
   }
-
-  async findAvailableRooms(checkInDate: Date, checkOutDate: Date): Promise<Room[]> {
-    return this.roomsRepository.find({
-      relations: ['reservations'],
-      where: [
-        { deleted_at: null, reservations: [] },
-        {
-          deleted_at: null,
-          reservations: {
-            ending_date: LessThanOrEqual(checkInDate),
-          },
-        },
-        {
-          deleted_at: null,
-          reservations: {
-            initial_date: MoreThanOrEqual(checkOutDate),
-          },
-        },
-      ],
-    });
-  }
-
 }
