@@ -4,13 +4,7 @@ import { Role } from 'src/enums/roles.enum';
 import { Status } from 'src/enums/status.enum';
 
 export class CreateUserDto {
-    @ApiProperty({
-        description: 'Unique identifier for the user',
-        example: '123e4567-e89b-12d3-a456-426614174000',
-    })
-    @IsUUID()
-    id: string;
-
+  
     @ApiProperty({ description: 'Name of the user', example: 'John Williams' })
     @IsString({ message: 'The name must be a string.' })
     @IsNotEmpty({ message: 'The name cannot be empty.' })
