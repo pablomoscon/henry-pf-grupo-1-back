@@ -47,7 +47,7 @@ export class SeedManager {
   private async enableForeignKeyChecks() {
     await this.dataSource.query(`ALTER TABLE "users" ENABLE TRIGGER ALL;`);
     await this.dataSource.query(
-      `ALTER TABLE "Credentials" ENABLE TRIGGER ALL;`,
+      `ALTER TABLE "credentials" ENABLE TRIGGER ALL;`,
     );
   }
 }
