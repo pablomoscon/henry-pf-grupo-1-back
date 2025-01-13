@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -12,30 +12,45 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) { }
 
+  async create(createUserDto: CreateUserDto) {
+    return 'This action adds a new user';
+  };
+
   async findByEmailWithCredentials(email: string): Promise<User | null> {
     return this.userRepository.findOne({
       where: { email },
       relations: ['credential'],
     });
-  }
+  };
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
+  async findAll(pageNumber: number, limitNumber: number) {
+    return await this.userRepository.find({
+      where: { deleted_at: IsNull() },
+      skip: (pageNumber - 1) * limitNumber,
+      take: limitNumber,
+      relations: ['reservations', 'cats'],
+    });
+  };
 
-  findAll() {
-    return `This action returns all users`;
-  }
+  async findOne(id: string) {
+    return await this.userRepository.findOne({
+      where: { id },
+      relations: ['reservations', 'cats'],
+    });
+  };
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    await this.userRepository.update(id, updateUserDto);
+    return await this.findOne(id);
+  };
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+  async remove(id: string): Promise<User> {
+    const room = await this.userRepository.findOne({ where: { id } });
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+    if (!room) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    room.deleted_at = new Date();
+    return this.userRepository.save(room);
+  };
 }
