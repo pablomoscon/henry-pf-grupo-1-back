@@ -1,34 +1,51 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Query, ParseUUIDPipe, HttpException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
+@ApiTags('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
-  }
+  };
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
+  @HttpCode(HttpStatus.OK)
+  async findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '5',
+  ) {
+    const pageNumber = Number(page);
+    const limitNumber = Number(limit);
+    return await this.usersService.findAll(pageNumber, limitNumber);
+  };
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
+  @HttpCode(HttpStatus.OK)
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const user = await this.usersService.findOne(id);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    return user;
+  };
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
+  @HttpCode(HttpStatus.OK)
+  async update(@Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateUserDto: UpdateUserDto
+  ) {
+    return await this.usersService.update(id, updateUserDto);
+  };
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
-  }
+  @HttpCode(HttpStatus.OK)
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.usersService.remove(id);
+  };
 }
