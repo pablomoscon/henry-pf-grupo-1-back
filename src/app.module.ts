@@ -13,6 +13,7 @@ import { MediaModule } from './modules/media/media.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
 import { UsersModule } from './modules/users/users.module';
 import { SeedModule } from './seeds/seeds.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SeedModule } from './seeds/seeds.module';
       useFactory: (configService: ConfigService) =>
         configService.get('databaseConfig'),
     }),
+    AuthModule,
     RoomsModule,
     CaretakersModule,
     CatsModule,
