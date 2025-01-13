@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { usersMock } from './users-mock';
+import { hash } from 'bcrypt';
 
 @Injectable()
 export class UsersSeed {
@@ -25,7 +26,12 @@ export class UsersSeed {
         user.deleted_at = userData.deleted_at;
         user.role = userData.role;
         user.status = userData.status;
-        user.credential = userData.credential;
+        user.credential = {
+          id: userData.credential.id,
+          password: await hash(userData.credential.password, 10),
+          deleted_at: null,
+          user: null,
+        };
         user.cats = userData.cats;
         user.caretakers = userData.caretakers;
         user.reservations = userData.reservations;
