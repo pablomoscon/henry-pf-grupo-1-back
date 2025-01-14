@@ -60,14 +60,14 @@ export class User {
   @IsOptional()
   deleted_at?: Date;
 
-  @Column({ type: 'enum', enum: Role })
+  @Column({ type: 'enum', enum: Role, default: Role.USER })
   @ApiProperty({
     description: 'Role of the user',
-    example: 'ADMIN',
+    example: 'USER',
   })
   role: Role;
 
-  @Column({ type: 'enum', enum: Status })
+  @Column({ type: 'enum', enum: Status, default: Status.ACTIVE })
   @ApiProperty({
     description: 'Status of the user',
     example: 'ACTIVE',

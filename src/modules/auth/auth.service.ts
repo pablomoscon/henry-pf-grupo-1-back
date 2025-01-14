@@ -16,7 +16,7 @@ export class AuthService {
     if (signUpUser.password !== signUpUser.confirmPassword) {
       throw new HttpException('Password do not match', 400);
     }
-
+    
     const user = await this.usersService.findByEmail(signUpUser.email);
     if (user) {
       throw new BadRequestException('User already exists');
