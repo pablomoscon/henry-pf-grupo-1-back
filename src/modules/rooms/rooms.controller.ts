@@ -18,7 +18,6 @@ import { UpdateRoomDto } from './dto/update-room.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Room } from './entities/room.entity';
 
-
 @ApiTags('Rooms')
 @Controller('rooms')
 export class RoomsController {
@@ -28,7 +27,7 @@ export class RoomsController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createRoomDto: CreateRoomDto) {
     return await this.roomsService.create(createRoomDto);
-  }
+  };
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -47,23 +46,32 @@ export class RoomsController {
       throw new BadRequestException('Invalid limit number');
     }
     return await this.roomsService.findAll(pageNumber, limitNumber);
-  }
+  };
 
-  @Get('available')
+  @Get('filters')
   @HttpCode(HttpStatus.OK)
-  async findAvailableRooms(
+  async findRooms(
     @Query('checkInDate') checkInDate: string,
     @Query('checkOutDate') checkOutDate: string,
     @Query('numberOfCats') numberOfCats?: number,
+    @Query('minPrice') minPrice?: number,
+    @Query('maxPrice') maxPrice?: number,
   ): Promise<Room[]> {
-    const checkIn = new Date(checkInDate);
-    const checkOut = new Date(checkOutDate);
+    const checkIn = checkInDate ? new Date(checkInDate) : undefined;
+    const checkOut = checkOutDate ? new Date(checkOutDate) : undefined;
 
-    if (isNaN(checkIn.getTime()) || isNaN(checkOut.getTime())) {
+    if ((checkInDate && isNaN(checkIn.getTime())) || (checkOutDate && isNaN(checkOut.getTime()))) {
       throw new BadRequestException('Invalid check-in or check-out date');
-    }
+    };
 
-    return await this.roomsService.findAvailableRooms(checkIn, checkOut, numberOfCats);
+    const priceRange = minPrice || maxPrice ? { minPrice, maxPrice } : undefined;
+
+    return await this.roomsService.findRooms({
+      checkInDate: checkIn,
+      checkOutDate: checkOut,
+      numberOfCats,
+      priceRange,
+    });
   };
 
   @Get(':id')

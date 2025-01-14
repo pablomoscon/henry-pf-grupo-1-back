@@ -38,16 +38,14 @@ export class Room {
 
     @Column({
         type: 'text',
-        array: true,
-        default: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWz9tftw9qculFH1gxieWkxL6rbRk_hrXTSg&s'],
+        default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWz9tftw9qculFH1gxieWkxL6rbRk_hrXTSg&s',
     })
     @ApiProperty({
-        description: 'Image URLs for the rooms',
-        example: ['https://example.com/room-image.jpg', 'https://example.com/room-image2.jpg'],
+        description: 'Image URL for the room',
+        example: 'https://example.com/room-image.jpg',
     })
-    @IsArray()
-    @IsString({ each: true })
-    imgs: string[];
+    @IsString()
+    img: string;
 
     @Column({
         type: 'text'
