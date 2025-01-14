@@ -16,7 +16,7 @@ export class AuthService {
     if (signUpUser.password !== signUpUser.confirmPassword) {
       throw new HttpException('Password do not match', 400);
     }
-    
+
     const user = await this.usersService.findByEmail(signUpUser.email);
     if (user) {
       throw new BadRequestException('User already exists');
@@ -29,12 +29,12 @@ export class AuthService {
 
     createdUser.credential = credential;
 
-    return createdUser;
+    return await this.usersService.update(createdUser.id, createdUser);
   };
 
   async signIn(signInAuthDto: SignInAuthDto) {
     const { email, password } = signInAuthDto;
-    
+
     const user = await this.usersService.findByEmail(email);
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
@@ -44,6 +44,5 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
     return user;
-    
   };
 }

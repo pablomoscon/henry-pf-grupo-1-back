@@ -33,6 +33,14 @@ export class UsersService {
     });
   };
 
+  async findByEmail(email: string) {
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: ['credential'],
+    });
+    return user;
+  };
+
   async findOne(id: string) {
     return await this.userRepository.findOne({
       where: { id },
@@ -41,8 +49,11 @@ export class UsersService {
   };
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    await this.userRepository.update(id, updateUserDto);
-    return await this.findOne(id);
+    const updatedUser = await this.userRepository.save({
+      ...updateUserDto,
+      id,
+    });
+    return updatedUser;
   };
 
   async remove(id: string): Promise<User> {
@@ -55,9 +66,4 @@ export class UsersService {
     return this.userRepository.save(room);
   };
   
-  async findByEmail(email: string) {
-    const user = await this.userRepository.findOne({ where: { email } });
-    return user;
-  };
-
 }

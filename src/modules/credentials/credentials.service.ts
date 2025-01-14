@@ -24,10 +24,10 @@ export class CredentialsService {
 
     const newCredential = this.credentialRepository.create({
       ...createCredentialDto,
-      password: hashedPassword, 
+      password: hashedPassword,
     });
 
-    newCredential.user = user;
+    newCredential.user = user; 
 
     return await this.credentialRepository.save(newCredential);
   };
