@@ -10,7 +10,7 @@ export class RoomsService {
   constructor(
     @InjectRepository(Room)
     private readonly roomsRepository: Repository<Room>,
-  ) { }
+  ) {}
 
   async create(createRoomDto: CreateRoomDto): Promise<Room> {
     const newRoom = await this.roomsRepository.create(createRoomDto);
@@ -26,27 +26,38 @@ export class RoomsService {
     });
   }
 
-  async findAvailableRooms(
-    checkInDate?: Date,
-    checkOutDate?: Date,
-    numberOfCats?: number
+  async findRooms(
+    filters: {
+      checkInDate?: Date;
+      checkOutDate?: Date;
+      numberOfCats?: number;
+      priceRange?: { minPrice?: number; maxPrice?: number };
+    } = {},
   ): Promise<Room[]> {
-    const availableRooms = await this.roomsRepository.find({
+    const { checkInDate, checkOutDate, numberOfCats, priceRange } = filters;
+    const { minPrice, maxPrice } = priceRange || {};
+
+    const rooms = await this.roomsRepository.find({
       relations: ['reservations'],
       where: {
         deleted_at: IsNull(),
         ...(numberOfCats && { number_of_cats: numberOfCats }),
+        ...(minPrice && { price: MoreThanOrEqual(minPrice) }),
+        ...(maxPrice && { price: LessThanOrEqual(maxPrice) }),
       },
     });
 
-    return checkInDate && checkOutDate
-      ? availableRooms.filter((availableRoom) =>
-        availableRoom.reservations.every(
+    if (checkInDate && checkOutDate) {
+      return rooms.filter((room) =>
+        room.reservations.every(
           ({ initial_date, ending_date }) =>
-            new Date(ending_date) < checkInDate || new Date(initial_date) > checkOutDate
-        )
-      )
-      : availableRooms;
+            new Date(ending_date) < checkInDate ||
+            new Date(initial_date) > checkOutDate,
+        ),
+      );
+    }
+
+    return rooms;
   }
 
   async findOne(id: string) {
@@ -60,7 +71,7 @@ export class RoomsService {
       throw new NotFoundException(`Room with ID ${id} not found`);
     }
     return await this.findOne(id);
-  };
+  }
 
   async remove(id: string): Promise<Room> {
     const room = await this.roomsRepository.findOne({ where: { id } });
