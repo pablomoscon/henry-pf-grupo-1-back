@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { IsNull, Repository } from 'typeorm';
+import { Credential } from '../credentials/entities/credential.entity';
 
 @Injectable()
 export class UsersService {
@@ -12,8 +13,12 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) { }
 
-  async create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto, credential: Credential) {
+    const newUser = this.userRepository.create({
+      ...createUserDto,
+      credential,
+    });
+    return await this.userRepository.save(newUser);
   };
 
   async findByEmailWithCredentials(email: string): Promise<User | null> {
@@ -28,8 +33,16 @@ export class UsersService {
       where: { deleted_at: IsNull() },
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
-      relations: ['reservations', 'cats'],
+      relations: ['reservations', 'cats', 'credentials'],
     });
+  };
+
+  async findByEmail(email: string) {
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: ['credential'],
+    });
+    return user;
   };
 
   async findOne(id: string) {
@@ -41,7 +54,7 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     await this.userRepository.update(id, updateUserDto);
-    return await this.findOne(id);
+    return this.findOne(id);
   };
 
   async remove(id: string): Promise<User> {
