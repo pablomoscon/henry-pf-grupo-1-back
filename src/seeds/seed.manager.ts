@@ -16,14 +16,14 @@ export class SeedManager {
   ) {}
 
   async runSeeders() {
-    await this.disableForeignKeyChecks();
+    // await this.disableForeignKeyChecks();
 
     try {
-      await this.usersSeed.seed();
-      console.log('Users seeded');
-
       await this.credentialsSeed.seed();
       console.log('Credentials seeded');
+
+      await this.usersSeed.seed();
+      console.log('Users seeded');
 
       await this.roomsSeed.seed();
       console.log('Rooms seeded');
@@ -33,21 +33,21 @@ export class SeedManager {
     } catch (error) {
       console.error('Error during seeding:', error);
     } finally {
-      await this.enableForeignKeyChecks();
+      // await this.enableForeignKeyChecks();
     }
   }
 
-  private async disableForeignKeyChecks() {
-    await this.dataSource.query(`ALTER TABLE "users" DISABLE TRIGGER ALL;`);
-    await this.dataSource.query(
-      `ALTER TABLE "credentials" DISABLE TRIGGER ALL;`,
-    );
-  }
+  // private async disableForeignKeyChecks() {
+  //   await this.dataSource.query(`ALTER TABLE "users" DISABLE TRIGGER ALL;`);
+  //   await this.dataSource.query(
+  //     `ALTER TABLE "credentials" DISABLE TRIGGER ALL;`,
+  //   );
+  // }
 
-  private async enableForeignKeyChecks() {
-    await this.dataSource.query(`ALTER TABLE "users" ENABLE TRIGGER ALL;`);
-    await this.dataSource.query(
-      `ALTER TABLE "credentials" ENABLE TRIGGER ALL;`,
-    );
-  }
+  // private async enableForeignKeyChecks() {
+  //   await this.dataSource.query(`ALTER TABLE "users" ENABLE TRIGGER ALL;`);
+  //   await this.dataSource.query(
+  //     `ALTER TABLE "credentials" ENABLE TRIGGER ALL;`,
+  //   );
+  // }
 }

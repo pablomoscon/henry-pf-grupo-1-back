@@ -19,7 +19,7 @@ const PostgresDatabaseOptions: DataSourceOptions = {
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/../**/migrations/*{.ts,.js}'],
   subscribers: [],
-  ssl: false,
+  ssl: false, // pasar a true para conectar online
 };
 
 export const databaseConfig = registerAs(
