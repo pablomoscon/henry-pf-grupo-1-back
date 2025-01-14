@@ -1,8 +1,8 @@
-import { Credential } from '../../modules/credentials/entities/credential.entity';
+import { Credentials } from '../../modules/credentials/entities/credentials.entity';
 import { Role } from '../../enums/roles.enum';
 import { Status } from '../../enums/status.enum';
 
-export const credentialsMock: Credential[] = [
+export const credentialsMock: Credentials[] = [
   {
     id: '123e4567-e89b-12d3-a456-426614174000',
     password: 'Pass1234!',
@@ -16,7 +16,7 @@ export const credentialsMock: Credential[] = [
       deleted_at: null,
       role: Role.ADMIN,
       status: Status.ACTIVE,
-      credential: null,
+      credentials: null,
       cats: [],
       caretakers: [],
       reservations: [],
@@ -37,7 +37,7 @@ export const credentialsMock: Credential[] = [
       deleted_at: null,
       role: Role.USER,
       status: Status.ACTIVE,
-      credential: null,
+      credentials: null,
       cats: [],
       caretakers: [],
       reservations: [],
@@ -58,7 +58,7 @@ export const credentialsMock: Credential[] = [
       deleted_at: null,
       role: Role.USER,
       status: Status.ACTIVE,
-      credential: null,
+      credentials: null,
       cats: [],
       caretakers: [],
       reservations: [],
@@ -79,7 +79,7 @@ export const credentialsMock: Credential[] = [
       deleted_at: null,
       role: Role.USER,
       status: Status.ACTIVE,
-      credential: null,
+      credentials: null,
       cats: [],
       caretakers: [],
       reservations: [],

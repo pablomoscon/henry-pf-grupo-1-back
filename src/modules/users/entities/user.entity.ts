@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional, IsDate } from 'class-validator';
-import { Credential } from '../../credentials/entities/credential.entity';
+import { Credentials } from '../../credentials/entities/credentials.entity';
 import { Cat } from '../../cats/entities/cat.entity';
 import { Caretaker } from '../../caretakers/entities/caretaker.entity';
 import { Reservation } from '../../reservations/entities/reservation.entity';
@@ -74,13 +74,13 @@ export class User {
   })
   status: Status;
 
-  @OneToOne(() => Credential)
+  @OneToOne(() => Credentials)
   @ApiProperty({
     description: 'Credential associated with the user',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @JoinColumn()
-  credential: Credential;
+  credentials: Credentials;
 
   @OneToMany(() => Cat, (cat) => cat.user)
   cats: Cat[];

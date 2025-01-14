@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { IsNull, Repository } from 'typeorm';
+import { Credentials } from '../credentials/entities/credentials.entity';
 
 @Injectable()
 export class UsersService {
@@ -12,15 +13,18 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) { }
 
-  async create(createUserDto: CreateUserDto) {
-      const newUser = this.userRepository.create(createUserDto);
-      return await this.userRepository.save(newUser);
+  async create(createUserDto: CreateUserDto, credentials: Credentials) {
+    const newUser = this.userRepository.create({
+      ...createUserDto,
+      credentials,
+    });
+    return await this.userRepository.save(newUser);
   };
 
   async findByEmailWithCredentials(email: string): Promise<User | null> {
     return this.userRepository.findOne({
       where: { email },
-      relations: ['credential'],
+      relations: ['credentials'],
     });
   };
 
@@ -29,14 +33,14 @@ export class UsersService {
       where: { deleted_at: IsNull() },
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
-      relations: ['reservations', 'cats','credential'],
+      relations: ['reservations', 'cats', 'credentials'],
     });
   };
 
   async findByEmail(email: string) {
     const user = await this.userRepository.findOne({
       where: { email },
-      relations: ['credential'],
+      relations: ['credentials'],
     });
     return user;
   };
@@ -62,5 +66,5 @@ export class UsersService {
     room.deleted_at = new Date();
     return this.userRepository.save(room);
   };
-  
+
 }

@@ -12,7 +12,7 @@ export const usersMock: User[] = [
     deleted_at: null,
     role: Role.ADMIN,
     status: Status.ACTIVE,
-    credential: {
+    credentials: {
       id: '123e4567-e89b-12d3-a456-426614174000',
       password: 'Pass1234!',
       deleted_at: null,
@@ -33,7 +33,7 @@ export const usersMock: User[] = [
     deleted_at: null,
     role: Role.USER,
     status: Status.ACTIVE,
-    credential: {
+    credentials: {
       id: '123e4567-e89b-12d3-a456-426614174001',
       password: 'Pass1234!',
       deleted_at: null,
@@ -54,7 +54,7 @@ export const usersMock: User[] = [
     deleted_at: null,
     role: Role.USER,
     status: Status.ACTIVE,
-    credential: {
+    credentials: {
       id: '123e4567-e89b-12d3-a456-426614174002',
       password: 'Pass1234!',
       deleted_at: null,
@@ -75,7 +75,7 @@ export const usersMock: User[] = [
     deleted_at: null,
     role: Role.USER,
     status: Status.ACTIVE,
-    credential: {
+    credentials: {
       id: '123e4567-e89b-12d3-a456-426614174003',
       password: 'Pass1234!',
       deleted_at: null,

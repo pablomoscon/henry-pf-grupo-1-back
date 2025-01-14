@@ -1,40 +1,55 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCredentialDto } from './dto/create-credential.dto';
+import { CreateCredentialsDto } from './dto/create-credentials.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Credential } from './entities/credential.entity'; // Asegúrate de importar Credential correctamente
-import { UsersService } from '../users/users.service'; // Asegúrate de que UsersService esté correctamente importado
+import { Credentials } from './entities/credentials.entity';
+import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
+import { UpdateUserDto } from '../users/dto/update-user.dto';
+import { UpdateCredentialsDto } from './dto/update-credentials.dto';
 
 @Injectable()
 export class CredentialsService {
   constructor(
-    @InjectRepository(Credential)
-    private readonly credentialRepository: Repository<Credential>,
+    @InjectRepository(Credentials)
+    private readonly credentialsRepository: Repository<Credentials>,
     private readonly usersService: UsersService,
   ) { }
 
-  async create(createCredentialDto: CreateCredentialDto, userId: string): Promise<Credential> {
-    const user = await this.usersService.findOne(userId);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+  async create(createCredentialsDto: CreateCredentialsDto): Promise<Credentials> {
 
-    const hashedPassword = await bcrypt.hash(createCredentialDto.password, 10);
+    const { password } = createCredentialsDto;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newCredential = this.credentialRepository.create({
-      ...createCredentialDto,
+    const credential = this.credentialsRepository.create({
+      ...createCredentialsDto,
       password: hashedPassword,
     });
 
-    newCredential.user = user; 
-
-    return await this.credentialRepository.save(newCredential);
+    return await this.credentialsRepository.save(credential);
   };
 
-  async findOne(userId: string): Promise<Credential | null> {
-    return await this.credentialRepository.findOne({
+  async findAll(): Promise<Credentials[]> {
+    return await this.credentialsRepository.find({
+      relations: ['user'],
+    });
+  };
+
+  async findOne(userId: string): Promise<Credentials | null> {
+    return await this.credentialsRepository.findOne({
       where: { user: { id: userId } },
     });
   };
+
+  async assignUserToCredentials (id: string, updateCredentialsDto: UpdateCredentialsDto) {
+    const credentials = await this.credentialsRepository.findOne({ where: { id } });
+
+    if (!credentials) {
+      throw new NotFoundException(`Credentials with ID ${id} not found`);
+    }
+    if (updateCredentialsDto.user) {
+      credentials.user = updateCredentialsDto.user;
+    }
+    return await this.credentialsRepository.save(credentials);
+  }
 }

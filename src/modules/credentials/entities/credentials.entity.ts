@@ -10,7 +10,7 @@ import { IsString, IsUUID, IsOptional } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
 
 @Entity('credentials')
-export class Credential {
+export class Credentials {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
     description: 'Unique identifier for the credentials',
@@ -35,11 +35,12 @@ export class Credential {
   @IsOptional()
   deleted_at?: Date;
 
-  @OneToOne(() => User, (user) => user.credential)
+  @OneToOne(() => User, (user) => user.credentials)
   @ApiProperty({
     description: 'User associated with the user',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @JoinColumn()
   user: User;
+  
 }

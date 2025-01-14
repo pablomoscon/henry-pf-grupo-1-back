@@ -26,9 +26,9 @@ export class UsersSeed {
         user.deleted_at = userData.deleted_at;
         user.role = userData.role;
         user.status = userData.status;
-        user.credential = {
-          id: userData.credential.id,
-          password: await hash(userData.credential.password, 10),
+        user.credentials = {
+          id: userData.credentials.id,
+          password: await hash(userData.credentials.password, 10),
           deleted_at: null,
           user: null,
         };

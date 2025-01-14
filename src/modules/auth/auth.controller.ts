@@ -13,7 +13,7 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   async signUp(@Body() signUpAuthDto: SignupAuthDto) {
     const user = await this.authService.signUp(signUpAuthDto);
-    return {
+    return { user,
       message: 'User successfully registered',
     };
   };

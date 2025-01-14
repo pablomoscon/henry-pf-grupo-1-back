@@ -7,11 +7,11 @@ import { UsersSeed } from './users/users.seed';
 import { RoomsSeed } from './rooms/rooms.seed';
 import { ReservationsSeed } from './reservations/reservations.seed';
 import { CredentialsSeed } from './credentials/credentials.seed';
-import { Credential } from 'src/modules/credentials/entities/credential.entity';
 import { SeedManager } from './seed.manager';
+import { Credentials } from 'src/modules/credentials/entities/credentials.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Room, Reservation, Credential])],
+  imports: [TypeOrmModule.forFeature([User, Room, Reservation, Credentials])],
   providers: [
     SeedManager,
     UsersSeed,
@@ -21,4 +21,4 @@ import { SeedManager } from './seed.manager';
   ],
   exports: [SeedManager],
 })
-export class SeedModule {}
+export class SeedModule { }

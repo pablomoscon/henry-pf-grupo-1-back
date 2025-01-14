@@ -5,7 +5,8 @@ import { SignupAuthDto } from "./dto/signup-auth.dto";
 import { UsersService } from '../users/users.service';
 import { CredentialsService } from "../credentials/credentials.service";
 import { CreateUserDto } from "../users/dto/create-user.dto";
-import { CreateCredentialDto } from "../credentials/dto/create-credential.dto";
+import { CreateCredentialsDto } from "../credentials/dto/create-credentials.dto";
+import { Credentials } from "../credentials/entities/credentials.entity";
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,10 @@ export class AuthService {
       throw new BadRequestException('User already exists');
     }
 
-    const { email, name, phone, birthdate, role } = signUpUser;
+    const { email, name, phone, birthdate, role, password } = signUpUser;
+
+    const createCredentialsDto: CreateCredentialsDto = { password };
+    const credentials: Credentials = await this.credentialsService.create(createCredentialsDto);
 
     const createUserDto: CreateUserDto = {
       email,
@@ -34,14 +38,11 @@ export class AuthService {
       ...(role && { role }),
     };
 
-    const createdUser = await this.usersService.create(createUserDto);
+    const userWithCredentials = await this.usersService.create(createUserDto, credentials);
 
-    const createCredentialDto: CreateCredentialDto = { password: signUpUser.password };
-    const credential = await this.credentialsService.create(createCredentialDto, createdUser.id);
-
-    createdUser.credential = credential;
-
-    return await this.usersService.update(createdUser.id, createdUser);
+    await this.credentialsService.assignUserToCredentials(credentials.id, { user: userWithCredentials });
+    
+    return userWithCredentials;
   };
 
   async signIn(signInAuthDto: SignInAuthDto) {
@@ -49,7 +50,7 @@ export class AuthService {
 
     const user = await this.usersService.findByEmail(email);
     const errorMessage = 'Invalid email or password';
-    if (!user || !(await bcrypt.compare(password, user.credential.password))) {
+    if (!user || !(await bcrypt.compare(password, user.credentials.password))) {
       throw new UnauthorizedException(errorMessage);
     }
     return user;
