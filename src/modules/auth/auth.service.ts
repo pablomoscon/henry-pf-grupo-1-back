@@ -4,6 +4,8 @@ import * as bcrypt from 'bcrypt';
 import { SignupAuthDto } from "./dto/signup-auth.dto";
 import { UsersService } from '../users/users.service';
 import { CredentialsService } from "../credentials/credentials.service";
+import { CreateUserDto } from "../users/dto/create-user.dto";
+import { CreateCredentialDto } from "../credentials/dto/create-credential.dto";
 
 @Injectable()
 export class AuthService {
@@ -22,10 +24,20 @@ export class AuthService {
       throw new BadRequestException('User already exists');
     }
 
-    const createdUser = await this.usersService.create(signUpUser);
+    const { email, name, phone, birthdate, role } = signUpUser;
 
-    const credentialDto = { password: signUpUser.password };
-    const credential = await this.credentialsService.create(credentialDto, createdUser.id);
+    const createUserDto: CreateUserDto = {
+      email,
+      name,
+      phone,
+      birthdate,
+      ...(role && { role }),
+    };
+
+    const createdUser = await this.usersService.create(createUserDto);
+
+    const createCredentialDto: CreateCredentialDto = { password: signUpUser.password };
+    const credential = await this.credentialsService.create(createCredentialDto, createdUser.id);
 
     createdUser.credential = credential;
 
@@ -36,12 +48,9 @@ export class AuthService {
     const { email, password } = signInAuthDto;
 
     const user = await this.usersService.findByEmail(email);
-    if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
-    const isValidPassword = await bcrypt.compare(password, user.credential.password);
-    if (!isValidPassword) {
-      throw new UnauthorizedException('Invalid email or password');
+    const errorMessage = 'Invalid email or password';
+    if (!user || !(await bcrypt.compare(password, user.credential.password))) {
+      throw new UnauthorizedException(errorMessage);
     }
     return user;
   };

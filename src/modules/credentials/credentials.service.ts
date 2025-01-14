@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -17,7 +17,7 @@ export class CredentialsService {
   async create(createCredentialDto: CreateCredentialDto, userId: string): Promise<Credential> {
     const user = await this.usersService.findOne(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
 
     const hashedPassword = await bcrypt.hash(createCredentialDto.password, 10);
