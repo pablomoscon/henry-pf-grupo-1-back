@@ -13,7 +13,8 @@ export class UsersService {
   ) { }
 
   async create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+      const newUser = this.userRepository.create(createUserDto);
+      return await this.userRepository.save(newUser);
   };
 
   async findByEmailWithCredentials(email: string): Promise<User | null> {
@@ -53,4 +54,10 @@ export class UsersService {
     room.deleted_at = new Date();
     return this.userRepository.save(room);
   };
+  
+  async findByEmail(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+    return user;
+  };
+
 }

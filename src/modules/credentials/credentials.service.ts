@@ -1,26 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class CredentialsService {
-  create(createCredentialDto: CreateCredentialDto) {
-    return 'This action adds a new credential';
-  }
+  constructor(
+    @InjectRepository(Credential)
+    private readonly credentialRepository: Repository<Credential>,
+  ) { }
 
-  findAll() {
-    return `This action returns all credentials`;
-  }
+  async create (credentials: CredentialDto): Promise<Credential> => {
+    const { password } = credentials;
 
-  findOne(id: number) {
-    return `This action returns a #${id} credential`;
-  }
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  update(id: number, updateCredentialDto: UpdateCredentialDto) {
-    return `This action updates a #${id} credential`;
-  }
+    const newCredentials = await credentialRepository.create({
+      username,
+      password: hashedPassword,
+    });
 
-  remove(id: number) {
-    return `This action removes a #${id} credential`;
-  }
+    credentialRepository.save(newCredentials);
+
+    return await newCredentials;
+  };
+
 }
