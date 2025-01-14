@@ -19,7 +19,7 @@ export class RoomsSeed {
         const room = new Room();
         room.id = roomData.id;
         room.name = roomData.name;
-        room.imgs = roomData.imgs;
+        room.img = roomData.img;
         room.description = roomData.description;
         room.price = roomData.price;
         room.available = roomData.available;

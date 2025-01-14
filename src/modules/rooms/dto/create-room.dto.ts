@@ -11,15 +11,12 @@ export class CreateRoomDto {
     name: string;
 
     @ApiProperty({
-        description: 'Image URLs for the rooms',
-        example: [
-            'https://example.com/room-image.jpg',
-            'https://example.com/room-image2.jpg',
-        ],
+        description: 'Image URL for the room',
+        example: 'https://example.com/room-image.jpg'
     })
     @IsArray()
-    @IsString({ each: true })
-    imgs: string[];
+    @IsString()
+    img: string;
 
     @ApiProperty({
         description: 'Description of the room',
