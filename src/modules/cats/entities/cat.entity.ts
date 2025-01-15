@@ -6,9 +6,11 @@ import {
   OneToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID, IsDate, IsOptional } from 'class-validator';
-import { User } from '../../users/entities/user.entity';
-import { Media } from '../../media/entities/media.entity';
+import { IsString, IsDate, IsBoolean, IsArray, IsOptional, IsEnum } from 'class-validator';
+import { User } from 'src/modules/users/entities/user.entity';
+import { Media } from 'src/modules/media/entities/media.entity';
+import { CatCompatibility } from 'src/enums/cat-compatibility.enum';
+import { CatVaccinations } from 'src/enums/cat-vaccinations.enum';
 
 @Entity('cats')
 export class Cat {
@@ -17,30 +19,80 @@ export class Cat {
     description: 'Unique identifier for the cat',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  @IsUUID()
   id: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  @ApiProperty({ description: 'Name of the cat', example: 'Lord Purrington' })
+  @Column({ type: 'varchar', length: 100 })
+  @ApiProperty({ description: 'Full name of the cat', example: 'Whiskers Purrington' })
   @IsString()
-  name: string;
-
-  @Column({ type: 'int' })
-  @ApiProperty({ description: 'Age of the cat', example: 9 })
-  age: number;
+  fullName: string;
 
   @Column({ type: 'date' })
   @ApiProperty({
-    description: 'Birthdate of the cat',
-    example: '2025-01-10T00:00:00.000Z',
+    description: 'Date of birth of the cat',
+    example: '2022-06-15',
   })
   @IsDate()
-  birthdate: Date;
+  dateOfBirth: Date;
 
-  @Column({ type: 'varchar' })
-  @ApiProperty({ description: 'Race of the cat', example: 'Siamese' })
+  @Column({ type: 'boolean' })
+  @ApiProperty({ description: 'Is the cat neutered?', example: true })
+  @IsBoolean()
+  isNeutered: boolean;
+
+  @Column({ type: 'varchar', length: 255 })
+  @ApiProperty({
+    description: 'Personality of the cat',
+    example: 'Playful and friendly',
+  })
   @IsString()
-  race: string;
+  personality: string;
+
+  @Column({ type: 'varchar', length: 20 })
+  @ApiProperty({
+    description: 'Does the cat get along with other cats?',
+    example: 'yes',
+    enum: CatCompatibility,
+  })
+  @IsEnum(CatCompatibility)
+  getsAlongWithOtherCats: CatCompatibility;
+
+  @Column({ type: 'varchar', length: 255 })
+  @ApiProperty({
+    description: 'What food does the cat eat?',
+    example: 'Dry food and wet food',
+  })
+  @IsString()
+  food: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  @ApiProperty({
+    description: 'Is the cat taking any medication?',
+    example: 'Antibiotics for an infection',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  medication?: string;
+
+  @Column({ type: 'text', nullable: true })
+  @ApiProperty({
+    description: 'How does the cat behave when visiting the veterinarian?',
+    example: 'Nervous but manageable',
+    nullable: true,
+  })
+  @IsOptional()
+  @IsString()
+  behaviorAtVet?: string;
+
+  @Column({ type: 'simple-array' })
+  @ApiProperty({
+    description: 'Vaccinations, tests, or certificates the cat has',
+    example: ['rabies', 'triple feline', 'FIV/Felv test'],
+    enum: CatVaccinations,
+  })
+  @IsArray()
+  @IsEnum(CatVaccinations, { each: true })
+  vaccinationsAndTests: CatVaccinations[];
 
   @ManyToOne(() => User, (user) => user.cats)
   @ApiProperty({ description: 'User who owns the cat' })

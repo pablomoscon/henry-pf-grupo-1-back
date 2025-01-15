@@ -1,26 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
+import { Cat } from './entities/cat.entity';
+import { IsNull, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
+
 export class CatsService {
-  create(createCatDto: CreateCatDto) {
-    return 'This action adds a new cat';
-  }
+  constructor(
+    @InjectRepository(Cat)
+    private readonly catRepository: Repository<Cat>,
+    private readonly usersService: UsersService,
+  ) { }
 
-  findAll() {
-    return `This action returns all cats`;
-  }
+  async create(createCatDto: CreateCatDto) {
 
-  findOne(id: number) {
-    return `This action returns a #${id} cat`;
-  }
+    const user = await this.usersService.findOne(createCatDto.userId);
+    if (!user) {
+      throw new BadRequestException('There is no user with that ID.');
+    }
+    const newCat = this.catRepository.create({
+      ...createCatDto,
+      user,
+    });
+    await this.catRepository.save(newCat);
+    return newCat;
+  };
 
-  update(id: number, updateCatDto: UpdateCatDto) {
-    return `This action updates a #${id} cat`;
-  }
+  async findAll() {
+    return await this.catRepository.find({
+      where: { deleted_at: IsNull() },
+      relations: ['user'],
+    });
+  };
 
-  remove(id: number) {
-    return `This action removes a #${id} cat`;
-  }
+  async findOne(id: string) {
+    return await this.catRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+  };
+
+  async update(id: string, updateCatDto: UpdateCatDto) {
+    await this.catRepository.update(id, updateCatDto);
+    return this.findOne(id);
+  };
+
+  async remove(id: string) {
+    const cat = await this.catRepository.findOne({ where: { id } });
+
+    if (!cat) {
+      throw new NotFoundException(`Cat with ID ${id} not found`);
+    }
+    cat.deleted_at = new Date();
+    return this.catRepository.save(cat);
+  };
 }

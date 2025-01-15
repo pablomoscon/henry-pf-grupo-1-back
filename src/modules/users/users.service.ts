@@ -33,14 +33,13 @@ export class UsersService {
       where: { deleted_at: IsNull() },
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
-      relations: ['reservations', 'cats', 'credential'],
+      relations: ['reservations', 'cats'],
     });
   };
 
   async findByEmail(email: string) {
     const user = await this.userRepository.findOne({
       where: { email },
-      relations: ['credential'],
     });
     return user;
   };
@@ -58,12 +57,12 @@ export class UsersService {
   };
 
   async remove(id: string): Promise<User> {
-    const room = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({ where: { id } });
 
-    if (!room) {
+    if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-    room.deleted_at = new Date();
-    return this.userRepository.save(room);
+    user.deleted_at = new Date();
+    return this.userRepository.save(user);
   };
 }
