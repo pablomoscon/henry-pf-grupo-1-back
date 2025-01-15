@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { Room } from './entities/room.entity';
-import { IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { Between, IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -41,9 +41,10 @@ export class RoomsService {
       relations: ['reservations'],
       where: {
         deleted_at: IsNull(),
-        ...(numberOfCats && { number_of_cats: numberOfCats }),
+        ...(numberOfCats !== undefined && { number_of_cats: numberOfCats }),
         ...(minPrice && { price: MoreThanOrEqual(minPrice) }),
         ...(maxPrice && { price: LessThanOrEqual(maxPrice) }),
+        ...(minPrice && maxPrice && { price: Between(minPrice, maxPrice) }),
       },
     });
 
@@ -56,13 +57,12 @@ export class RoomsService {
         ),
       );
     }
-
     return rooms;
-  }
+  };
 
   async findOne(id: string) {
     return await this.roomsRepository.findOneBy({ id });
-  }
+  };
 
   async update(id: string, updateRoomDto: UpdateRoomDto) {
     const updateResult = await this.roomsRepository.update(id, updateRoomDto);
@@ -71,7 +71,7 @@ export class RoomsService {
       throw new NotFoundException(`Room with ID ${id} not found`);
     }
     return await this.findOne(id);
-  }
+  };
 
   async remove(id: string): Promise<Room> {
     const room = await this.roomsRepository.findOne({ where: { id } });
@@ -81,5 +81,5 @@ export class RoomsService {
     }
     room.deleted_at = new Date();
     return this.roomsRepository.save(room);
-  }
+  };
 }
