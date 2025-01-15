@@ -100,7 +100,7 @@ export class AuthService {
       };
 
       const credential: Credential = await this.credentialsService.create(createCredentialsDto);
-      
+
       const createUserDto: CreateUserDto = {
         email: userInfo.email,
         name: userInfo.name,
@@ -117,7 +117,6 @@ export class AuthService {
       user = await this.usersService.create(createUserDto, credential);
       await this.credentialsService.assignUserToCredentials(credential.id, { user });
     }
-
-      return await this.createToken(user)
+    return await this.createToken(user)
   };
 }
