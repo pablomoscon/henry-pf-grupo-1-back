@@ -33,7 +33,7 @@ export class UsersService {
       where: { deleted_at: IsNull() },
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
-      relations: ['reservations', 'cats', 'credentials'],
+      relations: ['reservations', 'cats', 'credential'],
     });
   };
 
