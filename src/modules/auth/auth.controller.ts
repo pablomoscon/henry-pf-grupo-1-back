@@ -22,9 +22,10 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async authLogin(@Body() signInAuthDto: SignInAuthDto) {
-    const user = await this.authService.signIn(signInAuthDto);
+    const token = await this.authService.signIn(signInAuthDto);
     return {
-      message: 'Login successful'
+      success: 'Login successful',
+      token
     };
   };
 }

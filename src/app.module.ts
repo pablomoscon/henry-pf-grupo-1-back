@@ -14,6 +14,7 @@ import { ReservationsModule } from './modules/reservations/reservations.module';
 import { UsersModule } from './modules/users/users.module';
 import { SeedModule } from './seeds/seeds.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -25,6 +26,13 @@ import { AuthModule } from './modules/auth/auth.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) =>
         configService.get('databaseConfig'),
+    }),
+    JwtModule.register({
+      global: true,
+
+      signOptions: { expiresIn: '1h' },
+
+      secret: process.env.JWT_SECRET,
     }),
     AuthModule,
     RoomsModule,
