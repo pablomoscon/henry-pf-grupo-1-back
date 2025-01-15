@@ -1,8 +1,9 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import * as dotenv from 'dotenv';
 
-
+dotenv.config({ path: `.env.${process.env.NODE_ENV}.local` });
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
