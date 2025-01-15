@@ -6,10 +6,10 @@ import {
     IsDate,
     IsUUID,
     IsOptional,
-    IsArray,
     IsEnum,
     IsDecimal,
     IsInt,
+    IsArray,
 } from 'class-validator';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 import { RoomFeatures } from '../../../enums/rooms-features.enum';
@@ -110,6 +110,7 @@ export class Room {
         example: [RoomFeatures.HidingPlace, RoomFeatures.Hammocks],
     })
     @IsEnum(RoomFeatures, { each: true }) 
+    @IsArray()
     features: RoomFeatures[];
 
     @OneToMany(() => Reservation, (reservation) => reservation.room)

@@ -10,16 +10,11 @@ import { Credential } from '../credentials/entities/credential.entity';
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto, credential: Credential) {
-    return this.usersService.create(createUserDto, credential);
-  };
-
   @Get()
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query('page') page: string = '1',
-    @Query('limit') limit: string = '5',
+    @Query('limit') limit: string = '10',
   ) {
     const pageNumber = Number(page);
     const limitNumber = Number(limit);
