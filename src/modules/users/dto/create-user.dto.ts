@@ -21,14 +21,14 @@ export class CreateUserDto {
         description: 'Phone number of the user',
         example: '+5412345678 ',
     })
+    @IsOptional()
     @IsString()
-    @IsNotEmpty({ message: 'The phone number cannot be empty.' })
-    phone: string;
+    phone?: string;
 
     @ApiProperty({ description: 'Birthdate of the user', example: '1990-01-01' })
+    @IsOptional()
     @IsDate()
-    @IsNotEmpty({ message: 'The birthdate cannot be empty.' })
-    birthdate: Date;
+    birthdate?: Date;
 
     @ApiProperty({
         description: 'Role of the user',
@@ -37,5 +37,4 @@ export class CreateUserDto {
     })
     @IsOptional()
     role?: Role;
-
 }
