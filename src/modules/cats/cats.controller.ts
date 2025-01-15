@@ -12,7 +12,7 @@ export class CatsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createCatDto: CreateCatDto) {
-  return await this.catsService.create(createCatDto);
+    return await this.catsService.create(createCatDto);
   };
 
   @Get()
@@ -26,18 +26,22 @@ export class CatsController {
   async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     const cat = await this.catsService.findOne(id);
     if (!cat) {
-      throw new HttpException('Cat not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     return cat;
   };
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCatDto: UpdateCatDto) {
-    return this.catsService.update(+id, updateCatDto);
+  @HttpCode(HttpStatus.OK)
+  async update(@Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateCatDto: UpdateCatDto
+  ) {
+    return await this.catsService.update(id, updateCatDto);
   };
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.catsService.remove(+id);
+  @HttpCode(HttpStatus.OK)
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.catsService.remove(id);
   };
 }
