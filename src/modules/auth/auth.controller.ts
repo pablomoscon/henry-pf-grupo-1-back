@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Res, Query } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInAuthDto, } from './dto/signin-auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { SignupAuthDto } from './dto/signup-auth.dto';
+import { Response } from 'express';
+import { oauth2Client } from 'src/config/google-auth.config';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -28,4 +30,27 @@ export class AuthController {
       token
     };
   };
+
+  @Get('google')
+  redirectToGoogle(@Res() res: Response) {
+    const authUrl = oauth2Client.generateAuthUrl({
+      access_type: 'offline',
+      scope: ['https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/user.birthday.read',
+        'https://www.googleapis.com/auth/user.phonenumbers.read',
+      ],
+    });
+    res.redirect(authUrl);
+  };
+
+  @Get('google/callback')
+  async handleGoogleCallback(@Query('code') code: string, @Res() res: Response) {
+    const token = await this.authService.googleSignUp(code);
+    res.json({
+      message: 'User successfully registered or logged in via Google',
+      token,
+    });
+  };
 }
+

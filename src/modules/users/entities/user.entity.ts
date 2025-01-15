@@ -39,17 +39,19 @@ export class User {
   @IsString()
   email: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 20, nullable: true })
   @ApiProperty({
     description: 'Phone number of the user',
     example: '+5412345678 ',
   })
   @IsString()
+  @IsOptional()
   phone: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date', nullable: true })
   @ApiProperty({ description: 'Birthdate of the user', example: '1990-01-01' })
   @IsDate()
+  @IsOptional()
   birthdate: Date;
 
   @Column({ type: 'timestamp', nullable: true })

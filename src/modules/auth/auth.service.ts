@@ -9,6 +9,7 @@ import { CreateCredentialDto } from "../credentials/dto/create-credential.dto";
 import { Credential } from "../credentials/entities/credential.entity";
 import { User } from "../users/entities/user.entity";
 import { JwtService } from "@nestjs/jwt";
+import { oauth2Client } from "src/config/google-auth.config";
 
 @Injectable()
 export class AuthService {
@@ -72,5 +73,50 @@ export class AuthService {
       role: user.role,
     };
     return this.jwtService.signAsync(payload)
+  };
+
+  async getUserInfo(code: string): Promise<any> {
+    const { tokens } = await oauth2Client.getToken(code);
+    if (!tokens) {
+      throw new Error("No tokens received");
+    }
+    oauth2Client.setCredentials(tokens);
+
+    const [userInfoData, peopleData] = await Promise.all([
+      oauth2Client.request({ url: 'https://www.googleapis.com/oauth2/v3/userinfo' }).then(res => res.data),
+      oauth2Client.request({ url: 'https://people.googleapis.com/v1/people/me?personFields=birthdays,phoneNumbers' }).then(res => res.data),
+    ]);
+
+    return { ...(userInfoData as object), ...(peopleData as object) };
+  };
+
+  async googleSignUp(code: string): Promise<any> {
+    const userInfo = await this.getUserInfo(code);
+    let user = await this.usersService.findByEmail(userInfo.email);
+
+    if (!user) {
+      const createCredentialsDto: CreateCredentialDto = {
+        password: userInfo.sub,
+      };
+
+      const credential: Credential = await this.credentialsService.create(createCredentialsDto);
+
+      const createUserDto: CreateUserDto = {
+        email: userInfo.email,
+        name: userInfo.name,
+        birthdate: userInfo.birthdays?.[0]?.date
+          ? new Date(
+            userInfo.birthdays[0].date.year,
+            userInfo.birthdays[0].date.month - 1,
+            userInfo.birthdays[0].date.day
+          )
+          : null,
+        phone: userInfo.phoneNumbers?.[0]?.value,
+      };
+
+      user = await this.usersService.create(createUserDto, credential);
+      await this.credentialsService.assignUserToCredentials(credential.id, { user });
+    }
+    return await this.createToken(user)
   };
 }
