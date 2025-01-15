@@ -3,7 +3,9 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import * as dotenv from 'dotenv';
 
-dotenv.config({ path: `.env.${process.env.NODE_ENV}.local` });
+dotenv.config({
+  path: `.env.development.local`
+});
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
