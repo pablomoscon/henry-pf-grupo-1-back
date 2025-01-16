@@ -3,17 +3,16 @@ import { CreateCredentialDto } from './dto/create-credential.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Credential } from './entities/credential.entity';
-import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
-import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
+import { User } from '../users/entities/user.entity';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class CredentialsService {
   constructor(
     @InjectRepository(Credential)
     private readonly credentialsRepository: Repository<Credential>,
-    private readonly usersService: UsersService,
   ) { }
 
   async create(createCredentialsDto: CreateCredentialDto): Promise<Credential> {
@@ -27,6 +26,33 @@ export class CredentialsService {
     });
 
     return await this.credentialsRepository.save(credential);
+  };
+
+  async createGoogleCredential(createCredentialsDto: CreateCredentialDto): Promise<Credential> {
+    const { googleId, password } = createCredentialsDto;
+    const hashedCredential = await bcrypt.hash(googleId, 10);
+
+    const googleCredential = this.credentialsRepository.create({
+      ...createCredentialsDto,
+      googleId: hashedCredential,
+    });
+
+    const savedCredential = await this.credentialsRepository.save(googleCredential);
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    savedCredential.password = hashedPassword;
+
+    return await this.credentialsRepository.save(savedCredential);
+  };
+
+  async validatePassword(credentialId: string, password: string): Promise<boolean> {
+    const credential = await this.credentialsRepository.findOne({ where: { id: credentialId } });
+
+    if (!credential) {
+      throw new NotFoundException('Credentials not found');
+    }
+    return bcrypt.compare(password, credential.password);
   };
 
   async findAll(): Promise<Credential[]> {
@@ -51,5 +77,19 @@ export class CredentialsService {
       credential.user = updateCredentialsDto.user;
     }
     return await this.credentialsRepository.save(credential);
-  }
+  };
+
+  async updatePassword(user: User, newPassword: string): Promise<Credential> {
+    const credential = await this.credentialsRepository.findOne({
+      where: { user: { id: user.id } },
+      relations: ['user'],
+    });
+
+    if (!credential) {
+      throw new NotFoundException('Credentials not found');
+    }
+    credential.password = await bcrypt.hash(newPassword, 10);
+
+    return await this.credentialsRepository.save(credential);
+  };
 }

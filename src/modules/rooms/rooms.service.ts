@@ -35,16 +35,18 @@ export class RoomsService {
     } = {},
   ): Promise<Room[]> {
     const { checkInDate, checkOutDate, numberOfCats, priceRange } = filters;
-    const { minPrice, maxPrice } = priceRange || {};
+
+    const minPrice = priceRange?.minPrice && !isNaN(priceRange.minPrice) ? priceRange.minPrice : undefined;
+    const maxPrice = priceRange?.maxPrice && !isNaN(priceRange.maxPrice) ? priceRange.maxPrice : undefined;
 
     const rooms = await this.roomsRepository.find({
       relations: ['reservations'],
       where: {
         deleted_at: IsNull(),
         ...(numberOfCats !== undefined && { number_of_cats: numberOfCats }),
-        ...(minPrice && { price: MoreThanOrEqual(minPrice) }),
-        ...(maxPrice && { price: LessThanOrEqual(maxPrice) }),
-        ...(minPrice && maxPrice && { price: Between(minPrice, maxPrice) }),
+        ...(minPrice !== undefined && { price: MoreThanOrEqual(minPrice) }),
+        ...(maxPrice !== undefined && { price: LessThanOrEqual(maxPrice) }),
+        ...(minPrice !== undefined && maxPrice !== undefined && { price: Between(minPrice, maxPrice) }),
       },
     });
 
@@ -52,13 +54,14 @@ export class RoomsService {
       return rooms.filter((room) =>
         room.reservations.every(
           ({ initial_date, ending_date }) =>
-            new Date(ending_date) < checkInDate ||
-            new Date(initial_date) > checkOutDate,
+            new Date(ending_date) < checkInDate || new Date(initial_date) > checkOutDate,
         ),
       );
     }
+
     return rooms;
   };
+  
 
   async findOne(id: string) {
     return await this.roomsRepository.findOneBy({ id });
