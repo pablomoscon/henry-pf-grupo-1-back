@@ -35,16 +35,23 @@ export class RoomsService {
     } = {},
   ): Promise<Room[]> {
     const { checkInDate, checkOutDate, numberOfCats, priceRange } = filters;
-    const { minPrice, maxPrice } = priceRange || {};
+
+    const minPrice = priceRange?.minPrice !== undefined && !isNaN(Number(priceRange.minPrice))
+      ? Number(priceRange.minPrice)
+      : undefined;
+    const maxPrice = priceRange?.maxPrice !== undefined && !isNaN(Number(priceRange.maxPrice))
+      ? Number(priceRange.maxPrice)
+      : undefined;
 
     const rooms = await this.roomsRepository.find({
       relations: ['reservations'],
       where: {
         deleted_at: IsNull(),
         ...(numberOfCats !== undefined && { number_of_cats: numberOfCats }),
-        ...(minPrice && { price: MoreThanOrEqual(minPrice) }),
-        ...(maxPrice && { price: LessThanOrEqual(maxPrice) }),
-        ...(minPrice && maxPrice && { price: Between(minPrice, maxPrice) }),
+        ...(minPrice !== undefined && { price: MoreThanOrEqual(minPrice) }),
+        ...(maxPrice !== undefined && { price: LessThanOrEqual(maxPrice) }),
+        ...(minPrice !== undefined &&
+          maxPrice !== undefined && { price: Between(minPrice, maxPrice) }),
       },
     });
 
@@ -57,9 +64,10 @@ export class RoomsService {
         ),
       );
     }
+
     return rooms;
   };
-
+  
   async findOne(id: string) {
     return await this.roomsRepository.findOneBy({ id });
   };
