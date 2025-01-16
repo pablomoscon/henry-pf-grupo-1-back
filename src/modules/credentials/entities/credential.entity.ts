@@ -3,7 +3,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToOne,
-  JoinColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional } from 'class-validator';
@@ -26,6 +25,14 @@ export class Credential {
   })
   @IsString()
   password: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({
+    description: 'Unique identifier assigned by Google OAuth2 for the user',
+    example: '123456789012345678901',
+  })
+  @IsOptional()
+  googleId?: string;
 
   @Column({ type: 'timestamp', nullable: true })
   @ApiProperty({

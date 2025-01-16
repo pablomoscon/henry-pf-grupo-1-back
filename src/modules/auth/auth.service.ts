@@ -1,6 +1,5 @@
 import { BadRequestException, HttpException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { SignInAuthDto } from "./dto/signin-auth.dto";
-import * as bcrypt from 'bcrypt';
 import { SignupAuthDto } from "./dto/signup-auth.dto";
 import { UsersService } from '../users/users.service';
 import { CredentialsService } from "../credentials/credentials.service";
@@ -10,6 +9,7 @@ import { Credential } from "../credentials/entities/credential.entity";
 import { User } from "../users/entities/user.entity";
 import { JwtService } from "@nestjs/jwt";
 import { oauth2Client } from "src/config/google-auth.config";
+import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -55,14 +55,16 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
 
     if (!user) {
-      throw new BadRequestException('Invalid credentials')
-    };
-    const isPasswordValid = await bcrypt.compare(password, user.credential.password);
+      throw new BadRequestException('Invalid credentials');
+    }
+
+    const isPasswordValid = await this.credentialsService.validatePassword(user.credential.id, password);
 
     if (!isPasswordValid) {
-      throw new BadRequestException('Invalid credentials')
-    };
-    return await this.createToken(user)
+      throw new BadRequestException('Invalid credentials');
+    }
+
+    return this.createToken(user);
   };
 
   private async createToken(user: User) {
@@ -96,10 +98,11 @@ export class AuthService {
 
     if (!user) {
       const createCredentialsDto: CreateCredentialDto = {
-        password: userInfo.sub,
+        googleId: userInfo.sub,
+        password: crypto.randomBytes(16).toString('hex')
       };
 
-      const credential: Credential = await this.credentialsService.create(createCredentialsDto);
+      const credential: Credential = await this.credentialsService.createGoogleCredential(createCredentialsDto);
 
       const createUserDto: CreateUserDto = {
         email: userInfo.email,
