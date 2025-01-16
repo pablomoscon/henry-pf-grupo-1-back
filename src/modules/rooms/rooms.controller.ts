@@ -57,10 +57,14 @@ export class RoomsController {
     @Query('minPrice') minPrice?: string,
     @Query('maxPrice') maxPrice?: string,
   ): Promise<Room[]> {
+
     const checkIn = checkInDate ? new Date(checkInDate) : undefined;
     const checkOut = checkOutDate ? new Date(checkOutDate) : undefined;
 
-    if ((checkInDate && isNaN(checkIn.getTime())) || (checkOutDate && isNaN(checkOut.getTime()))) {
+    if (
+      (checkInDate && isNaN(checkIn.getTime())) ||
+      (checkOutDate && isNaN(checkOut.getTime()))
+    ) {
       throw new BadRequestException('Invalid check-in or check-out date');
     }
 
@@ -69,21 +73,21 @@ export class RoomsController {
     const maxPriceNumber = maxPrice ? Number(maxPrice) : undefined;
 
     if (
+      (numberOfCats && isNaN(numberOfCatsNumber)) ||
       (minPrice && isNaN(minPriceNumber)) ||
-      (maxPrice && isNaN(maxPriceNumber)) ||
-      (numberOfCats && isNaN(numberOfCatsNumber))
+      (maxPrice && isNaN(maxPriceNumber))
     ) {
       throw new BadRequestException('Invalid number for one or more filters');
     }
 
-    const priceRange = minPrice || maxPrice ? { minPrice: minPriceNumber, maxPrice: maxPriceNumber } : undefined;
-
-    return await this.roomsService.findRooms({
+    const filters = {
       checkInDate: checkIn,
       checkOutDate: checkOut,
       numberOfCats: numberOfCatsNumber,
-      priceRange,
-    })
+      priceRange: minPrice || maxPrice ? { minPrice: minPriceNumber, maxPrice: maxPriceNumber } : undefined,
+    };
+
+    return await this.roomsService.findRooms(filters);
   };
 
   @Get(':id')
