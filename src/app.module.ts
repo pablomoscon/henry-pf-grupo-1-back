@@ -15,6 +15,7 @@ import { UsersModule } from './modules/users/users.module';
 import { SeedModule } from './seeds/seeds.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { LocationsModule } from './modules/locations/locations.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { JwtModule } from '@nestjs/jwt';
     ReservationsModule,
     UsersModule,
     SeedModule,
+    LocationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
