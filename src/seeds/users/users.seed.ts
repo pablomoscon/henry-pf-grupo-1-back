@@ -26,7 +26,8 @@ export class UsersSeed {
         user.name = userData.name;
         user.email = userData.email;
         user.phone = userData.phone;
-        user.birthdate = userData.birthdate;
+        user.address = userData.address;
+        user.customerId = userData.customerId;
         user.deleted_at = userData.deleted_at;
         user.role = userData.role;
         user.status = userData.status;

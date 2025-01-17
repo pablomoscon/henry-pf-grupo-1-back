@@ -45,10 +45,21 @@ export class SignupAuthDto {
     @IsNotEmpty({ message: 'The phone number cannot be empty.' })
     phone: string;
 
-    @ApiProperty({ description: 'Birthdate of the user', example: '1990-01-01' })
-    @IsDate()
-    @IsNotEmpty({ message: 'The birthdate cannot be empty.' })
-    birthdate: Date;
+    @ApiProperty({
+        description: 'Customer ID associated with the user in external systems',
+        example: '123e4567-e89b-12d3-a456-426614174000',
+    })
+    @IsString()
+    @IsNotEmpty()
+    customerId: string;
+
+    @ApiProperty({
+        description: 'Address of the user',
+        example: '123 Main St, Springfield',
+    })
+    @IsString()
+    @IsNotEmpty()
+    address: string;
 
     @ApiProperty({
         description: 'Role of the user',

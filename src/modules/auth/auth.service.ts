@@ -29,7 +29,7 @@ export class AuthService {
       throw new BadRequestException('User already exists');
     }
 
-    const { email, name, phone, birthdate, role, password } = signUpUser;
+    const { email, name, phone, address, customerId, role, password } = signUpUser;
 
     const createCredentialsDto: CreateCredentialDto = { password };
     const credential: Credential = await this.credentialsService.create(createCredentialsDto);
@@ -38,7 +38,9 @@ export class AuthService {
       email,
       name,
       phone,
-      birthdate,
+      address,
+      customerId,
+
       ...(role && { role }),
     };
 
@@ -63,8 +65,20 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new BadRequestException('Invalid credentials');
     }
-
-    return this.createToken(user);
+    const token = await this.createToken(user);
+    
+    return {
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name, 
+        role: user.role, 
+        phone: user.phone,
+        address: user.address,
+        customerId: user.customerId,
+      },
+    };
   };
 
   private async createToken(user: User) {
@@ -72,7 +86,11 @@ export class AuthService {
       sub: user.id,
       id: user.id,
       email: user.email,
+      name: user.name,
       role: user.role,
+      phone: user.phone,
+      address: user.address,
+      customerId: user.customerId,
     };
     return this.jwtService.signAsync(payload)
   };
@@ -107,14 +125,9 @@ export class AuthService {
       const createUserDto: CreateUserDto = {
         email: userInfo.email,
         name: userInfo.name,
-        birthdate: userInfo.birthdays?.[0]?.date
-          ? new Date(
-            userInfo.birthdays[0].date.year,
-            userInfo.birthdays[0].date.month - 1,
-            userInfo.birthdays[0].date.day
-          )
-          : null,
         phone: userInfo.phoneNumbers?.[0]?.value,
+        address: userInfo.address?.[0]?.value,
+        customerId: userInfo.cuestomerId?.[0]?.value,
       };
 
       user = await this.usersService.create(createUserDto, credential);

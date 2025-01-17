@@ -39,6 +39,16 @@ export class User {
   @IsString()
   email: string;
 
+  @Column({ nullable: true })
+  @ApiProperty({
+    description: 'Customer ID associated with the user in external systems',
+    example: '29309649',
+  })
+  @IsString()
+  @IsOptional()
+  customerId: string;
+
+
   @Column({ type: 'varchar', length: 20, nullable: true })
   @ApiProperty({
     description: 'Phone number of the user',
@@ -47,13 +57,7 @@ export class User {
   @IsString()
   @IsOptional()
   phone: string;
-
-  @Column({ type: 'date', nullable: true })
-  @ApiProperty({ description: 'Birthdate of the user', example: '1990-01-01' })
-  @IsDate()
-  @IsOptional()
-  birthdate: Date;
-
+  
   @Column({ type: 'timestamp', nullable: true })
   @ApiProperty({
     description: 'Timestamp when the user was deleted',
@@ -61,6 +65,15 @@ export class User {
   })
   @IsOptional()
   deleted_at?: Date;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  @ApiProperty({
+    description: 'Address of the user',
+    example: '123 Main St, Springfield',
+  })
+  @IsString()
+  @IsOptional()
+  address: string;
 
   @Column({ type: 'enum', enum: Role, default: Role.USER })
   @ApiProperty({
