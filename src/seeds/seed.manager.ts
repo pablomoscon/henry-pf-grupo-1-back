@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { UsersSeed } from './users/users.seed';
 import { CredentialsSeed } from './credentials/credentials.seed';
 import { RoomsSeed } from './rooms/rooms.seed';
+import { LocationsSeed } from './locations/locations.seed';
 import { ReservationsSeed } from './reservations/reservations.seed';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class SeedManager {
     private readonly usersSeed: UsersSeed,
     private readonly credentialsSeed: CredentialsSeed,
     private readonly roomsSeed: RoomsSeed,
+    private readonly locationsSeed: LocationsSeed,
     private readonly reservationsSeed: ReservationsSeed,
   ) {}
 
@@ -24,6 +26,9 @@ export class SeedManager {
 
       await this.usersSeed.seed();
       console.log('Users seeded');
+
+      await this.locationsSeed.seed();
+      console.log('Locations seeded');
 
       await this.roomsSeed.seed();
       console.log('Rooms seeded');
