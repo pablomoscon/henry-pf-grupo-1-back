@@ -19,36 +19,36 @@ export class AuthController {
     return new AuthResponseDto(user)
   };
 
-@Post('login')
-@HttpCode(HttpStatus.OK)
-async authLogin(@Body() signInAuthDto: SignInAuthDto) {
-  const response = await this.authService.signIn(signInAuthDto);
-  return {
-    success: 'Login successful',
-    response
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  async authLogin(@Body() signInAuthDto: SignInAuthDto) {
+    const response = await this.authService.signIn(signInAuthDto);
+    return {
+      success: 'Login successful',
+      response
+    };
   };
-};
 
-@Get('google')
-redirectToGoogle(@Res() res: Response) {
-  const authUrl = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: ['https://www.googleapis.com/auth/userinfo.profile',
-      'https://www.googleapis.com/auth/userinfo.email',
-      'https://www.googleapis.com/auth/user.birthday.read',
-      'https://www.googleapis.com/auth/user.phonenumbers.read',
-    ],
-  });
-  res.redirect(authUrl);
-};
+  @Get('google')
+  redirectToGoogle(@Res() res: Response) {
+    const authUrl = oauth2Client.generateAuthUrl({
+      access_type: 'offline',
+      scope: ['https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/user.address.read',
+        'https://www.googleapis.com/auth/user.phonenumbers.read',
+      ],
+    });
+    res.redirect(authUrl);
+  };
 
-@Get('google/callback')
-async handleGoogleCallback(@Query('code') code: string, @Res() res: Response) {
-  const token = await this.authService.googleSignUp(code);
-  res.json({
-    message: 'User successfully registered or logged in via Google',
-    token,
-  });
-};
+  @Get('google/callback')
+  async handleGoogleCallback(@Query('code') code: string, @Res() res: Response) {
+    const token = await this.authService.googleSignUp(code);
+    res.json({
+      message: 'User successfully registered or logged in via Google',
+      token,
+    });
+  };
 }
 
