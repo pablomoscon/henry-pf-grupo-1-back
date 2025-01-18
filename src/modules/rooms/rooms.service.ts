@@ -18,7 +18,7 @@ export class RoomsService {
     @InjectRepository(Room)
     private readonly roomsRepository: Repository<Room>,
     private readonly fileUploadService: FileUploadService,
-  ) {}
+  ) { }
 
   async create(
     createRoomDto: CreateRoomDto,
@@ -42,7 +42,7 @@ export class RoomsService {
       img: imgUrl,
     });
     return this.roomsRepository.save(newRoom);
-  }
+  };
 
   async findAll(pageNumber: number, limitNumber: number) {
     return await this.roomsRepository.find({
@@ -51,7 +51,7 @@ export class RoomsService {
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
     });
-  }
+  };
 
   async findRooms(
     filters: {
@@ -87,19 +87,19 @@ export class RoomsService {
     if (checkInDate && checkOutDate) {
       return rooms.filter((room) =>
         room.reservations.every(
-          ({ initial_date, ending_date }) =>
-            new Date(ending_date) < checkInDate ||
-            new Date(initial_date) > checkOutDate,
+          ({ checkInDate, checkOutDate }) =>
+            new Date(checkOutDate) < checkInDate ||
+            new Date(checkInDate) > checkOutDate,
         ),
       );
     }
 
     return rooms;
-  }
+  };
 
   async findOne(id: string) {
     return await this.roomsRepository.findOneBy({ id });
-  }
+  };
 
   async update(id: string, updateRoomDto: UpdateRoomDto) {
     const updateResult = await this.roomsRepository.update(id, updateRoomDto);
@@ -108,7 +108,7 @@ export class RoomsService {
       throw new NotFoundException(`Room with ID ${id} not found`);
     }
     return await this.findOne(id);
-  }
+  };
 
   async remove(id: string): Promise<Room> {
     const room = await this.roomsRepository.findOne({ where: { id } });
@@ -118,5 +118,5 @@ export class RoomsService {
     }
     room.deleted_at = new Date();
     return this.roomsRepository.save(room);
-  }
+  };
 }

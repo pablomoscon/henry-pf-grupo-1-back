@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Credential } from './entities/credential.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
@@ -57,6 +57,7 @@ export class CredentialsService {
 
   async findAll(): Promise<Credential[]> {
     return await this.credentialsRepository.find({
+      where: { deleted_at: IsNull() },
       relations: ['user'],
     });
   };

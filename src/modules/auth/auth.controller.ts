@@ -30,8 +30,8 @@ export class AuthController {
   };
 
   @Get('google')
-  redirectToGoogle(@Res() res: Response) {
-    const authUrl = oauth2Client.generateAuthUrl({
+  async redirectToGoogle(@Res() res: Response) {
+    const authUrl = await oauth2Client.generateAuthUrl({
       access_type: 'offline',
       scope: ['https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/userinfo.email',

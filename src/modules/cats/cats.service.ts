@@ -32,7 +32,7 @@ export class CatsService {
   async findAll() {
     return await this.catRepository.find({
       where: { deleted_at: IsNull() },
-      relations: ['user'],
+      relations: ['user', 'reservations'],
     });
   };
 
@@ -56,5 +56,13 @@ export class CatsService {
     }
     cat.deleted_at = new Date();
     return this.catRepository.save(cat);
+  };
+
+  async isCatOwnedByUser(catId: string, userId: string): Promise<boolean> {
+    const cat = await this.catRepository.findOne({ where: { id: catId, user: { id: userId } } });
+    if (!cat) {
+      throw new Error('The cat does not belong to the user.');
+    }
+    return true;
   };
 }
