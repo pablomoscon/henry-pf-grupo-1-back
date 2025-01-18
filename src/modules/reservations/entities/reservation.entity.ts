@@ -60,6 +60,13 @@ export class Reservation {
   @IsOptional()
   deleted_at?: Date;
 
+  @Column({ type: "decimal", precision: 10, scale: 2 })
+  @ApiProperty({
+    description: "Total amount for the reservation",
+    example: 250.50,
+  })
+  totalAmount: number;
+
   @ApiProperty({
     description: "User making the reservation",
     type: () => User,

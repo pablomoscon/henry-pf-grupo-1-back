@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID, IsDate, IsArray } from 'class-validator';
+import { IsNotEmpty, IsUUID, IsDate, IsArray, IsNumber } from 'class-validator';
 
 export class CreateReservationDto {
     @ApiProperty({
@@ -30,7 +30,6 @@ export class CreateReservationDto {
         description: 'Fecha de inicio de la reserva',
         example: '2025-01-17',
     })
-    @IsDate()
     @IsNotEmpty()
     checkInDate: Date;
 
@@ -38,7 +37,14 @@ export class CreateReservationDto {
         description: 'Fecha de fin de la reserva',
         example: '2025-01-20',
     })
-    @IsDate()
     @IsNotEmpty()
     checkOutDate: Date;
+
+    @ApiProperty({
+        description: 'Costo total de la reserva',
+        example: 150.75,
+    })
+    @IsNumber()
+    @IsNotEmpty()
+    totalAmount: number;
 }

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 import { CreateReservationDto } from 'src/modules/reservations/dto/create-reservation.dto';
 import { UsersService } from '../users/users.service';
@@ -21,7 +21,7 @@ export class ReservationsService {
   ) { }
 
   async create(createReservationDto: CreateReservationDto): Promise<Reservation> {
-    const { userId, roomId, catsIds, checkInDate, checkOutDate } = createReservationDto;
+    const { userId, roomId, catsIds, checkInDate, checkOutDate, totalAmount } = createReservationDto;
 
     const isUsersCat = await Promise.all(catsIds.map(cat => this.catsService.isCatOwnedByUser(cat, userId)));
     if (isUsersCat.some(isOwned => isOwned === false)) {
@@ -59,6 +59,7 @@ export class ReservationsService {
       room,
       checkInDate,
       checkOutDate,
+      totalAmount,
       status: ReservationStatus.PENDING,
     });
 
@@ -82,20 +83,20 @@ export class ReservationsService {
 
   async findAll(): Promise<Reservation[]> {
     return await this.reservationRepository.find({
-      relations: ['user', 'room', 'cat'],
+      where: { deleted_at: IsNull() },
+      relations: ['user', 'room', 'cats'],
     });
   };
 
   async findOne(id: string): Promise<Reservation> {
     const reservation = await this.reservationRepository.findOne({
       where: { id },
-      relations: ['user', 'room', 'cat'],
+      relations: ['user', 'room', 'cats'],
     });
 
     if (!reservation) {
       throw new NotFoundException(`Reservation with ID ${id} not found`);
     }
-
     return reservation;
   }
 

@@ -47,6 +47,8 @@ export class ReservationsSeed {
           where: { id: In(reservationData.cats.map(cat => cat.id)) },
         });
 
+        reservation.totalAmount = reservationData.totalAmount;
+
         await this.reservationRepository.save(reservation);
       }
     }
