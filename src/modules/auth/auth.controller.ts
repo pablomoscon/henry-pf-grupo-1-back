@@ -33,10 +33,11 @@ export class AuthController {
   async redirectToGoogle(@Res() res: Response) {
     const authUrl = await oauth2Client.generateAuthUrl({
       access_type: 'offline',
-      scope: ['https://www.googleapis.com/auth/userinfo.profile',
+      scope: [
+        'https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/user.address.read',
         'https://www.googleapis.com/auth/user.phonenumbers.read',
+        'https://www.googleapis.com/auth/user.addresses.read'
       ],
     });
     res.redirect(authUrl);

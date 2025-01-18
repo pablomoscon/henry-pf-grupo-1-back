@@ -66,14 +66,14 @@ export class AuthService {
       throw new BadRequestException('Invalid credentials');
     }
     const token = await this.createToken(user);
-    
+
     return {
       token,
       user: {
         id: user.id,
         email: user.email,
-        name: user.name, 
-        role: user.role, 
+        name: user.name,
+        role: user.role,
         phone: user.phone,
         address: user.address,
         customerId: user.customerId,
@@ -104,7 +104,9 @@ export class AuthService {
 
     const [userInfoData, peopleData] = await Promise.all([
       oauth2Client.request({ url: 'https://www.googleapis.com/oauth2/v3/userinfo' }).then(res => res.data),
-      oauth2Client.request({ url: 'https://people.googleapis.com/v1/people/me?personFields=birthdays,phoneNumbers' }).then(res => res.data),
+      oauth2Client.request({
+        url: 'https://people.googleapis.com/v1/people/me?personFields=phoneNumbers,addresses'
+      }).then(res => res.data),
     ]);
 
     return { ...(userInfoData as object), ...(peopleData as object) };
@@ -126,10 +128,9 @@ export class AuthService {
         email: userInfo.email,
         name: userInfo.name,
         phone: userInfo.phoneNumbers?.[0]?.value,
-        address: userInfo.address?.[0]?.value,
-        customerId: userInfo.cuestomerId?.[0]?.value,
+        address: userInfo.addresses?.[0]?.value,
+        customerId: userInfo.customerId,
       };
-
       user = await this.usersService.create(createUserDto, credential);
       await this.credentialsService.assignUserToCredentials(credential.id, { user });
     }
