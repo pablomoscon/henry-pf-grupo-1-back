@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, OneToMany } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 import { ReservationStatus } from "src/enums/reservation-status.enum";
 import { User } from "src/modules/users/entities/user.entity";
 import { Cat } from "src/modules/cats/entities/cat.entity";
 import { Room } from "src/modules/rooms/entities/room.entity";
 import { IsOptional } from "class-validator";
+import { Payment } from "src/modules/payments/entities/payment.entity";
 
 @Entity("reservations")
 export class Reservation {
@@ -89,4 +90,11 @@ export class Reservation {
   })
   @ManyToOne(() => Room, (room) => room.reservations, { onDelete: "SET NULL" })
   room: Room;
+
+  @ApiProperty({
+    description: 'List of payments associated with the reservation',
+    type: () => [Payment],
+  })
+  @OneToMany(() => Payment, (payment) => payment.reservation)
+  payments: Payment[];
 }
