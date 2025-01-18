@@ -87,9 +87,9 @@ export class RoomsService {
     if (checkInDate && checkOutDate) {
       return rooms.filter((room) =>
         room.reservations.every(
-          ({ initial_date, ending_date }) =>
-            new Date(ending_date) < checkInDate ||
-            new Date(initial_date) > checkOutDate,
+          ({ checkInDate, checkOutDate }) =>
+            new Date(checkOutDate) < checkInDate ||
+            new Date(checkInDate) > checkOutDate,
         ),
       );
     }
@@ -118,5 +118,5 @@ export class RoomsService {
     }
     room.deleted_at = new Date();
     return this.roomsRepository.save(room);
-  }
+  };
 }

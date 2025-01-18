@@ -1,56 +1,77 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsOptional, IsUUID } from 'class-validator';
-import { User } from '../../users/entities/user.entity';
-import { Room } from '../../rooms/entities/room.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { ApiProperty } from "@nestjs/swagger";
 
-@Entity('reservations')
+import { ReservationStatus } from "src/enums/reservation-status.enum";
+import { User } from "src/modules/users/entities/user.entity";
+import { Cat } from "src/modules/cats/entities/cat.entity";
+import { Room } from "src/modules/rooms/entities/room.entity";
+import { IsOptional } from "class-validator";
+
+@Entity("reservations")
 export class Reservation {
-  @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
-    description: 'Unique identifier for the reservation',
-    example: '123e4567-e89b-12d3-a456-426614174000',
+    description: "Unique identifier for the reservation",
+    example: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
   })
-  @IsUUID()
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({
-    type: 'date',
-  })
   @ApiProperty({
-    description: 'Initial date of the reservation',
-    example: '2025-01-09T00:00:00.000Z',
+    description: "User making the reservation",
+    type: () => User,
   })
-  @IsDate()
-  initial_date: Date;
-
-  @Column({
-    type: 'date',
-  })
-  @ApiProperty({
-    description: 'Ending date of the reservation',
-    example: '2025-01-09T00:00:00.000Z',
-  })
-  @IsDate()
-  ending_date: Date;
-
-  @Column({
-    type: 'timestamp',
-    nullable: true,
-  })
-  @ApiProperty({
-    description: 'Timestamp when the room was deleted',
-    example: '2025-01-09T00:00:00.000Z',
-  })
-  @IsDate()
-  @IsOptional()
-  deleted_at?: Date;
-
-  @ManyToOne(() => User, (user) => user.reservations)
-  @ApiProperty({ description: 'User who made the reservation' })
+  @ManyToOne(() => User, (user) => user.reservations, { onDelete: "CASCADE" })
   user: User;
 
-  @ManyToOne(() => Room, (room) => room.reservations)
-  @ApiProperty({ description: 'Room being reserved' })
+  @ApiProperty({
+    description: "Cat associated with the reservation",
+    type: () => Cat,
+  })
+  @ManyToOne(() => Cat, (cat) => cat.reservations, { onDelete: "CASCADE" })
+  cat: Cat;
+
+  @ApiProperty({
+    description: "Room reserved",
+    type: () => Room,
+    nullable: true,
+  })
+  @ManyToOne(() => Room, (room) => room.reservations, { onDelete: "SET NULL" })
   room: Room;
+
+  @ApiProperty({
+    description: "Reservation start date",
+    example: "2025-01-17",
+  })
+  @Column({ type: "date" })
+  checkInDate: Date;
+
+  @ApiProperty({
+    description: "Reservation end date",
+    example: "2025-01-20",
+  })
+  @Column({ type: "date" })
+  checkOutDate: Date;
+
+  @ApiProperty({
+    description: "Reservation status",
+    enum: ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED"],
+    example: "PENDING",
+  })
+  @Column({ type: "enum", enum: ReservationStatus, default: ReservationStatus.PENDING })
+  status: ReservationStatus;
+
+  @ApiProperty({
+    description: "Date the reservation was created",
+    example: "2025-01-10T12:00:00Z",
+  })
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @ApiProperty({
+    description: "Date the reservation was last updated",
+    example: "2025-01-15T14:30:00Z",
+  })
+  @IsOptional()
+  @UpdateDateColumn()
+  updatedAt?: Date;
 }
