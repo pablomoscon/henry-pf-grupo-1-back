@@ -11,10 +11,11 @@ import { CredentialsSeed } from './credentials/credentials.seed';
 import { Credential } from 'src/modules/credentials/entities/credential.entity';
 import { SeedManager } from './seed.manager';
 import { LocationsModule } from '../modules/locations/locations.module';
+import { Cat } from 'src/modules/cats/entities/cat.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Room, Reservation, Credential]),
+    TypeOrmModule.forFeature([User, Room, Reservation, Credential, Cat]),
     LocationsModule,
   ],
   providers: [
@@ -27,4 +28,4 @@ import { LocationsModule } from '../modules/locations/locations.module';
   ],
   exports: [SeedManager],
 })
-export class SeedModule {}
+export class SeedModule { }

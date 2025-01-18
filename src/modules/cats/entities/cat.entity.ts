@@ -4,13 +4,22 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  ManyToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsDate, IsBoolean, IsArray, IsOptional, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsDate,
+  IsBoolean,
+  IsArray,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Media } from 'src/modules/media/entities/media.entity';
 import { CatCompatibility } from 'src/enums/cat-compatibility.enum';
 import { CatVaccinations } from 'src/enums/cat-vaccinations.enum';
+import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 
 @Entity('cats')
 export class Cat {
@@ -112,4 +121,11 @@ export class Cat {
     type: () => [Media],
   })
   media: Media[];
+
+  @ManyToMany(() => Reservation, (reservation) => reservation.cats)
+  @ApiProperty({
+    description: 'List of reservations associated with the cat',
+    type: () => [Reservation],
+  })
+  reservations: Reservation[];
 }
