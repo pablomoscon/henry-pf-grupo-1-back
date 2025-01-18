@@ -25,10 +25,21 @@ export class CreateUserDto {
     @IsString()
     phone?: string;
 
-    @ApiProperty({ description: 'Birthdate of the user', example: '1990-01-01' })
+    @ApiProperty({
+        description: 'Customer ID associated with the user in external systems',
+        example: '123e4567-e89b-12d3-a456-426614174000',
+    })
+    @IsString()
     @IsOptional()
-    @IsDate()
-    birthdate?: Date;
+    customerId?: string;
+
+    @ApiProperty({
+        description: 'Address of the user',
+        example: '123 Main St, Springfield',
+    })
+    @IsString()
+    @IsOptional()
+    address?: string;
 
     @ApiProperty({
         description: 'Role of the user',

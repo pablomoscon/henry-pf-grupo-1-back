@@ -5,7 +5,8 @@ export class AuthResponseDto {
     id: string;
     name: string;
     email: string;
-    birthdate: Date;
+    address: string;
+    customerId: string;
     phone: string;
     cats: Cat[];
     role: Role;
@@ -19,7 +20,8 @@ export class AuthResponseDto {
             id,
             name,
             email,
-            birthdate,
+            address,
+            customerId,
             phone,
             deleted_at,
             cats,
@@ -30,7 +32,8 @@ export class AuthResponseDto {
         this.email = email;
         this.phone = phone;
         this.deleted_at = deleted_at;
-        this.birthdate = birthdate;
+        this.address = address;
+        this.customerId = customerId;
         this.cats = cats;
 
         if (includeAdmin) {
