@@ -3,10 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 import { CreateReservationDto } from 'src/modules/reservations/dto/create-reservation.dto';
-import { UpdateReservationDto } from 'src/modules/reservations/dto/update-reservation.dto';
-import { User } from 'src/modules/users/entities/user.entity';
-import { Room } from 'src/modules/rooms/entities/room.entity';
-import { Cat } from 'src/modules/cats/entities/cat.entity';
 import { UsersService } from '../users/users.service';
 import { RoomsService } from '../rooms/rooms.service';
 import { CatsService } from '../cats/cats.service';
@@ -23,7 +19,7 @@ export class ReservationsService {
   ) { }
 
   async create(createReservationDto: CreateReservationDto): Promise<Reservation> {
-    const { userId, roomId, catId, checkInDate, checkOutDate, status } = createReservationDto;
+    const { userId, roomId, catId, checkInDate, checkOutDate } = createReservationDto;
   
     const isUsersCat = await this.catsService.isCatOwnedByUser(catId, userId);
     if (!isUsersCat) {
@@ -33,7 +29,7 @@ export class ReservationsService {
     const isRoomAvailable = await this.isRoomAvailable(roomId, checkInDate, checkOutDate);
 
     if (!isRoomAvailable) {
-      throw new Error("The room is not available for the selected dates");
+      throw new BadRequestException ("The room is not available for the selected dates");
     };
 
     const user = await this.usersService.findOne(userId)

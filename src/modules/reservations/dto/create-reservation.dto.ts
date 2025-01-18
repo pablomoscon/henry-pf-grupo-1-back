@@ -42,13 +42,4 @@ export class CreateReservationDto {
     @IsDate()
     @IsNotEmpty()
     checkOutDate: Date;
-
-    @ApiProperty({
-        description: 'Estado de la reserva',
-        enum: ReservationStatus,
-        example: 'PENDING',
-    })
-    @IsEnum(ReservationStatus)
-    @IsOptional()
-    status?: ReservationStatus = ReservationStatus.PENDING;
 }

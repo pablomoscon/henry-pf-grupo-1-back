@@ -9,9 +9,10 @@ import { ReservationsSeed } from './reservations/reservations.seed';
 import { CredentialsSeed } from './credentials/credentials.seed';
 import { Credential } from 'src/modules/credentials/entities/credential.entity';
 import { SeedManager } from './seed.manager';
+import { Cat } from 'src/modules/cats/entities/cat.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Room, Reservation, Credential])],
+  imports: [TypeOrmModule.forFeature([User, Room, Reservation, Credential, Cat])],
   providers: [
     SeedManager,
     UsersSeed,

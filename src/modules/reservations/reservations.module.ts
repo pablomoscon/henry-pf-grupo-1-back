@@ -9,9 +9,10 @@ import { Reservation } from './entities/reservation.entity';
 import { User } from '../users/entities/user.entity';
 import { Cat } from '../cats/entities/cat.entity';
 import { Room } from '../rooms/entities/room.entity';
+import { FileUploadModule } from '../file-upload/file-upload.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Reservation, User, Cat, Room])],
+  imports: [TypeOrmModule.forFeature([Reservation, User, Cat, Room]), FileUploadModule],
   controllers: [ReservationsController],
   providers: [ReservationsService, UsersService, CatsService, RoomsService],
 })

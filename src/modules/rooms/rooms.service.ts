@@ -18,7 +18,7 @@ export class RoomsService {
     @InjectRepository(Room)
     private readonly roomsRepository: Repository<Room>,
     private readonly fileUploadService: FileUploadService,
-  ) {}
+  ) { }
 
   async create(
     createRoomDto: CreateRoomDto,
@@ -118,5 +118,5 @@ export class RoomsService {
     }
     room.deleted_at = new Date();
     return this.roomsRepository.save(room);
-  };
+  }
 }
