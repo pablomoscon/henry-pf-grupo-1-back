@@ -66,14 +66,14 @@ export class AuthService {
       throw new BadRequestException('Invalid credentials');
     }
     const token = await this.createToken(user);
-    
+
     return {
       token,
       user: {
         id: user.id,
         email: user.email,
-        name: user.name, 
-        role: user.role, 
+        name: user.name,
+        role: user.role,
         phone: user.phone,
         address: user.address,
         customerId: user.customerId,
@@ -128,8 +128,8 @@ export class AuthService {
         email: userInfo.email,
         name: userInfo.name,
         phone: userInfo.phoneNumbers?.[0]?.value,
-        address: userInfo.addresses?.[0]?.value,  
-        customerId: userInfo.customerId, 
+        address: userInfo.addresses?.[0]?.value,
+        customerId: userInfo.customerId,
       };
       user = await this.usersService.create(createUserDto, credential);
       await this.credentialsService.assignUserToCredentials(credential.id, { user });
