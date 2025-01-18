@@ -13,12 +13,13 @@ export class CredentialsController {
   constructor(private readonly credentialsService: CredentialsService) { }
 
   @Get()
-  findAll(): Promise<Credential[]> {
-    return this.credentialsService.findAll();
+  @HttpCode(HttpStatus.OK)
+  async findAll(): Promise<Credential[]> {
+    return await this.credentialsService.findAll();
   };
 
-  @UseGuards(AuthGuard)
   @Patch()
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async updatePassword(
     @CurrentUser() user: User,
