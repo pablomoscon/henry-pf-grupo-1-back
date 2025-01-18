@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable } from "typeorm";
 import { ApiProperty } from "@nestjs/swagger";
 
 import { ReservationStatus } from "src/enums/reservation-status.enum";
@@ -16,6 +16,43 @@ export class Reservation {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
+  @Column({ type: "date" })
+  @ApiProperty({
+    description: "Reservation start date",
+    example: "2025-01-17",
+  })
+  checkInDate: Date;
+
+  @Column({ type: "date" })
+  @ApiProperty({
+    description: "Reservation end date",
+    example: "2025-01-20",
+  })
+  checkOutDate: Date;
+
+  @Column({ type: "enum", enum: ReservationStatus, default: ReservationStatus.PENDING })
+  @ApiProperty({
+    description: "Reservation status",
+    enum: ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED"],
+    example: "PENDING",
+  })
+  status: ReservationStatus;
+
+  @CreateDateColumn()
+  @ApiProperty({
+    description: "Date the reservation was created",
+    example: "2025-01-10T12:00:00Z",
+  })
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  @ApiProperty({
+    description: "Date the reservation was last updated",
+    example: "2025-01-15T14:30:00Z",
+  })
+  @IsOptional()
+  updatedAt?: Date;
+  
   @ApiProperty({
     description: "User making the reservation",
     type: () => User,
@@ -27,8 +64,9 @@ export class Reservation {
     description: "Cat associated with the reservation",
     type: () => Cat,
   })
-  @ManyToOne(() => Cat, (cat) => cat.reservations, { onDelete: "CASCADE" })
-  cat: Cat;
+  @ManyToMany(() => Cat, (cat) => cat.reservations)
+  @JoinTable() 
+  cats: Cat[];
 
   @ApiProperty({
     description: "Room reserved",
@@ -37,41 +75,4 @@ export class Reservation {
   })
   @ManyToOne(() => Room, (room) => room.reservations, { onDelete: "SET NULL" })
   room: Room;
-
-  @ApiProperty({
-    description: "Reservation start date",
-    example: "2025-01-17",
-  })
-  @Column({ type: "date" })
-  checkInDate: Date;
-
-  @ApiProperty({
-    description: "Reservation end date",
-    example: "2025-01-20",
-  })
-  @Column({ type: "date" })
-  checkOutDate: Date;
-
-  @ApiProperty({
-    description: "Reservation status",
-    enum: ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED"],
-    example: "PENDING",
-  })
-  @Column({ type: "enum", enum: ReservationStatus, default: ReservationStatus.PENDING })
-  status: ReservationStatus;
-
-  @ApiProperty({
-    description: "Date the reservation was created",
-    example: "2025-01-10T12:00:00Z",
-  })
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @ApiProperty({
-    description: "Date the reservation was last updated",
-    example: "2025-01-15T14:30:00Z",
-  })
-  @IsOptional()
-  @UpdateDateColumn()
-  updatedAt?: Date;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { reservationsMock } from './reservations-mock';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Room } from 'src/modules/rooms/entities/room.entity';
@@ -43,8 +43,8 @@ export class ReservationsSeed {
           where: { id: reservationData.room.id },
         });
 
-        reservation.cat = await this.catRepository.findOne({
-          where: { id: reservationData.cat.id },
+        reservation.cats = await this.catRepository.find({
+          where: { id: In(reservationData.cats.map(cat => cat.id)) },
         });
 
         await this.reservationRepository.save(reservation);
@@ -52,3 +52,4 @@ export class ReservationsSeed {
     }
   }
 }
+  

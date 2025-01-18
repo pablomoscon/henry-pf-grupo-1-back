@@ -7,6 +7,8 @@ import { UsersService } from '../users/users.service';
 import { RoomsService } from '../rooms/rooms.service';
 import { CatsService } from '../cats/cats.service';
 import { ReservationStatus } from 'src/enums/reservation-status.enum';
+import { Cat } from '../cats/entities/cat.entity';
+import { ReservationResponseDto } from './dto/response-reservation.dto';
 
 @Injectable()
 export class ReservationsService {
@@ -19,17 +21,17 @@ export class ReservationsService {
   ) { }
 
   async create(createReservationDto: CreateReservationDto): Promise<Reservation> {
-    const { userId, roomId, catId, checkInDate, checkOutDate } = createReservationDto;
-  
-    const isUsersCat = await this.catsService.isCatOwnedByUser(catId, userId);
-    if (!isUsersCat) {
-      throw new BadRequestException('Cat is not owned by user');
+    const { userId, roomId, catsIds, checkInDate, checkOutDate } = createReservationDto;
+
+    const isUsersCat = await Promise.all(catsIds.map(cat => this.catsService.isCatOwnedByUser(cat, userId)));
+    if (isUsersCat.some(isOwned => isOwned === false)) {
+      throw new BadRequestException('One or more cats are not owned by the user');
     };
 
     const isRoomAvailable = await this.isRoomAvailable(roomId, checkInDate, checkOutDate);
 
     if (!isRoomAvailable) {
-      throw new BadRequestException ("The room is not available for the selected dates");
+      throw new BadRequestException("The room is not available for the selected dates");
     };
 
     const user = await this.usersService.findOne(userId)
@@ -40,22 +42,31 @@ export class ReservationsService {
     if (!room) {
       throw new NotFoundException('Room not found');
     }
-    const cat = await this.catsService.findOne(catId)
-    if (!cat) {
-      throw new NotFoundException('Cat not found');
-    }
+    const cats: Cat[] = [];
+
+    for (const catId of catsIds) {
+      const cat = await this.catsService.findOne(catId);
+      if (!cat) {
+        throw new NotFoundException(`Cat with ID ${catId} not found`);
+      } else {
+        cats.push(cat);
+      }
+    };
 
     const reservation: Reservation = await this.reservationRepository.create({
       user,
-      cat,
+      cats,
       room,
       checkInDate,
       checkOutDate,
       status: ReservationStatus.PENDING,
     });
 
+    await this.reservationRepository.save(reservation)
+
     return reservation;
   };
+
 
   private async isRoomAvailable(roomId: string, checkInDate: Date, checkOutDate: Date): Promise<boolean> {
     const conflictingReservations = await this.reservationRepository.find({
@@ -73,7 +84,7 @@ export class ReservationsService {
     return await this.reservationRepository.find({
       relations: ['user', 'room', 'cat'],
     });
-  }
+  };
 
   async findOne(id: string): Promise<Reservation> {
     const reservation = await this.reservationRepository.findOne({
@@ -87,40 +98,40 @@ export class ReservationsService {
 
     return reservation;
   }
-/* 
-  async update(id: string, updateReservationDto: UpdateReservationDto): Promise<Reservation> {
-    const reservation = await this.findOne(id);
-
-    if (updateReservationDto.userId) {
-      const user = await this.userRepository.findOne({ where: { id: updateReservationDto.userId } });
-      if (!user) {
-        throw new NotFoundException(`User with ID ${updateReservationDto.userId} not found`);
+  /* 
+    async update(id: string, updateReservationDto: UpdateReservationDto): Promise<Reservation> {
+      const reservation = await this.findOne(id);
+  
+      if (updateReservationDto.userId) {
+        const user = await this.userRepository.findOne({ where: { id: updateReservationDto.userId } });
+        if (!user) {
+          throw new NotFoundException(`User with ID ${updateReservationDto.userId} not found`);
+        }
+        reservation.user = user;
       }
-      reservation.user = user;
-    }
-
-    if (updateReservationDto.roomId) {
-      const room = await this.roomRepository.findOne({ where: { id: updateReservationDto.roomId } });
-      if (!room) {
-        throw new NotFoundException(`Room with ID ${updateReservationDto.roomId} not found`);
+  
+      if (updateReservationDto.roomId) {
+        const room = await this.roomRepository.findOne({ where: { id: updateReservationDto.roomId } });
+        if (!room) {
+          throw new NotFoundException(`Room with ID ${updateReservationDto.roomId} not found`);
+        }
+        reservation.room = room;
       }
-      reservation.room = room;
-    }
-
-
-    if (updateReservationDto.catId) {
-      const cat = await this.catRepository.findOne({ where: { id: updateReservationDto.catId } });
-      if (!cat) {
-        throw new NotFoundException(`Cat with ID ${updateReservationDto.catId} not found`);
+  
+  
+      if (updateReservationDto.catId) {
+        const cat = await this.catRepository.findOne({ where: { id: updateReservationDto.catId } });
+        if (!cat) {
+          throw new NotFoundException(`Cat with ID ${updateReservationDto.catId} not found`);
+        }
+        reservation.cat = cat;
       }
-      reservation.cat = cat;
+  
+      Object.assign(reservation, updateReservationDto);
+  
+      return await this.reservationRepository.save(reservation);
     }
-
-    Object.assign(reservation, updateReservationDto);
-
-    return await this.reservationRepository.save(reservation);
-  }
- */
+   */
 
   async remove(id: string): Promise<void> {
     const reservation = await this.findOne(id);

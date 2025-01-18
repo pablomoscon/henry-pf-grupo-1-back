@@ -4,6 +4,8 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  ManyToMany,
+  JoinColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import {
@@ -121,7 +123,7 @@ export class Cat {
   })
   media: Media[];
 
-  @OneToMany(() => Reservation, (reservation) => reservation.cat, { onDelete: 'CASCADE' })
+  @ManyToMany(() => Reservation, (reservation) => reservation.cats)
   @ApiProperty({
     description: 'List of reservations associated with the cat',
     type: () => [Reservation],

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID, IsEnum, IsDateString, IsOptional, IsDate } from 'class-validator';
-import { ReservationStatus } from 'src/enums/reservation-status.enum';
+import { IsNotEmpty, IsUUID, IsDate, IsArray } from 'class-validator';
+
 
 export class CreateReservationDto {
     @ApiProperty({
@@ -15,9 +15,9 @@ export class CreateReservationDto {
         description: 'Identificador del gato asociado a la reserva',
         example: '123e4567-e89b-12d3-a456-426614174002',
     })
-    @IsUUID()
+    @IsArray()
     @IsNotEmpty()
-    catId: string;
+    catsIds: string[];
 
     @ApiProperty({
         description: 'Identificador de la habitación reservada',

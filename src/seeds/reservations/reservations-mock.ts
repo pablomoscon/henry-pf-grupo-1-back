@@ -8,7 +8,9 @@ export const reservationsMock: Reservation[] = [
   {
     id: '123e4567-e89b-12d3-a456-426614174000',
     user: { id: '123e4567-e89b-12d3-a456-426614174000' } as User,
-    cat: { id: '123e4567-e89b-12d3-a456-426614174002' } as Cat,
+    cats: [
+      { id: '123e4567-e89b-12d3-a456-426614174002' } as Cat, 
+    ],
     room: { id: '123e4567-e89b-12d3-a456-426614174000' } as Room,
     checkInDate: new Date('2025-01-09'),
     checkOutDate: new Date('2025-01-10'),
@@ -19,7 +21,9 @@ export const reservationsMock: Reservation[] = [
   {
     id: '123e4567-e89b-12d3-a456-426614174001',
     user: { id: '123e4567-e89b-12d3-a456-426614174001' } as User,
-    cat: { id: '123e4567-e89b-12d3-a456-426614174003' } as Cat,
+    cats: [
+      { id: '123e4567-e89b-12d3-a456-426614174003' } as Cat,  
+    ],
     room: { id: '123e4567-e89b-12d3-a456-426614174001' } as Room,
     checkInDate: new Date('2025-01-11'),
     checkOutDate: new Date('2025-01-12'),
