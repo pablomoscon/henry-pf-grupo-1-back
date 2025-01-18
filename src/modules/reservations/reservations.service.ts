@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { IsNull, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 import { CreateReservationDto } from 'src/modules/reservations/dto/create-reservation.dto';
 import { UsersService } from '../users/users.service';
@@ -86,6 +86,17 @@ export class ReservationsService {
       where: { deleted_at: IsNull() },
       relations: ['user', 'room', 'cats'],
     });
+  };
+
+  async unavailableRooms(roomId: string, checkInDate: Date, checkOutDate: Date) {
+    const unavailableRooms = await this.reservationRepository.find({
+      where: {
+        room: { id: roomId },
+        checkInDate: LessThan(checkOutDate),
+        checkOutDate: MoreThan(checkInDate),
+      },
+    });
+    return unavailableRooms;
   };
 
   async findOne(id: string): Promise<Reservation> {

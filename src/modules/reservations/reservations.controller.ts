@@ -15,22 +15,27 @@ export class ReservationsController {
   };
 
   @Get()
-  findAll() {
-    return this.reservationsService.findAll();
+  async findAll() {
+    return await this.reservationsService.findAll();
   };
 
   @Get(':id')
-    findOne(@Param('id') id: string) {
-      return this.reservationsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.reservationsService.findOne(id);
   };
-  
-    @Patch(':id')
-    update(@Param('id') id: string, @Body() updateReservationDto: UpdateReservationDto) {
-      return this.reservationsService.update(id, updateReservationDto);
+
+  @Get('unavailable-rooms')
+  async unavailableRooms(roomId: string, checkInDate: Date, checkOutDate: Date) {
+    return await this.unavailableRooms(roomId, checkInDate, checkOutDate)
   };
-  
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-      return this.reservationsService.remove(id);
+
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateReservationDto: UpdateReservationDto) {
+    return await this.reservationsService.update(id, updateReservationDto);
+  };
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    return await this.reservationsService.remove(id);
   };
 }
