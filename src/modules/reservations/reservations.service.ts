@@ -125,4 +125,14 @@ export class ReservationsService {
     reservation.deleted_at = new Date();
     return this.reservationRepository.save(reservation);
   };
+
+  async updateReservationStatus(reservationId: string, status: ReservationStatus): Promise<Reservation> {
+    const reservation = await this.reservationRepository.findOne({ where: { id: reservationId } });
+    if (!reservation) {
+      throw new Error('Reservation not found');
+    }
+
+    reservation.status = status;
+    return this.reservationRepository.save(reservation);
+  };
 }

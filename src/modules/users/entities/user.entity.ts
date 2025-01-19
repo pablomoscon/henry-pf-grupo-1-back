@@ -58,7 +58,7 @@ export class User {
   @IsString()
   @IsOptional()
   phone: string;
-  
+
   @Column({ type: 'timestamp', nullable: true })
   @ApiProperty({
     description: 'Timestamp when the user was deleted',
@@ -138,5 +138,5 @@ export class User {
     type: () => [Payment],
   })
   @OneToMany(() => Payment, (payment) => payment.user)
-  payments: Payment[];
+  payments?: Payment[];
 }

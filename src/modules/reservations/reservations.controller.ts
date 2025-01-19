@@ -3,8 +3,11 @@ import { ReservationsService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { ReservationResponseDto } from './dto/response-reservation.dto';
+import { UnavailableRoomsDto } from './dto/unavailable-rooms-dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('reservations')
+@ApiTags('Reservations')
 export class ReservationsController {
   constructor(private readonly reservationsService: ReservationsService) { }
 
@@ -21,16 +24,23 @@ export class ReservationsController {
     return await this.reservationsService.findAll();
   };
 
+
+  @Get('unavailable-rooms')
+  @HttpCode(HttpStatus.OK)
+  unavailableRooms(@Body() body: UnavailableRoomsDto) {
+    const { roomId, checkInDate, checkOutDate } = body;
+
+    return this.reservationsService.unavailableRooms(
+      roomId,
+      new Date(checkInDate),
+      new Date(checkOutDate)
+    );
+  };
+
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string) {
     return await this.reservationsService.findOne(id);
-  };
-
-  @Get('unavailable-rooms')
-  @HttpCode(HttpStatus.OK)
-  async unavailableRooms(roomId: string, checkInDate: Date, checkOutDate: Date) {
-    return await this.unavailableRooms(roomId, checkInDate, checkOutDate)
   };
 
   @Patch(':id')

@@ -7,10 +7,10 @@ import { Reservation } from 'src/modules/reservations/entities/reservation.entit
 export class Payment {
     @ApiProperty({
         description: 'Unique identifier of the payment',
-        example: 1,
+        example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
     })
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @ApiProperty({
         description: 'User who made the payment',
@@ -31,7 +31,7 @@ export class Payment {
         example: 150.75,
     })
     @Column({ type: 'decimal', precision: 10, scale: 2 })
-    amount: number;
+    totalAmount: number;
 
     @ApiProperty({
         description: 'Currency used in the payment',
@@ -62,4 +62,13 @@ export class Payment {
     })
     @CreateDateColumn()
     createdAt: Date;
+
+    @Column({ nullable: true })
+    @ApiProperty({ description: 'Payment method type (e.g., "card", "bank_transfer")', example: 'card', required: false })
+    paymentMethodType: string;  
+
+    @Column({ nullable: true })
+    @ApiProperty({ description: 'Stripe payment method ID', example: 'pm_1Hq3d2J2eqhYzjzRtZZ8Ff6D', required: false })
+    paymentMethodId: string; 
+
 }
