@@ -25,11 +25,12 @@ export class ReservationsController {
     return await this.reservationsService.findAll();
   };
 
-
   @Get('unavailable-rooms')
   @HttpCode(HttpStatus.OK)
-  unavailableRooms(@Body() body: UnavailableRoomsDto) {
-    const { roomId, checkInDate, checkOutDate } = body;
+  unavailableRooms(
+    @Query() query: UnavailableRoomsDto
+  ) {
+    const { roomId, checkInDate, checkOutDate } = query;
 
     return this.reservationsService.unavailableRooms(
       roomId,
