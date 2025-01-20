@@ -15,11 +15,12 @@ import { Room } from '../rooms/entities/room.entity';
 import { RoomsService } from '../rooms/rooms.service';
 import { FileUploadService } from '../file-upload/file-upload.service';
 import { CloudinaryService } from 'src/services/cloudinary/cloudinary.service';
+import { MailService } from '../mail/mail.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Payment, User, Reservation, Room, Cat])],
   controllers: [PaymentsController],
-  providers: [PaymentsService, ReservationsService, UsersService, RoomsService, CatsService, FileUploadService, CloudinaryService,
+  providers: [PaymentsService, ReservationsService, UsersService, RoomsService, CatsService, FileUploadService, CloudinaryService, MailService,
     {
       provide: Stripe,
       useFactory: (configService: ConfigService) => {

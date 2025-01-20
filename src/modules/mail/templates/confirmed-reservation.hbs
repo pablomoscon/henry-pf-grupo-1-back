@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+
+        p {
+            font-size: 14px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: rgb(34, 34, 34);
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px 0;
+            background-color: rgb(212, 175, 55);
+            color: rgb(34, 34, 34);
+            border-radius: 0.2rem;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #f4f4f4;
+            color: #777777;
+            font-size: 10px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px 0;
+            background-color:  rgb(212, 175, 55);
+            color: rgb(34, 34, 34);
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Reservation Confirmed!</h2>
+        </div>
+        <div class="content">
+            <h1 style="text-align: center;color: rgb(253, 246, 227);">Hello <span style="color: rgb(253, 246, 227);">{{user}}.</span></h1>
+
+            <h2 style="color: rgb(253, 246, 227);">Your reservation has been successfully confirmed!</h2>
+
+            <p style="color: rgb(212, 175, 55);">Here are the details of your reservation:</p>
+            <ul>
+                <li style="color: rgb(212, 175, 55);"><strong>Check-In Date:</strong> {{checkIn}}</li>
+                <li style="color: rgb(212, 175, 55);"><strong>Check-Out Date:</strong> {{checkOut}}</li>
+                <li style="color: rgb(212, 175, 55);"><strong>Total Amount:</strong> ${{totalAmount}}</li>
+                <li style="color: rgb(212, 175, 55);"><strong>Room:</strong> {{room}}</li>
+                <li style="color: rgb(212, 175, 55);"><strong>Cats Included:</strong> {{cats}}</li>
+                <li style="color: rgb(212, 175, 55);"><strong>Payment Status:</strong> {{payment}}</li>
+            </ul>
+
+            <p>We hope you enjoy your stay. Please feel free to contact us for any questions or additional requests.</p>
+
+            <p style="font-weight: bold; font-style: italic">Sincerely, <br>The Reservations Team</p>
+
+            <a href="." class="button">Visit Our Website</a>
+        </div>
+        <div class="footer">
+            <img src="cid:logoApp" alt="Logo" style="max-width: 40px">
+            <p>&copy; 2025 The Fancy Box. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+
+
+</html>
