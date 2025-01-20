@@ -15,6 +15,7 @@ export class ReservationsController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createReservationDto: CreateReservationDto): Promise<ReservationResponseDto> {
     const reservation = await this.reservationsService.create(createReservationDto);
+    
     return new ReservationResponseDto(reservation);
   };
 
