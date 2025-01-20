@@ -1,12 +1,15 @@
 name: deploy
 
 on:
-  push:
+  pull_request:
     branches:
-      - 'feat/dockerized-deploy-on-render'
+      - develop
+    types:
+      - closed
 
 jobs:
   build:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
