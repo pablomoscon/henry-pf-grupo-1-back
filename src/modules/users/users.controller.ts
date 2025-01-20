@@ -42,4 +42,10 @@ export class UsersController {
   async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.usersService.remove(id);
   };
+
+  @Get('cats/:id')
+  @HttpCode(HttpStatus.OK)
+  async usersCats(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.usersService.usersCats(id);
+  };
 }
