@@ -17,7 +17,7 @@ export class PaymentsController {
     return await this.paymentsService.createPaymentIntent(createPaymentDto);
   };
 
-  @Post('payment-check/:paymentIntentId')
+  @Post('check/:paymentIntentId')
   @HttpCode(HttpStatus.OK)
   async confirmPayment(
     @Param('paymentIntentId') paymentIntentId: string
