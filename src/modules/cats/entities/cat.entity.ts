@@ -33,7 +33,7 @@ export class Cat {
   @Column({ type: 'varchar', length: 100 })
   @ApiProperty({ description: 'Full name of the cat', example: 'Whiskers Purrington' })
   @IsString()
-  fullName: string;
+  name: string;
 
   @Column({ type: 'date' })
   @ApiProperty({

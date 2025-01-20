@@ -6,7 +6,7 @@ import { CatVaccinations } from 'src/enums/cat-vaccinations.enum';
 export class CreateCatDto {
     @ApiProperty({ description: 'Full name of the cat', example: 'Whiskers Purrington' })
     @IsString()
-    fullName: string;
+    name: string;
 
     @ApiProperty({ description: 'Date of birth of the cat', example: '2022-06-15' })
     @IsDate()

@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { IsNull, Repository } from 'typeorm';
 import { Credential } from '../credentials/entities/credential.entity';
+import { Cat } from '../cats/entities/cat.entity';
 
 @Injectable()
 export class UsersService {
@@ -66,4 +67,12 @@ export class UsersService {
     user.deleted_at = new Date();
     return this.userRepository.save(user);
   };
+
+  async usersCats(id: string): Promise<{ id: string; name: string }[]> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['cats'], 
+    });
+    return user?.cats.map(cat => ({ id: cat.id, name: cat.name })) || [];
+  }
 }
