@@ -27,6 +27,12 @@ export class ReservationResponseDto {
     status: string;
 
     @ApiProperty({
+        description: 'The total amount for the reservation',
+        example: 300.00,
+    })
+    totalAmount: number;
+
+    @ApiProperty({
         description: 'The ID of the user making the reservation',
         example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
     })
@@ -49,8 +55,9 @@ export class ReservationResponseDto {
         this.checkInDate = reservation.checkInDate;
         this.checkOutDate = reservation.checkOutDate;
         this.status = reservation.status;
-        this.userId = reservation.user.id;  // Devuelve solo el ID del usuario
-        this.roomId = reservation.room?.id; // Devuelve solo el ID de la habitación
-        this.catIds = reservation.cats.map(cat => cat.id); // Devuelve un array de IDs de los gatos
+        this.userId = reservation.user.id;  
+        this.roomId = reservation.room?.id; 
+        this.catIds = reservation.cats.map(cat => cat.id); 
+        this.totalAmount = reservation.totalAmount;
     }
 }

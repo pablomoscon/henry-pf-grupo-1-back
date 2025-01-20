@@ -24,6 +24,7 @@ export const usersMock: User[] = [
     reservations: [],
     sentMessages: [],
     receivedMessages: [],
+    payments: null
   },
   {
     id: '123e4567-e89b-12d3-a456-426614174001',
@@ -46,6 +47,7 @@ export const usersMock: User[] = [
     reservations: [],
     sentMessages: [],
     receivedMessages: [],
+    payments: null
   },
   {
     id: '123e4567-e89b-12d3-a456-426614174002',
@@ -68,6 +70,7 @@ export const usersMock: User[] = [
     reservations: [],
     sentMessages: [],
     receivedMessages: [],
+    payments: null
   },
   {
     id: '123e4567-e89b-12d3-a456-426614174003',
@@ -90,5 +93,6 @@ export const usersMock: User[] = [
     reservations: [],
     sentMessages: [],
     receivedMessages: [],
+    payments:null
   },
 ];

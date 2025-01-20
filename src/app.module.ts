@@ -16,6 +16,7 @@ import { SeedModule } from './seeds/seeds.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { LocationsModule } from './modules/locations/locations.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { LocationsModule } from './modules/locations/locations.module';
     UsersModule,
     SeedModule,
     LocationsModule,
+    PaymentsModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -15,6 +15,7 @@ import { Reservation } from '../../reservations/entities/reservation.entity';
 import { ChatHistory } from '../../chat-history/entities/chat-history.entity';
 import { Role } from 'src/enums/roles.enum';
 import { Status } from 'src/enums/status.enum';
+import { Payment } from 'src/modules/payments/entities/payment.entity';
 
 @Entity('users')
 export class User {
@@ -57,7 +58,7 @@ export class User {
   @IsString()
   @IsOptional()
   phone: string;
-  
+
   @Column({ type: 'timestamp', nullable: true })
   @ApiProperty({
     description: 'Timestamp when the user was deleted',
@@ -97,18 +98,45 @@ export class User {
   @JoinColumn()
   credential: Credential;
 
+  @ApiProperty({
+    description: 'List of cats owned by the user',
+    type: () => [Cat],
+  })
   @OneToMany(() => Cat, (cat) => cat.user)
   cats: Cat[];
 
+  @ApiProperty({
+    description: 'List of caretakers managed by the user',
+    type: () => [Caretaker],
+  })
   @OneToMany(() => Caretaker, (caretaker) => caretaker.user)
   caretakers: Caretaker[];
 
+  @ApiProperty({
+    description: 'List of reservations made by the user',
+    type: () => [Reservation],
+  })
   @OneToMany(() => Reservation, (reservation) => reservation.user)
   reservations: Reservation[];
 
+  @ApiProperty({
+    description: 'List of chat messages sent by the user',
+    type: () => [ChatHistory],
+  })
   @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.sender)
   sentMessages: ChatHistory[];
 
+  @ApiProperty({
+    description: 'List of chat messages received by the user',
+    type: () => [ChatHistory],
+  })
   @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.receiver)
   receivedMessages: ChatHistory[];
+
+  @ApiProperty({
+    description: 'List of payments made by the user',
+    type: () => [Payment],
+  })
+  @OneToMany(() => Payment, (payment) => payment.user)
+  payments?: Payment[];
 }
