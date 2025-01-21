@@ -44,7 +44,7 @@ export class AuthController {
     res.json({ url: authUrl });
   }
 
-  @Get('google/callback')
+    @Get('google/callback')
   async handleGoogleCallback(@Query('code') code: string, @Res() res: Response) {
     const token = await this.authService.googleSignUp(code);
 
