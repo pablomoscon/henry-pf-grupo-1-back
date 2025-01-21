@@ -44,11 +44,18 @@ export class AuthController {
     res.json({ url: authUrl });
   }
 
-    @Get('google/callback')
+  @Get('google/callback')
   async handleGoogleCallback(@Query('code') code: string, @Res() res: Response) {
-    const token = await this.authService.googleSignUp(code);
+    const { token, user } = await this.authService.googleSignUp(code);
+    console.log('User:', user);
+    console.log('Token:', token);
 
-    res.setHeader('Authorization', `Bearer ${token}`);
+    res.cookie(
+      'auth',
+      JSON.stringify({ token, user: new ResponseUserDto(user) }),
+      { httpOnly: true, secure: false }
+    );
+
     res.redirect('http://localhost:3001/dashboard');
   };
 }
