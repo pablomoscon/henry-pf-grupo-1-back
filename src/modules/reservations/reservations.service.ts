@@ -84,7 +84,7 @@ export class ReservationsService {
   async findAll(): Promise<Reservation[]> {
     return await this.reservationRepository.find({
       where: { deleted_at: IsNull() },
-      relations: ['user', 'room', 'cats'],
+      relations: ['user', 'room', 'cats', 'payments'],
     });
   };
 
