@@ -15,7 +15,7 @@ export class PaymentsService {
     private readonly reservationsService: ReservationsService,
   ) { }
 
-  async createCheckoutSession(reservationId: string): Promise<{ redirectUrl: string }> {
+  async createCheckoutSession(reservationId: string): Promise<string> {
     try {
       const reservation = await this.reservationsService.findOne(reservationId);
 
@@ -58,7 +58,7 @@ export class PaymentsService {
       payment.sessionId = session.id;
       await this.paymentRepository.save(payment);
 
-      return { redirectUrl: session.url };
+      return session.url;
     } catch (error) {
       console.error('Error creating Stripe session:', error);
       throw new Error('Error creating Stripe session');
