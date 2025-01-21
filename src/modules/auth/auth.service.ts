@@ -103,14 +103,14 @@ export class AuthService {
     oauth2Client.setCredentials(tokens);
 
     const [userInfoData, peopleData] = await Promise.all([
-      oauth2Client.request({ url: 'https://www.googleapis.com/oauth2/v3/userinfo' }).then(res => res.data as UserInfoData),
+      oauth2Client.request({ url: 'https://www.googleapis.com/oauth2/v3/userinfo' }).then(res => res.data),
       oauth2Client.request({
-        url: 'https://people.googleapis.com/v1/people/me?personFields=phoneNumbers,addresses',
-      }).then(res => res.data as PeopleData),
+        url: 'https://people.googleapis.com/v1/people/me?personFields=phoneNumbers,addresses'
+      }).then(res => res.data),
     ]);
 
-    return { ...userInfoData, ...peopleData };
-  }
+    return { ...(userInfoData as object), ...(peopleData as object) };
+  };
 
   async googleSignUp(code: string): Promise<any> {
     const userInfo = await this.getUserInfo(code);
@@ -134,7 +134,6 @@ export class AuthService {
       user = await this.usersService.create(createUserDto, credential);
       await this.credentialsService.assignUserToCredentials(credential.id, { user });
     }
-    const token = await this.createToken(user);
-    return { token, user };
+    return await this.createToken(user)
   };
 }

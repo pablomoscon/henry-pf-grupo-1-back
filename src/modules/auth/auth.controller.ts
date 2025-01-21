@@ -6,7 +6,6 @@ import { SignupAuthDto } from './dto/signup-auth.dto';
 import { Response } from 'express';
 import { oauth2Client } from 'src/config/google-auth.config';
 import { AuthResponseDto } from './dto/response-auth.dto';
-import { ResponseUserDto } from '../users/dto/response-user.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -43,21 +42,14 @@ export class AuthController {
     });
 
     res.json({ url: authUrl });
-  };
+  }
 
   @Get('google/callback')
   async handleGoogleCallback(@Query('code') code: string, @Res() res: Response) {
-    const { token, user } = await this.authService.googleSignUp(code);
-    console.log('User:', user);
-    console.log('Token:', token);
+    const token = await this.authService.googleSignUp(code);
 
-    res.cookie(
-      'auth',
-      JSON.stringify({ token, user: new ResponseUserDto(user) }),
-      { httpOnly: true, secure: false }
-    );
-
-    res.redirect('http://localhost:3001/dashboard');
+    res.setHeader('Authorization', `Bearer ${token}`);
+    res.redirect('http://localhost:3001/dashbord');
   };
 }
 
