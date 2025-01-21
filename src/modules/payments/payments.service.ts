@@ -1,11 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { Stripe } from 'stripe';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Stripe } from 'stripe';
-import { Payment } from './entities/payment.entity';
+import { Payment } from 'src/modules/payments/entities/payment.entity';
 import { ReservationsService } from '../reservations/reservations.service';
 import { ReservationStatus } from 'src/enums/reservation-status.enum';
-
 
 @Injectable()
 export class PaymentsService {
@@ -14,93 +13,93 @@ export class PaymentsService {
     @InjectRepository(Payment)
     private readonly paymentRepository: Repository<Payment>,
     private readonly reservationsService: ReservationsService,
-
   ) { }
 
-  async createPaymentIntent(CreatePaymentDto) {
-    const { reservationId, currency } = CreatePaymentDto
-    const reservation = await this.reservationsService.findOne(reservationId);
-    const totalAmount = reservation.totalAmount;
-    const userId = reservation.user.id;
-    const paymentIntent = await this.stripe.paymentIntents.create({
-      amount: totalAmount * 100,
-      currency,
-    });
+  async createCheckoutSession(reservationId: string): Promise<string> {
+    try {
+      const reservation = await this.reservationsService.findOne(reservationId);
 
-    const payment = this.paymentRepository.create({
-      totalAmount,
-      currency,
-      paymentIntentId: paymentIntent.id,
-      status: 'pending',
-      reservation: { id: reservationId },
-      user: { id: userId }
-    });
+      if (!reservation) {
+        throw new Error('Reservation not found');
+      }
 
-    await this.paymentRepository.save(payment);
+      const session = await this.stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        customer_email: reservation.user.email,
+        mode: 'payment',
+        success_url: `http://localhost:3001/success?&status=succeeded&sessionId={CHECKOUT_SESSION_ID}`,
+        cancel_url: `http://localhost:3001/cancel?&status=canceled&sessionId={CHECKOUT_SESSION_ID}`,
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: reservation.room.name,
+                description: `Reservation for ${reservation.checkInDate} to ${reservation.checkOutDate} by ${reservation.user.name}`,
+                metadata: {
+                  customerId: reservation.user.customerId,
+                  numberOfCats: reservation.cats.length,
+                  cats: JSON.stringify(reservation.cats.map(cat => cat.id)),
+                },
+              },
+              unit_amount: reservation.totalAmount * 100,
+            },
+            quantity: 1,
+          },
+        ],
+      });
 
-    return {
-      clientSecret: paymentIntent.client_secret,
-      reservationId,
-      userId
-    };
+      const payment = new Payment();
+      payment.user = reservation.user;
+      payment.reservation = reservation;
+      payment.totalAmount = reservation.totalAmount;
+      payment.status = 'pending';
+      payment.currency = 'usd';
+      payment.sessionId = session.id;
+      await this.paymentRepository.save(payment);
+
+      return session.url;
+    } catch (error) {
+      console.error('Error creating Stripe session:', error);
+      throw new Error('Error creating Stripe session');
+    }
   };
 
-  async paymentCheck (paymentIntentId: string) {
-    const payment = await this.paymentRepository.findOne({
-      where: { paymentIntentId },
-      relations: ['reservation'],
-    });
+  async updateReservationAndPaymentStatus(sessionId: string, status: string): Promise<void> {
+    try {
+      const payment = await this.paymentRepository.findOne({
+        where: { sessionId: sessionId },
+        relations: ['reservation'],
+      });
+      if (!payment) {
+        throw new Error('Payment not found');
+      }
 
-    if (!payment) {
-      throw new NotFoundException('Payment not found');
-    }
+      const newPaymentStatus = status === 'succeeded'
+        ? 'succeeded'
+        : status === 'canceled'
+          ? 'canceled'
+          : payment.status;
 
-    const stripePaymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
+      payment.status = newPaymentStatus;
+      await this.paymentRepository.save(payment);
 
-    payment.status = stripePaymentIntent.status === 'succeeded'
-      ? 'succeeded'
-      : (stripePaymentIntent.status === 'canceled' ? 'canceled' : payment.status);
+      const reservation = await this.reservationsService.findOne(payment.reservation.id);
+      if (!reservation) {
+        throw new Error('Reservation not found');
+      }
 
-    const paymentMethodId = stripePaymentIntent.status === 'succeeded'
-      ? stripePaymentIntent.payment_method as string
-      : undefined;
-
-    const paymentMethod = paymentMethodId ? await this.stripe.paymentMethods.retrieve(paymentMethodId) : null;
-
-    paymentMethod && (payment.paymentMethodType = paymentMethod.type);
-    paymentMethod && (payment.paymentMethodId = paymentMethodId);
-
-    await this.paymentRepository.save(payment);
-
-    const reservation = payment.reservation;
-    reservation && await this.reservationsService.updateReservationStatus(
-      reservation.id,
-      stripePaymentIntent.status === 'succeeded'
+      const newReservationStatus = status === 'succeeded'
         ? ReservationStatus.CONFIRMED
-        : (stripePaymentIntent.status === 'canceled' ? ReservationStatus.CANCELLED : reservation.status)
-    );
+        : status === 'canceled'
+          ? ReservationStatus.CANCELLED
+          : reservation.status;
 
-    return {
-      status: stripePaymentIntent.status,
-      payment,
-    };
-  };
+      await this.reservationsService.updateReservationStatus(reservation.id, newReservationStatus);
 
-  async getPaymentStatus(paymentIntentId: string) {
-    const payment = await this.paymentRepository.findOne({
-      where: { paymentIntentId },
-      relations: ['reservation'],
-    });
-
-    if (!payment) {
-      throw new NotFoundException('Payment not found');
+    } catch (error) {
+      console.error('Error updating payment and reservation status:', error);
+      throw new Error('Error updating payment and reservation status');
     }
-
-    const stripePaymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
-
-    return {
-      status: stripePaymentIntent.status,
-      payment,
-    };
   };
 }

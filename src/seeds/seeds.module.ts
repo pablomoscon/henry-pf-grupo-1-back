@@ -12,6 +12,7 @@ import { Credential } from 'src/modules/credentials/entities/credential.entity';
 import { SeedManager } from './seed.manager';
 import { LocationsModule } from '../modules/locations/locations.module';
 import { Cat } from 'src/modules/cats/entities/cat.entity';
+import { CatsSeed } from './cats/cats-seed';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { Cat } from 'src/modules/cats/entities/cat.entity';
     LocationsSeed,
     ReservationsSeed,
     CredentialsSeed,
+    CatsSeed
   ],
   exports: [SeedManager],
 })

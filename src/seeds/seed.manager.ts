@@ -5,6 +5,7 @@ import { CredentialsSeed } from './credentials/credentials.seed';
 import { RoomsSeed } from './rooms/rooms.seed';
 import { LocationsSeed } from './locations/locations.seed';
 import { ReservationsSeed } from './reservations/reservations.seed';
+import { CatsSeed } from './cats/cats-seed';
 
 @Injectable()
 export class SeedManager {
@@ -15,6 +16,7 @@ export class SeedManager {
     private readonly roomsSeed: RoomsSeed,
     private readonly locationsSeed: LocationsSeed,
     private readonly reservationsSeed: ReservationsSeed,
+    private readonly catsSeed: CatsSeed
   ) {}
 
   async runSeeders() {
@@ -32,6 +34,9 @@ export class SeedManager {
 
       await this.roomsSeed.seed();
       console.log('Rooms seeded');
+      
+      await this.catsSeed.seed();
+      console.log('Cats seeded');
 
       await this.reservationsSeed.seed();
       console.log('Reservations seeded');

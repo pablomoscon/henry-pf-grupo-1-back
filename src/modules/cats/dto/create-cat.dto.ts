@@ -53,6 +53,13 @@ export class CreateCatDto {
     @IsEnum(CatVaccinations, { each: true })
     vaccinationsAndTests: CatVaccinations[];
 
+    @ApiProperty({
+        description: 'Photo of the cat',
+        example: 'https://example.com/images/whiskers.jpg',
+    })
+    @IsString()
+    photo: string;
+
     @ApiProperty({ description: 'User who owns the cat' })
     @IsUUID()
     @IsNotEmpty()

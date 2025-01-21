@@ -103,6 +103,14 @@ export class Cat {
   @IsEnum(CatVaccinations, { each: true })
   vaccinationsAndTests: CatVaccinations[];
 
+  @Column({ type: 'varchar', length: 255 })
+  @ApiProperty({
+    description: 'Photo of the cat',
+    example: 'https://example.com/images/whiskers.jpg',
+  })
+  @IsString()
+  photo: string;
+
   @ManyToOne(() => User, (user) => user.cats)
   @ApiProperty({ description: 'User who owns the cat' })
   user: User;
