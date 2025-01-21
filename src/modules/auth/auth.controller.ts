@@ -57,7 +57,7 @@ export class AuthController {
       { httpOnly: true, secure: false }
     );
 
-    res.redirect('http://localhost:3001/');
+    res.redirect('http://localhost:3001/dashboard');
   };
 }
 
