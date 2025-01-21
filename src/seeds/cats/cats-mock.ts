@@ -1,7 +1,7 @@
-import { Cat } from 'src/modules/cats/entities/cat.entity';
-import { User } from 'src/modules/users/entities/user.entity';
-import { CatVaccinations } from 'src/enums/cat-vaccinations.enum';
-import { CatCompatibility } from 'src/enums/cat-compatibility.enum';
+import { Cat } from '../../modules/cats/entities/cat.entity';
+import { CatCompatibility } from 'src/enums/cat-compatibility.enum'; // Importado
+import { CatVaccinations } from 'src/enums/cat-vaccinations.enum'; // Importado
+import { User } from 'src/modules/users/entities/user.entity'; // Importado
 
 export const catsMock: Cat[] = [
     {
@@ -13,9 +13,9 @@ export const catsMock: Cat[] = [
         getsAlongWithOtherCats: CatCompatibility.YES,
         food: 'Dry food and wet food',
         vaccinationsAndTests: [CatVaccinations.RABIES, CatVaccinations.TRIPLE_FELINE],
-        user: { id: '123e4567-e89b-12d3-a456-426614174000' } as User,
-        media: [], 
-        reservations: [], 
+        user: { id: '123e4567-e89b-12d3-a456-426614174000' } as User, 
+        media: [],
+        reservations: [],
         photo: 'https://example.com/images/whiskers.jpg',
     },
     {
@@ -27,7 +27,7 @@ export const catsMock: Cat[] = [
         getsAlongWithOtherCats: CatCompatibility.NO,
         food: 'Wet food only',
         vaccinationsAndTests: [CatVaccinations.FIV_FELV_TEST],
-        user: { id: '123e4567-e89b-12d3-a456-426614174001' } as User,
+        user: { id: '123e4567-e89b-12d3-a456-426614174001' } as User, 
         media: [],
         reservations: [],
         photo: 'https://example.com/images/bella.jpg',
@@ -41,9 +41,23 @@ export const catsMock: Cat[] = [
         getsAlongWithOtherCats: CatCompatibility.UNSURE,
         food: 'Mixed food (dry and wet)',
         vaccinationsAndTests: [CatVaccinations.RABIES],
-        user: { id: '123e4567-e89b-12d3-a456-426614174002' } as User,
+        user: { id: '123e4567-e89b-12d3-a456-426614174002' } as User, 
         media: [],
         reservations: [],
         photo: 'https://example.com/images/shadow.jpg',
+    },
+    {
+        id: '123e4567-e89b-12d3-a456-426614174003',
+        name: 'Luna Whiskerbeam',
+        dateOfBirth: new Date('2023-02-22'),
+        isNeutered: true,
+        personality: 'Independent and quiet',
+        getsAlongWithOtherCats: CatCompatibility.YES,
+        food: 'Dry food',
+        vaccinationsAndTests: [CatVaccinations.TRIPLE_FELINE],
+        user: { id: '123e4567-e89b-12d3-a456-426614174003' } as User,
+        media: [],
+        reservations: [],
+        photo: 'https://example.com/images/luna.jpg',
     },
 ];
