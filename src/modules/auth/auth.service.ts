@@ -134,6 +134,7 @@ export class AuthService {
       user = await this.usersService.create(createUserDto, credential);
       await this.credentialsService.assignUserToCredentials(credential.id, { user });
     }
-    return await this.createToken(user)
+    const token = await this.createToken(user);
+    return { token, user };
   };
 }
