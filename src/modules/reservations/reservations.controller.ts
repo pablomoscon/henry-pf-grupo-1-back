@@ -27,16 +27,10 @@ export class ReservationsController {
 
   @Get('unavailable-rooms')
   @HttpCode(HttpStatus.OK)
-  unavailableRooms(
-    @Query() query: UnavailableRoomsDto
+  unavailableRoomsDates(
+    @Query('roomId') roomId: string,  
   ) {
-    const { roomId, checkInDate, checkOutDate } = query;
-
-    return this.reservationsService.unavailableRooms(
-      roomId,
-      new Date(checkInDate),
-      new Date(checkOutDate)
-    );
+    return this.reservationsService.unavailableRoomsDates(roomId);
   };
 
   @Get(':id')

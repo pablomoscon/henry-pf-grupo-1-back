@@ -88,15 +88,19 @@ export class ReservationsService {
     });
   };
 
-  async unavailableRooms(roomId: string, checkInDate: Date, checkOutDate: Date) {
-    const unavailableRooms = await this.reservationRepository.find({
+  async unavailableRoomsDates(roomId: string): Promise<{ reservationId: string }[]> {
+    const reservations = await this.reservationRepository.find({
       where: {
         room: { id: roomId },
-        checkInDate: LessThan(checkOutDate),
-        checkOutDate: MoreThan(checkInDate),
       },
+      select: ["id", "checkInDate", "checkOutDate"],
     });
-    return unavailableRooms;
+
+    return reservations.map(reservation => ({
+      reservationId: reservation.id,
+      checkInDate: reservation.checkInDate,
+      checkOutDate: reservation.checkOutDate,
+    }));
   };
 
   async findOne(id: string): Promise<Reservation> {
