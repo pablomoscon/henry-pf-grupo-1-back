@@ -29,6 +29,7 @@ export class CatsSeed {
                 cat.food = catData.food;
                 cat.vaccinationsAndTests = catData.vaccinationsAndTests;
                 cat.user = await this.userRepository.findOne({ where: { id: catData.user.id } });
+                cat.photo = catData.photo;
 
                 await this.catRepository.save(cat);
             }

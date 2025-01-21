@@ -16,6 +16,7 @@ export const catsMock: Cat[] = [
         user: { id: '123e4567-e89b-12d3-a456-426614174000' } as User,
         media: [], 
         reservations: [], 
+        photo: 'https://example.com/images/whiskers.jpg',
     },
     {
         id: '123e4567-e89b-12d3-a456-426614174001',
@@ -29,6 +30,7 @@ export const catsMock: Cat[] = [
         user: { id: '123e4567-e89b-12d3-a456-426614174001' } as User,
         media: [],
         reservations: [],
+        photo: 'https://example.com/images/bella.jpg',
     },
     {
         id: '123e4567-e89b-12d3-a456-426614174002',
@@ -42,5 +44,6 @@ export const catsMock: Cat[] = [
         user: { id: '123e4567-e89b-12d3-a456-426614174002' } as User,
         media: [],
         reservations: [],
+        photo: 'https://example.com/images/shadow.jpg',
     },
 ];

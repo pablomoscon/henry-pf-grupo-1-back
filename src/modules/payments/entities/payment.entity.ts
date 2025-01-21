@@ -42,11 +42,11 @@ export class Payment {
     currency: string;
 
     @ApiProperty({
-        description: 'Stripe PaymentIntent ID',
+        description: 'Unique identifier for the Stripe payment session.',
         example: 'pi_1GqIC8ClCIKljWqX9l1XQ0HF',
     })
     @Column()
-    paymentIntentId: string;
+    sessionId: string;
 
     @ApiProperty({
         description: 'Status of the payment',
@@ -65,10 +65,10 @@ export class Payment {
 
     @Column({ nullable: true })
     @ApiProperty({ description: 'Payment method type (e.g., "card", "bank_transfer")', example: 'card', required: false })
-    paymentMethodType: string;  
+    paymentMethodType: string;
 
     @Column({ nullable: true })
     @ApiProperty({ description: 'Stripe payment method ID', example: 'pm_1Hq3d2J2eqhYzjzRtZZ8Ff6D', required: false })
-    paymentMethodId: string; 
-
+    paymentMethodId: string;
 }
+
