@@ -7,7 +7,7 @@ export class PaymentsController {
 
   @Post('create-checkout-session/:reservationId')
   @HttpCode(HttpStatus.CREATED)
-  async createCheckoutSession(@Param('reservationId') reservationId: string): Promise<string> {
+  async createCheckoutSession(@Param('reservationId') reservationId: string): Promise<{ redirectUrl: string }> {
     try {
       const sessionUrl = await this.paymentsService.createCheckoutSession(reservationId);
       return sessionUrl;
