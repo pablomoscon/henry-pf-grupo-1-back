@@ -40,16 +40,16 @@ export class AuthController {
         'https://www.googleapis.com/auth/user.addresses.read'
       ],
     });
-    res.redirect(authUrl);
-  };
+
+    res.json({ url: authUrl });
+  }
 
   @Get('google/callback')
   async handleGoogleCallback(@Query('code') code: string, @Res() res: Response) {
     const token = await this.authService.googleSignUp(code);
-    res.json({
-      message: 'User successfully registered or logged in via Google',
-      token,
-    });
+
+    res.setHeader('Authorization', `Bearer ${token}`);
+    res.redirect('http://localhost:3001/dashbord');
   };
 }
 
