@@ -5,7 +5,7 @@ import { PaymentsService } from './payments.service';
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) { }
 
-  @Post('create-checkout-session/:reservationId')
+  @Get('create-checkout-session/:reservationId')
   @HttpCode(HttpStatus.CREATED)
   async createCheckoutSession(@Param('reservationId') reservationId: string): Promise<{ redirectUrl: string }> {
     try {
