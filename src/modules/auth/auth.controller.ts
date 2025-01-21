@@ -49,7 +49,7 @@ export class AuthController {
     const token = await this.authService.googleSignUp(code);
 
     res.setHeader('Authorization', `Bearer ${token}`);
-    res.redirect('http://localhost:3001/dashbord');
+    res.redirect('http://localhost:3001/dashboard');
   };
 }
 
