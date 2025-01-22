@@ -14,6 +14,7 @@ import {
   IsArray,
   IsOptional,
   IsEnum,
+  IsNumber,
 } from 'class-validator';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Media } from 'src/modules/media/entities/media.entity';
@@ -42,6 +43,14 @@ export class Cat {
   })
   @IsDate()
   dateOfBirth: Date;
+
+  @Column({ type: 'decimal', precision: 5, scale: 2 })
+  @ApiProperty({
+    description: 'Weight of the cat in kilograms',
+    example: 4.5,
+  })
+  @IsNumber()
+  weight: number;
 
   @Column({ type: 'boolean' })
   @ApiProperty({ description: 'Is the cat neutered?', example: true })
