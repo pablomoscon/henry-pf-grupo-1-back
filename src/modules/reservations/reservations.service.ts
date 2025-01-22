@@ -139,4 +139,12 @@ export class ReservationsService {
     reservation.status = status;
     return this.reservationRepository.save(reservation);
   };
+
+  async findUserReservations(userId: string): Promise<Reservation[]> {
+    return await this.reservationRepository.find({
+      where: { user: { id: userId } },
+      relations: ['room', 'cats', 'payments'],
+    });
+  }
+
 }

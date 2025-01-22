@@ -33,6 +33,14 @@ export class ReservationsController {
     return this.reservationsService.unavailableRoomsDates(roomId);
   };
 
+  @Get('users-reservations')
+  @HttpCode(HttpStatus.OK)
+  async usersReservations(
+    @Query('userId') userId: string,
+  ) {
+    return await this.reservationsService.findUserReservations(userId);
+  };
+
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string) {
