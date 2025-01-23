@@ -1,8 +1,8 @@
 import { User } from '../../modules/users/entities/user.entity';
 import { Role } from '../../enums/roles.enum';
 import { Status } from '../../enums/status.enum';
-import { CatCompatibility } from 'src/enums/cat-compatibility.enum'; // Importado
-import { CatVaccinations } from 'src/enums/cat-vaccinations.enum'; // Importado
+import { CatCompatibility } from 'src/enums/cat-compatibility.enum';
+import { CatVaccinations } from 'src/enums/cat-vaccinations.enum'; 
 
 export const usersMock: User[] = [
   {

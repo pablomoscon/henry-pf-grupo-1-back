@@ -7,11 +7,12 @@ import { FileUploadService } from '../file-upload/file-upload.service';
 import { CloudinaryService } from 'src/services/cloudinary/cloudinary.service';
 import { UsersService } from '../users/users.service';
 import { MessagesService } from './messages.service';
+import { MessagesGateway } from './messages.gateway';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Message, User]),
   ],
   controllers: [MessagesController],
-  providers: [MessagesService, FileUploadService, CloudinaryService, UsersService],
+  providers: [MessagesService,  MessagesGateway, FileUploadService, CloudinaryService, UsersService],
 })
 export class MessagesModule {}
