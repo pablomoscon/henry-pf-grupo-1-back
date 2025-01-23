@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Req, Res, Param, HttpException, Query, Get } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Res, Param, HttpException, Query, Get } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { Response } from 'express';
 
@@ -10,18 +10,16 @@ export class PaymentsController {
   @HttpCode(HttpStatus.OK)
   async createCheckoutSession(
     @Param('reservationId') reservationId: string,
-    @Res() res: Response  // Usamos @Res() para acceder al objeto Response
-  ): Promise<void> {  // Cambiamos el tipo de retorno a void
+    @Res() res: Response  
+  ): Promise<void> {  
     try {
       const sessionUrl = await this.paymentsService.createCheckoutSession(reservationId);
 
-      // Realizamos la redirección a la URL proporcionada por Stripe
-      return res.redirect(sessionUrl);  // Redirige automáticamente al cliente
+      return res.redirect(sessionUrl); 
     } catch (error) {
       throw new HttpException('Error creating the Stripe session', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
-
+  };
 
   @Get('status')
   async paymentStatus(

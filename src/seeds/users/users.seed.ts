@@ -39,6 +39,8 @@ export class UsersSeed {
         user.reservations = userData.reservations;
         user.sentMessages = userData.sentMessages;
         user.receivedMessages = userData.receivedMessages;
+        user.sentChats = userData.sentChats;
+        user.receivedChats = userData.receivedChats;
 
         await this.userRepository.save(user);
       }

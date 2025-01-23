@@ -16,6 +16,7 @@ import { ChatHistory } from '../../chat-history/entities/chat-history.entity';
 import { Role } from 'src/enums/roles.enum';
 import { Status } from 'src/enums/status.enum';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
+import { Message } from 'src/modules/messages/entities/message.entity';
 
 @Entity('users')
 export class User {
@@ -124,14 +125,28 @@ export class User {
     type: () => [ChatHistory],
   })
   @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.sender)
-  sentMessages: ChatHistory[];
+  sentChats: ChatHistory[];
 
   @ApiProperty({
     description: 'List of chat messages received by the user',
     type: () => [ChatHistory],
   })
   @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.receiver)
-  receivedMessages: ChatHistory[];
+  receivedChats: ChatHistory[];
+
+  @ApiProperty({
+    description: 'List of messages sent by the user',
+    type: () => [Message],
+  })
+  @OneToMany(() => Message, (message) => message.sender)
+  sentMessages: ChatHistory[];
+
+  @ApiProperty({
+    description: 'List of messages received by the user',
+    type: () => [Message],
+  })
+  @OneToMany(() => Message, (message) => message.receiver)
+  receivedMessages: Message[];
 
   @ApiProperty({
     description: 'List of payments made by the user',
