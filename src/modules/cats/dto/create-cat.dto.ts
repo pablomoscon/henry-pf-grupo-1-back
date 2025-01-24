@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsDate, IsBoolean, IsArray, IsEnum, IsUUID, IsNotEmpty } from 'class-validator';
+import { IsString, IsDate, IsBoolean, IsArray, IsEnum, IsUUID, IsNotEmpty, IsNumber } from 'class-validator';
 import { CatCompatibility } from 'src/enums/cat-compatibility.enum';
 import { CatVaccinations } from 'src/enums/cat-vaccinations.enum';
 
@@ -52,6 +52,20 @@ export class CreateCatDto {
     @IsArray()
     @IsEnum(CatVaccinations, { each: true })
     vaccinationsAndTests: CatVaccinations[];
+
+    @ApiProperty({
+        description: 'Photo of the cat',
+        example: 'https://example.com/images/whiskers.jpg',
+    })
+    @IsString()
+    photo: string;
+
+    @ApiProperty({
+        description: 'Weight of the cat in kilograms',
+        example: 4.5,
+    })
+    @IsNumber()
+    weight: number;
 
     @ApiProperty({ description: 'User who owns the cat' })
     @IsUUID()

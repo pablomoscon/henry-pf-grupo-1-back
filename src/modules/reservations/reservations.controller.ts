@@ -3,7 +3,6 @@ import { ReservationsService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
 import { ReservationResponseDto } from './dto/response-reservation.dto';
-import { UnavailableRoomsDto } from './dto/unavailable-rooms-dto';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('reservations')
@@ -27,16 +26,18 @@ export class ReservationsController {
 
   @Get('unavailable-rooms')
   @HttpCode(HttpStatus.OK)
-  unavailableRooms(
-    @Query() query: UnavailableRoomsDto
+  unavailableRoomsDates(
+    @Query('roomId') roomId: string,  
   ) {
-    const { roomId, checkInDate, checkOutDate } = query;
+    return this.reservationsService.unavailableRoomsDates(roomId);
+  };
 
-    return this.reservationsService.unavailableRooms(
-      roomId,
-      new Date(checkInDate),
-      new Date(checkOutDate)
-    );
+  @Get('users-reservations')
+  @HttpCode(HttpStatus.OK)
+  async usersReservations(
+    @Query('userId') userId: string,
+  ) {
+    return await this.reservationsService.findUserReservations(userId);
   };
 
   @Get(':id')

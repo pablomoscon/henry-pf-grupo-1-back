@@ -6,6 +6,7 @@ import { SignupAuthDto } from './dto/signup-auth.dto';
 import { Response } from 'express';
 import { oauth2Client } from 'src/config/google-auth.config';
 import { AuthResponseDto } from './dto/response-auth.dto';
+import { ResponseUserDto } from '../users/dto/response-user.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -40,16 +41,21 @@ export class AuthController {
         'https://www.googleapis.com/auth/user.addresses.read'
       ],
     });
-    res.redirect(authUrl);
+
+    return res.redirect(authUrl);
   };
 
   @Get('google/callback')
   async handleGoogleCallback(@Query('code') code: string, @Res() res: Response) {
-    const token = await this.authService.googleSignUp(code);
-    res.json({
-      message: 'User successfully registered or logged in via Google',
-      token,
-    });
+    const { token, user } = await this.authService.googleSignUp(code);
+
+    res.cookie(
+      'auth',
+      JSON.stringify({ token, user: new ResponseUserDto(user) }),
+      { httpOnly: false, secure: false }
+    );
+
+    res.redirect('http://localhost:3001/dashboard');
   };
 }
 

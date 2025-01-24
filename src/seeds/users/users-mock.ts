@@ -1,6 +1,8 @@
 import { User } from '../../modules/users/entities/user.entity';
 import { Role } from '../../enums/roles.enum';
 import { Status } from '../../enums/status.enum';
+import { CatCompatibility } from 'src/enums/cat-compatibility.enum'; // Importado
+import { CatVaccinations } from 'src/enums/cat-vaccinations.enum'; // Importado
 
 export const usersMock: User[] = [
   {
@@ -19,11 +21,29 @@ export const usersMock: User[] = [
       deleted_at: null,
       user: null,
     },
-    cats: [],
+    cats: [
+      {
+        id: '123e4567-e89b-12d3-a456-426614174000',
+        name: 'Whiskers Purrington',
+        dateOfBirth: new Date('2022-06-15'),
+        isNeutered: true,
+        personality: 'Playful and friendly',
+        getsAlongWithOtherCats: CatCompatibility.YES, 
+        food: 'Dry food and wet food',
+        vaccinationsAndTests: [CatVaccinations.RABIES, CatVaccinations.TRIPLE_FELINE],
+        user: { id: '123e4567-e89b-12d3-a456-426614174000' } as User,
+        media: [],
+        reservations: [],
+        photo: 'https://example.com/images/whiskers.jpg',
+        weight: 4.5,
+      },
+    ],
     caretakers: [],
     reservations: [],
     sentMessages: [],
     receivedMessages: [],
+    sentChats: [],
+    receivedChats: [],
     payments: null
   },
   {
@@ -42,12 +62,30 @@ export const usersMock: User[] = [
       deleted_at: null,
       user: null,
     },
-    cats: [],
+    cats: [
+      {
+        id: '123e4567-e89b-12d3-a456-426614174001',
+        name: 'Bella Meowster',
+        dateOfBirth: new Date('2021-10-10'),
+        isNeutered: false,
+        personality: 'Shy and reserved',
+        getsAlongWithOtherCats: CatCompatibility.NO, 
+        food: 'Wet food only',
+        vaccinationsAndTests: [CatVaccinations.FIV_FELV_TEST],
+        user: { id: '123e4567-e89b-12d3-a456-426614174001' } as User,
+        media: [],
+        reservations: [],
+        photo: 'https://example.com/images/bella.jpg',
+        weight: 3.2,
+      },
+    ],
     caretakers: [],
     reservations: [],
     sentMessages: [],
     receivedMessages: [],
-    payments: null
+    payments: null,
+    sentChats: [],
+    receivedChats: [],
   },
   {
     id: '123e4567-e89b-12d3-a456-426614174002',
@@ -65,12 +103,30 @@ export const usersMock: User[] = [
       deleted_at: null,
       user: null,
     },
-    cats: [],
+    cats: [
+      {
+        id: '123e4567-e89b-12d3-a456-426614174002',
+        name: 'Shadow Paws',
+        dateOfBirth: new Date('2023-01-05'),
+        isNeutered: true,
+        personality: 'Curious and energetic',
+        getsAlongWithOtherCats: CatCompatibility.UNSURE,
+        food: 'Mixed food (dry and wet)',
+        vaccinationsAndTests: [CatVaccinations.RABIES], 
+        user: { id: '123e4567-e89b-12d3-a456-426614174002' } as User,
+        media: [],
+        reservations: [],
+        photo: 'https://example.com/images/shadow.jpg',
+        weight: 4.5,
+      },
+    ],
     caretakers: [],
     reservations: [],
     sentMessages: [],
     receivedMessages: [],
-    payments: null
+    payments: null,
+    sentChats: [],
+    receivedChats: [],
   },
   {
     id: '123e4567-e89b-12d3-a456-426614174003',
@@ -93,6 +149,8 @@ export const usersMock: User[] = [
     reservations: [],
     sentMessages: [],
     receivedMessages: [],
-    payments:null
+    payments: null,
+    sentChats: [],
+    receivedChats: [],
   },
 ];

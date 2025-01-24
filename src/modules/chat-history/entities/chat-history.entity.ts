@@ -13,11 +13,11 @@ export class ChatHistory {
   @IsUUID()
   id: string;
 
-  @ManyToOne(() => User, (user) => user.sentMessages)
+  @ManyToOne(() => User, (user) => user.sentChats)
   @ApiProperty({ description: 'Sender of the message' })
   sender: User;
 
-  @ManyToOne(() => User, (user) => user.receivedMessages)
+  @ManyToOne(() => User, (user) => user.receivedChats)
   @ApiProperty({ description: 'Receiver of the message' })
   receiver: User;
 
