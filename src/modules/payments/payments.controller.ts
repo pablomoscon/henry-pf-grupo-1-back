@@ -1,21 +1,16 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, Req, Res, Param, HttpException, Query, Get } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-import { Response } from 'express';
 
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) { }
 
-  @Get('create-checkout-session/:reservationId')
-  @HttpCode(HttpStatus.OK)
-  async createCheckoutSession(
-    @Param('reservationId') reservationId: string,
-    @Res() res: Response 
-  ): Promise<void> { 
+  @Post('create-checkout-session/:reservationId')
+  @HttpCode(HttpStatus.CREATED)
+  async createCheckoutSession(@Param('reservationId') reservationId: string): Promise<string> {
     try {
       const sessionUrl = await this.paymentsService.createCheckoutSession(reservationId);
-  
-      return res.redirect(sessionUrl); 
+      return sessionUrl;
     } catch (error) {
       throw new HttpException('Error creating the Stripe session', HttpStatus.INTERNAL_SERVER_ERROR);
     }
