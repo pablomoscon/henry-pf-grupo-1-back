@@ -17,6 +17,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { LocationsModule } from './modules/locations/locations.module';
 import { PaymentsModule } from './modules/payments/payments.module';
+import { MessagesModule } from './modules/messages/messages.module';
 
 @Module({
   imports: [
@@ -47,9 +48,10 @@ import { PaymentsModule } from './modules/payments/payments.module';
     UsersModule,
     SeedModule,
     LocationsModule,
-    PaymentsModule
+    PaymentsModule,
+    MessagesModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
