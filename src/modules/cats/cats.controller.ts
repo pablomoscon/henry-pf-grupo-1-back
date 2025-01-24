@@ -12,7 +12,7 @@ export class CatsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UseInterceptors(FileInterceptor('img'))
+  @UseInterceptors(FileInterceptor('photo'))
   async create(
     @UploadedFile() file: Express.Multer.File,
     @Body() createCatDto: CreateCatDto) {
