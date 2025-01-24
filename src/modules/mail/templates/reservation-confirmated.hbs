@@ -1,15 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
     <title>Reservation Confirmation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap' rel='stylesheet' />
     <style>
         body {
             font-family: 'Roboto', Arial, sans-serif;
-            background-color: #f4f4f4;
+            background-color:
+                #f4f4f4;
             margin: 0;
             padding: 0;
             color: white;
@@ -22,13 +22,15 @@
             background-color: rgb(34, 34, 34);
             padding: 25px;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0,
+                    0.2);
         }
 
         .header {
             text-align: center;
             padding: 15px 0;
-            background-color: rgb(212, 175, 55);
+            background-color:
+                rgb(212, 175, 55);
             color: rgb(34, 34, 34);
             border-radius: 10px 10px 0 0;
         }
@@ -45,7 +47,8 @@
 
         .content h1 {
             text-align: center;
-            font-size: 28px;
+            font-size:
+                28px;
             margin-bottom: 10px;
         }
 
@@ -67,36 +70,26 @@
             color: rgb(212, 175, 55);
         }
 
-        .button {
-            display: inline-block;
-            padding: 12px 25px;
-            margin: 20px 0;
-            background-color: rgb(212, 175, 55);
-            color: rgb(34, 34, 34);
+        .contact-us a {
+            color: #f4f4f4;
             text-decoration: none;
-            border-radius: 5px;
             font-weight: bold;
-            text-align: center;
-            transition: transform 0.3s ease, background-color 0.3s ease;
-        }
-
-        .button:hover {
-            background-color: rgb(175, 146, 46);
-            transform: translateY(-3px);
+            text-decoration: underline
         }
 
         .footer {
             text-align: center;
-            padding: 15px 0;
-            background-color: #f4f4f4;
+            padding: 12px 0;
+            background-color: #9CB380;
             color: #555555;
             font-size: 12px;
             border-radius: 0 0 10px 10px;
+            margin-top: 5px;
         }
 
         .footer img {
-            max-width: 40px;
-            margin-bottom: 5px;
+            max-width: 30px;
+            margin-bottom: 0px;
         }
 
         .footer p {
@@ -111,10 +104,16 @@
             <h2>Reservation Confirmed!</h2>
         </div>
         <div class="content">
-            <h1>Hello, <span>{{user}}</span>!</h1>
-            <h2>Your reservation has been successfully confirmed!</h2>
-            <p>Here are the details of your reservation:</p>
-            <ul>
+            <h1 class="greeting">
+                Hello, <span>{{user}}</span>.
+            </h1>
+            <h2 class="confirmation-message">
+                Your reservation has been successfully confirmed!
+            </h2>
+            <p class="details-intro">
+                Here are the details of your reservation:
+            </p>
+            <ul class="reservation-details">
                 <li><strong>Check-In Date:</strong> {{checkIn}}</li>
                 <li><strong>Check-Out Date:</strong> {{checkOut}}</li>
                 <li><strong>Total Amount:</strong> ${{totalAmount}}</li>
@@ -122,15 +121,18 @@
                 <li><strong>Cats Included:</strong> {{cats}}</li>
                 <li><strong>Payment Status:</strong> {{payment}}</li>
             </ul>
-            <p>We hope you enjoy your stay. Please feel free to contact us for any questions or additional requests.</p>
-            <p style="font-style: italic; font-weight: bold;">Sincerely,<br>The Reservations Team</p>
-            <a href="." class="button">Visit Our Website</a>
+            <div class="contact-us">
+                <p>
+                    We hope you enjoy your stay. Please feel free to contact us for any
+                    questions or additional requests.
+                </p>
+                <a href=".">Visit Our Website</a>
+            </div>
         </div>
         <div class="footer">
-            <img src="cid:logoApp" alt="Logo">
+            <img src="cid:logoApp" alt="Logo" />
             <p>&copy; 2025 The Fancy Box. All rights reserved.</p>
         </div>
     </div>
 </body>
-
 </html>

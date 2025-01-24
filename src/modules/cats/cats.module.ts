@@ -13,5 +13,6 @@ import { FileUploadService } from '../file-upload/file-upload.service';
   ],
   controllers: [CatsController],
   providers: [CatsService, UsersService, FileUploadService, CloudinaryService],
+  exports: [CatsService],
 })
 export class CatsModule {}

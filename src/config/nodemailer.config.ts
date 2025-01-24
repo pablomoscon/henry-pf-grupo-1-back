@@ -1,7 +1,7 @@
 import * as nodemailer from 'nodemailer';
 import * as dotenv from 'dotenv';
-import { join } from 'path'; // Asegúrate de importar join/ Si estás usando este adaptador
-
+import { join } from 'path'; 
+import * as HandlebarsAdapter from 'nodemailer-express-handlebars';
 
 dotenv.config({
     path: '.env.development.local',
