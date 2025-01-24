@@ -8,7 +8,7 @@ export const usersMock: User[] = [
   {
     id: '123e4567-e89b-12d3-a456-426614174000',
     name: 'John Williams',
-    email: 'john.williams@mail.com',
+    email: 'mosconpablo@gmail.com',
     phone: '+5412345678',
     address: '123 Main St, Springfield',
     customerId: '22234768',

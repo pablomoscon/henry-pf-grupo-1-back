@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { Stripe } from 'stripe';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
 import { ReservationsService } from '../reservations/reservations.service';
 import { ReservationStatus } from 'src/enums/reservation-status.enum';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class PaymentsService {
@@ -12,7 +13,10 @@ export class PaymentsService {
     private readonly stripe: Stripe,
     @InjectRepository(Payment)
     private readonly paymentRepository: Repository<Payment>,
+    @Inject(forwardRef(() => ReservationsService))
     private readonly reservationsService: ReservationsService,
+    @Inject(forwardRef(() => MailService))
+    private readonly mailsService: MailService,
   ) { }
 
   async createCheckoutSession(reservationId: string): Promise<string> {
@@ -96,6 +100,7 @@ export class PaymentsService {
           : reservation.status;
 
       await this.reservationsService.updateReservationStatus(reservation.id, newReservationStatus);
+      this.mailsService.sendConfirmatedReservation(reservation);
 
     } catch (error) {
       console.error('Error updating payment and reservation status:', error);

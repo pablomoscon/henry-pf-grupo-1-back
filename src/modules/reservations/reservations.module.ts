@@ -1,19 +1,27 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
 import { ReservationsController } from './reservations.controller';
-import { UsersService } from '../users/users.service';
-import { CatsService } from '../cats/cats.service';
-import { RoomsService } from '../rooms/rooms.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reservation } from './entities/reservation.entity';
-import { User } from '../users/entities/user.entity';
-import { Cat } from '../cats/entities/cat.entity';
-import { Room } from '../rooms/entities/room.entity';
 import { FileUploadModule } from '../file-upload/file-upload.module';
+import { CloudinaryService } from 'src/services/cloudinary/cloudinary.service';
+import { UsersModule } from '../users/users.module';
+import { CatsModule } from '../cats/cats.module';
+import { RoomsModule } from '../rooms/rooms.module';
+import { MailsModule } from '../mail/mail.module';
+import { PaymentsModule } from '../payments/payments.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Reservation, User, Cat, Room]), FileUploadModule],
+  imports: [TypeOrmModule.forFeature([Reservation]),
+    UsersModule,
+    RoomsModule,
+    CatsModule,
+    FileUploadModule,
+    MailsModule,
+    forwardRef(() => PaymentsModule)
+  ],
   controllers: [ReservationsController],
-  providers: [ReservationsService, UsersService, CatsService, RoomsService],
+  providers: [ReservationsService, CloudinaryService],
+  exports: [ReservationsService],
 })
 export class ReservationsModule { }

@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, ParseUUIDPipe, HttpException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, ParseUUIDPipe, HttpException, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CreateCatDto } from './dto/create-cat.dto';
 import { UpdateCatDto } from './dto/update-cat.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('cats')
 @ApiTags('cats')
@@ -11,8 +12,11 @@ export class CatsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createCatDto: CreateCatDto) {
-    return await this.catsService.create(createCatDto);
+  @UseInterceptors(FileInterceptor('img'))
+  async create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() createCatDto: CreateCatDto) {
+    return await this.catsService.create(createCatDto, file);
   };
 
   @Get()
