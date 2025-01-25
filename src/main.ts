@@ -6,11 +6,14 @@ import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   app.enableCors({
     origin: '*',
   });
-  
+
+  app.use(loggerGlobal);
+  app.useGlobalFilters(new GlobalExceptionFilter());
+
   setupSwagger(app);
 
   const seedManager = app.get(SeedManager);
