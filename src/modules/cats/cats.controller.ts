@@ -12,7 +12,7 @@ export class CatsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UseInterceptors(FileInterceptor('photo'))
+  @UseInterceptors(FileInterceptor('photoFile'))
   async create(
     @UploadedFile() file: Express.Multer.File,
     @Body() createCatDto: CreateCatDto) {
@@ -37,10 +37,13 @@ export class CatsController {
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  async update(@Param('id', new ParseUUIDPipe()) id: string,
-    @Body() updateCatDto: UpdateCatDto
+  @UseInterceptors(FileInterceptor('photoFile'))  
+  async update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateCatDto: UpdateCatDto,
+    @UploadedFile() file?: Express.Multer.File,
   ) {
-    return await this.catsService.update(id, updateCatDto);
+    return await this.catsService.update(id, updateCatDto, file);
   };
 
   @Delete(':id')
