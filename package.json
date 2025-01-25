@@ -26,6 +26,7 @@
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/platform-express": "^11.0.5",
+    "@nestjs/platform-socket.io": "^11.0.5",
     "@nestjs/swagger": "^11.0.3",
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/websockets": "^11.0.5",
@@ -42,7 +43,6 @@
     "pg": "^8.13.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "socket.io": "^4.8.1",
     "stripe": "^17.5.0",
     "typeorm": "^0.3.20"
   },

@@ -6,8 +6,7 @@ import { CreateMessageDto } from './dto/create-message.dto';
 import { UsersService } from '../users/users.service';
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 
-
-@WebSocketGateway(3002, { cors: { origin: '*' }, namespace: 'messages/chats' })  
+@WebSocketGateway({ cors: { origin: '*' }, namespace: 'messages/chat' })  
 export class MessagesGateway {
     @WebSocketServer()
     server: Server;
