@@ -62,9 +62,32 @@ export class CatsService {
     });
   };
 
-  async update(id: string, updateCatDto: UpdateCatDto) {
-    await this.catRepository.update(id, updateCatDto);
-    return this.findOne(id);
+  async update(id: string, updateCatDto: UpdateCatDto, file?: Express.Multer.File): Promise<Cat> {
+    let imgUrl: string | undefined;
+
+    if (file) {
+      imgUrl = await this.fileUploadService.uploadFile({
+        fieldName: file.fieldname,
+        buffer: file.buffer,
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+        size: file.size,
+      });
+    }
+
+    const updatedCat = await this.catRepository.preload({
+      id,
+      ...updateCatDto,
+      photo: imgUrl || undefined,
+    });
+
+    if (!updatedCat) {
+      throw new NotFoundException(`Cat with ID ${id} not found`);
+    }
+
+    await this.catRepository.save(updatedCat);
+
+    return updatedCat;
   };
 
   async remove(id: string) {
