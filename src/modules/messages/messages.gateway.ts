@@ -37,11 +37,11 @@ export class MessagesGateway {
 
     @SubscribeMessage('connect')
     handleConnection(socket: Socket) {
-        console.log('Cliente conectado:', socket.id);
+        console.log('Client connected:', socket.id);
     }
 
     @SubscribeMessage('disconnect')
     handleDisconnect(socket: Socket) {
-        console.log('Cliente desconectado:', socket.id);
+        console.log('Client disconnected:', socket.id);
     }
 }

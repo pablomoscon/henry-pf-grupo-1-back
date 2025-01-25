@@ -9,5 +9,6 @@ import { FileUploadModule } from '../file-upload/file-upload.module';
   imports: [TypeOrmModule.forFeature([Room]), FileUploadModule],
   controllers: [RoomsController],
   providers: [RoomsService],
+  exports: [RoomsService],
 })
 export class RoomsModule {}

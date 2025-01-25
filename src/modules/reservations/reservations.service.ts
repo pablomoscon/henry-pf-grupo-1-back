@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
+import { IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 import { CreateReservationDto } from 'src/modules/reservations/dto/create-reservation.dto';
 import { UsersService } from '../users/users.service';
@@ -9,6 +9,7 @@ import { CatsService } from '../cats/cats.service';
 import { ReservationStatus } from 'src/enums/reservation-status.enum';
 import { Cat } from '../cats/entities/cat.entity';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class ReservationsService {
@@ -18,6 +19,7 @@ export class ReservationsService {
     private readonly usersService: UsersService,
     private readonly roomsService: RoomsService,
     private readonly catsService: CatsService,
+    private readonly MailService: MailService,
   ) { }
 
   async create(createReservationDto: CreateReservationDto): Promise<Reservation> {
@@ -64,6 +66,7 @@ export class ReservationsService {
     });
 
     await this.reservationRepository.save(reservation)
+    this.MailService.sendInitiatedReservation(reservation)
 
     return reservation;
   };
@@ -145,6 +148,5 @@ export class ReservationsService {
       where: { user: { id: userId } },
       relations: ['room', 'cats', 'payments'],
     });
-  }
-
+  };
 }

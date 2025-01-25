@@ -18,6 +18,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { LocationsModule } from './modules/locations/locations.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { MessagesModule } from './modules/messages/messages.module';
+import { MailsModule } from './modules/mail/mail.module';
+
 
 @Module({
   imports: [
@@ -49,9 +51,10 @@ import { MessagesModule } from './modules/messages/messages.module';
     SeedModule,
     LocationsModule,
     PaymentsModule,
-    MessagesModule
+    MessagesModule, 
+    MailsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

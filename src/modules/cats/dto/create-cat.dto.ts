@@ -54,13 +54,6 @@ export class CreateCatDto {
     vaccinationsAndTests: CatVaccinations[];
 
     @ApiProperty({
-        description: 'Photo of the cat',
-        example: 'https://example.com/images/whiskers.jpg',
-    })
-    @IsString()
-    photo: string;
-
-    @ApiProperty({
         description: 'Weight of the cat in kilograms',
         example: 4.5,
     })

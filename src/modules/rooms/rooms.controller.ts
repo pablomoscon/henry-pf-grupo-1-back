@@ -33,7 +33,6 @@ export class RoomsController {
     @UploadedFile() file: Express.Multer.File,
     @Body() createRoomDto: CreateRoomDto,
   ) {
-    ////// if para transformar el array si llega como string desde insomnia //////
     if (typeof createRoomDto.features === 'string') {
       try {
         createRoomDto.features = JSON.parse(createRoomDto.features);
@@ -41,8 +40,6 @@ export class RoomsController {
         throw new BadRequestException('Invalid format for features');
       }
     }
-    ////// if para transformar el array si llega como string desde insomnia //////
-
     return await this.roomsService.create(createRoomDto, file);
   }
 

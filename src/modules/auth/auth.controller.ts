@@ -52,7 +52,10 @@ export class AuthController {
     res.cookie(
       'auth',
       JSON.stringify({ token, user: new ResponseUserDto(user) }),
-      { httpOnly: false, secure: false }
+      { httpOnly: false, 
+       secure: false,
+      maxAge: 60 * 60 * 1000
+      }
     );
 
     res.redirect('http://localhost:3001/dashboard');
