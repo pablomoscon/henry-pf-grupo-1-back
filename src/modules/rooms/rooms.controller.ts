@@ -13,13 +13,19 @@ import {
   HttpCode,
   UploadedFile,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Room } from './entities/room.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles } from 'src/decorators/role.decorator';
+import { Role } from 'src/enums/roles.enum';
+import { AuthGuard } from 'src/guards/auth/auth.guard';
+import { RolesGuard } from 'src/guards/roles/roles.guard';
+import { ImageUploadValidationPipe } from 'src/pipes/image-upload-validation.pipe';
 
 @ApiTags('Rooms')
 @Controller('rooms')
@@ -27,10 +33,13 @@ export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}
 
   @Post()
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('img'))
   async create(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile(new ImageUploadValidationPipe()) file: Express.Multer.File,
     @Body() createRoomDto: CreateRoomDto,
   ) {
     if (typeof createRoomDto.features === 'string') {
@@ -118,12 +127,18 @@ export class RoomsController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
   async update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
     return await this.roomsService.update(id, updateRoomDto);
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id') id: string) {
     return await this.roomsService.remove(id);
