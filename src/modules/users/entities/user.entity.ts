@@ -17,6 +17,7 @@ import { Role } from 'src/enums/roles.enum';
 import { Status } from 'src/enums/status.enum';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
 import { Message } from 'src/modules/messages/entities/message.entity';
+import { Review } from 'src/modules/reviews/entities/review.entity';
 
 @Entity('users')
 export class User {
@@ -154,4 +155,11 @@ export class User {
   })
   @OneToMany(() => Payment, (payment) => payment.user)
   payments?: Payment[];
+
+  @OneToMany(() => Review, (review) => review.user)
+  @ApiProperty({
+    description: 'Reviews submitted by the user',
+    type: () => [Review],
+  })
+  reviews: Review[];
 }
