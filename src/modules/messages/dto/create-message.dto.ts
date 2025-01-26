@@ -24,5 +24,14 @@ export class CreateMessageDto {
     @ApiProperty({ description: 'Receiver of the message' })
     @IsUUID()
     receiver: string;
+
+    @ApiProperty({
+        description: 'ID of the associated reservation (optional)',
+        example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+        required: false
+    })
+    @IsUUID()
+    @IsOptional()
+    reservationId: string;
 }
     

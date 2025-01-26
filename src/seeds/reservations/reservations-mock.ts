@@ -18,7 +18,8 @@ export const reservationsMock: Reservation[] = [
     createdAt: new Date('2025-01-01T08:00:00Z'),
     updatedAt: new Date('2025-01-05T10:00:00Z'),
     totalAmount: 100.00, 
-    payments:null,
+    payments: null,
+    messages:[]
   },
   {
     id: '123e4567-e89b-12d3-a456-426614174001',
@@ -34,5 +35,6 @@ export const reservationsMock: Reservation[] = [
     updatedAt: new Date('2025-01-06T11:00:00Z'),
     totalAmount: 150.00,
     payments: null,
+    messages: []
   },
 ];

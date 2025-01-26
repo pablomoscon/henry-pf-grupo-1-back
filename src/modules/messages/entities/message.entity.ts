@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional, IsEnum, IsDate } from 'class-validator';
 import { User } from 'src/modules/users/entities/user.entity';
 import { MessageType } from 'src/enums/message-type';
+import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 
 @Entity()
 export class Message {
@@ -71,4 +72,9 @@ export class Message {
   @ManyToOne(() => User, (user) => user.receivedMessages)
   @ApiProperty({ description: 'Receiver of the message' })
   receiver: User;
+
+  @ManyToOne(() => Reservation, (reservation) => reservation.messages)
+  @ApiProperty({ description: 'Reservation associated with the message' })
+  reservation: Reservation;
+
 }

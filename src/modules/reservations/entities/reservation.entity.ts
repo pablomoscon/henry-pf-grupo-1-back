@@ -6,6 +6,7 @@ import { Cat } from "src/modules/cats/entities/cat.entity";
 import { Room } from "src/modules/rooms/entities/room.entity";
 import { IsOptional } from "class-validator";
 import { Payment } from "src/modules/payments/entities/payment.entity";
+import { Message } from "src/modules/messages/entities/message.entity";
 
 @Entity("reservations")
 export class Reservation {
@@ -97,5 +98,8 @@ export class Reservation {
   })
   @OneToMany(() => Payment, (payment) => payment.reservation)
   payments?: Payment[];
+
+  @OneToMany(() => Message, (message) => message.reservation)
+  messages?: Message[];
   
 }

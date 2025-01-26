@@ -26,8 +26,8 @@ export class MessagesController {
   constructor(private readonly messagesService: MessagesService) {}
 
   @Post()
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+ /*  @ApiBearerAuth()
+  @UseGuards(AuthGuard) */
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('file'))
   async create(
@@ -42,8 +42,8 @@ export class MessagesController {
   }
 
   @Get()
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+/*   @ApiBearerAuth()
+  @UseGuards(AuthGuard) */
   @HttpCode(HttpStatus.OK)
   findAll() {
     return this.messagesService.findAll();
@@ -58,8 +58,8 @@ export class MessagesController {
   }
 
   @Patch(':id')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+ /*  @ApiBearerAuth()
+  @UseGuards(AuthGuard) */
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('file'))
   update(
