@@ -50,11 +50,10 @@ export class Review {
     @Max(5, { message: 'The maximum rating is 5.' })
     calification: number;
 
-    @ManyToOne(() => User, (user) => user.reviews)
     @ApiProperty({
         description: 'User who submitted the review',
-        type: () => User,
     })
+    @ManyToOne(() => User, (user) => user.reviews)
     user: User;
 
     @Column({ type: 'timestamp', nullable: true })

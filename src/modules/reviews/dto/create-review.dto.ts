@@ -23,7 +23,6 @@ export class CreateReviewDto {
 
     @ApiProperty({
         description: 'User who submitted the review',
-        type: () => User,
     })
     @IsNotEmpty({ message: 'The user cannot be empty.' })
     userId: string;

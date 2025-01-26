@@ -3,10 +3,7 @@ import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Role } from 'src/enums/roles.enum';
-import { Roles } from 'src/decorators/role.decorator';
-import { AuthGuard } from 'src/guards/auth/auth.guard';
-import { RolesGuard } from 'src/guards/roles/roles.guard';
+
 
 @Controller('reviews')
 @ApiTags('users')
@@ -28,7 +25,7 @@ export class ReviewsController {
     const pageNumber = Number(page);
     const limitNumber = Number(limit);
     return await this.reviewsService.findAll(pageNumber, limitNumber);
-  }
+  };
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)

@@ -4,19 +4,31 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Review } from './entities/review.entity';
 import { IsNull, Repository } from 'typeorm';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class ReviewsService {
 
   constructor(
     @InjectRepository(Review) private readonly reviewRepository: Repository<Review>,
-  ) { } 
+    private readonly usersService: UsersService, 
+  ) { }
 
-  async create(createReviewDto: CreateReviewDto): Promise<Review> {
-    const newReview = await this.reviewRepository.create(createReviewDto);
+  async create(createReviewDto: CreateReviewDto): Promise < Review > {
+
+    const user = await this.usersService.findOne(createReviewDto.userId);
+
+    if(!user) {
+      throw new Error('User not found');
+    }
+    const newReview = this.reviewRepository.create({
+      ...createReviewDto,  
+      user, 
+    });
+
     return await this.reviewRepository.save(newReview);
   };
-
+  
  async findAll(pageNumber: number, limitNumber: number) {
     return await this.reviewRepository.find({
       where: { deleted_at: IsNull() },

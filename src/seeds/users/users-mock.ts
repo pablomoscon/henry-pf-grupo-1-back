@@ -28,9 +28,12 @@ export const usersMock: User[] = [
         dateOfBirth: new Date('2022-06-15'),
         isNeutered: true,
         personality: 'Playful and friendly',
-        getsAlongWithOtherCats: CatCompatibility.YES, 
+        getsAlongWithOtherCats: CatCompatibility.YES,
         food: 'Dry food and wet food',
-        vaccinationsAndTests: [CatVaccinations.RABIES, CatVaccinations.TRIPLE_FELINE],
+        vaccinationsAndTests: [
+          CatVaccinations.RABIES,
+          CatVaccinations.TRIPLE_FELINE,
+        ],
         user: { id: '123e4567-e89b-12d3-a456-426614174000' } as User,
         media: [],
         reservations: [],
@@ -45,6 +48,8 @@ export const usersMock: User[] = [
     sentChats: [],
     receivedChats: [],
     payments: null,
+    notifications: [],
+    createdAt: new Date('2024-01-26T09:00:00Z'),
     reviews:[]
   },
   {
@@ -70,7 +75,7 @@ export const usersMock: User[] = [
         dateOfBirth: new Date('2021-10-10'),
         isNeutered: false,
         personality: 'Shy and reserved',
-        getsAlongWithOtherCats: CatCompatibility.NO, 
+        getsAlongWithOtherCats: CatCompatibility.NO,
         food: 'Wet food only',
         vaccinationsAndTests: [CatVaccinations.FIV_FELV_TEST],
         user: { id: '123e4567-e89b-12d3-a456-426614174001' } as User,
@@ -87,6 +92,8 @@ export const usersMock: User[] = [
     payments: null,
     sentChats: [],
     receivedChats: [],
+    notifications: [],
+    createdAt: new Date(),
     reviews: []
   },
   {
@@ -114,7 +121,7 @@ export const usersMock: User[] = [
         personality: 'Curious and energetic',
         getsAlongWithOtherCats: CatCompatibility.UNSURE,
         food: 'Mixed food (dry and wet)',
-        vaccinationsAndTests: [CatVaccinations.RABIES], 
+        vaccinationsAndTests: [CatVaccinations.RABIES],
         user: { id: '123e4567-e89b-12d3-a456-426614174002' } as User,
         media: [],
         reservations: [],
@@ -129,6 +136,8 @@ export const usersMock: User[] = [
     payments: null,
     sentChats: [],
     receivedChats: [],
+    notifications: [],
+    createdAt: new Date(),
     reviews: []
   },
   {
@@ -155,6 +164,36 @@ export const usersMock: User[] = [
     payments: null,
     sentChats: [],
     receivedChats: [],
+    notifications: [],
+    createdAt: new Date(),
+    reviews: []
+  },
+  {
+    id: '123e4567-e89b-12d3-a456-426614174004',
+    name: 'Eve Martinez',
+    email: 'eve.martinez@mail.com',
+    phone: '+5412345682',
+    address: '987 Birch St, Central City',
+    customerId: '45980123',
+    deleted_at: null,
+    role: Role.USER,
+    status: Status.INACTIVE,
+    credential: {
+      id: '123e4567-e89b-12d3-a456-426614174004',
+      password: 'Pass1234!',
+      deleted_at: null,
+      user: null,
+    },
+    cats: [],
+    caretakers: [],
+    reservations: [],
+    sentMessages: [],
+    receivedMessages: [],
+    payments: null,
+    sentChats: [],
+    receivedChats: [],
+    notifications: [],
+    createdAt: new Date(),
     reviews: []
   },
 ];
