@@ -19,7 +19,8 @@ import { LocationsModule } from './modules/locations/locations.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { MessagesModule } from './modules/messages/messages.module';
 import { MailsModule } from './modules/mail/mail.module';
-
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { CronsModule } from './cron/cron.module';
 
 @Module({
   imports: [
@@ -45,16 +46,18 @@ import { MailsModule } from './modules/mail/mail.module';
     CatsModule,
     ChatHistoryModule,
     CredentialsModule,
+    CronsModule,
     MediaModule,
     ReservationsModule,
     UsersModule,
     SeedModule,
     LocationsModule,
     PaymentsModule,
-    MessagesModule, 
+    MessagesModule,
     MailsModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
