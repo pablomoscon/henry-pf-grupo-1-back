@@ -38,7 +38,8 @@ export class MessagesController {
       createMessageDto,
       file,
     );
-    return new MessageResponseDto(newMessage);
+    /* return new MessageResponseDto(newMessage); */
+    return newMessage
   }
 
   @Get()

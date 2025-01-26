@@ -3,9 +3,9 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsBoolean, IsInt } from 'class-validator';
 import { Room } from '../../../modules/rooms/entities/room.entity';
 import { Caretaker } from '../../../modules/caretakers/entities/caretaker.entity';
-
 @Entity('locations')
 export class Location {
+
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty({
     description: 'Unique identifier for the location',

@@ -8,8 +8,8 @@ export class CaretakersController {
   constructor(private readonly caretakersService: CaretakersService) {}
 
   @Post()
-  create(@Body() createCaretakerDto: CreateCaretakerDto) {
-    return this.caretakersService.create(createCaretakerDto);
+  async create(@Body() createCaretakerDto: CreateCaretakerDto) {
+    return await this.caretakersService.create(createCaretakerDto);
   }
 
   @Get()

@@ -1,11 +1,48 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCaretakerDto } from './dto/create-caretaker.dto';
 import { UpdateCaretakerDto } from './dto/update-caretaker.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Caretaker } from './entities/caretaker.entity';
+import { Repository } from 'typeorm';
+import { UsersService } from '../users/users.service';
+import { ReservationsService } from '../reservations/reservations.service';
+import { LocationsService } from '../locations/locations.service';
 
 @Injectable()
 export class CaretakersService {
-  create(createCaretakerDto: CreateCaretakerDto) {
-    return 'This action adds a new caretaker';
+
+  constructor(
+    @InjectRepository(Caretaker) private readonly caretakerRepository: Repository<Caretaker>,
+    private readonly usersService: UsersService,
+    private readonly locationsService: LocationsService,
+    private readonly reservationsService: ReservationsService,
+  ) { }
+
+  async create(createCaretakerDto: CreateCaretakerDto): Promise<Caretaker> {
+    const user = await this.usersService.findOne(createCaretakerDto.userId);
+    const location = await this.locationsService.findOne(createCaretakerDto.locationId);
+    const reservations = [];
+    for (const reservationId of createCaretakerDto.reservationsId) {
+      const reservation = await this.reservationsService.findOne(reservationId);  // Suponiendo que existe un método findOne
+      if (reservation) {
+        reservations.push(reservation);
+      } else {
+        console.error(`Reservation with id ${reservationId} not found`);
+      }
+    };
+
+    if (!user || !location) {
+      throw new Error('User or Location not found');
+    }
+
+    const newCaretaker = this.caretakerRepository.create({
+      ...createCaretakerDto,
+      user,
+      location,
+      reservations,
+    });
+
+    return await this.caretakerRepository.save(newCaretaker);
   }
 
   findAll() {

@@ -27,8 +27,8 @@ export class UsersController {
 
   @Get()
   @ApiBearerAuth()
-  @Roles(Role.ADMIN, Role.CARETAKER)
-  @UseGuards(AuthGuard, RolesGuard)
+/*   @Roles(Role.ADMIN, Role.CARETAKER)
+  @UseGuards(AuthGuard, RolesGuard) */
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query('page') page: string = '1',

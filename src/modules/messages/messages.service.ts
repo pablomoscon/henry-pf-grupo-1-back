@@ -36,12 +36,10 @@ export class MessagesService {
     }
 
     const sender = await this.usersService.findOne(createMessageDto.sender);
-    const receiver = await this.usersService.findOne(createMessageDto.receiver);
 
     const newMessage = this.messageRepository.create({
       ...createMessageDto,
       sender,
-      receiver,
       media_url: mediaUrl,
     });
 
@@ -49,7 +47,9 @@ export class MessagesService {
   };
 
   async findAll(): Promise<Message[]> {
-    return this.messageRepository.find();
+    return this.messageRepository.find({
+      relations: ['sender', 'receivers'],
+    });
   }
 
   async findOne(id: string): Promise<Message> {
@@ -87,5 +87,5 @@ export class MessagesService {
 
   async remove(id: string): Promise<void> {
     await this.messageRepository.delete(id);
-  }
+  };
 }

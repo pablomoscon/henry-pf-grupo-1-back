@@ -5,10 +5,6 @@ import { MessageType } from 'src/enums/message-type';
 export class CreateMessageDto {
 
 
-    @ApiProperty({ description: 'Type of the message', example: 'CHAT' })
-    @IsEnum(MessageType)
-    type: MessageType;
-
     @ApiProperty({
         description: 'Content of the message',
         example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -20,10 +16,6 @@ export class CreateMessageDto {
     @ApiProperty({ description: 'Sender of the message' })
     @IsUUID()
     sender: string;
-
-    @ApiProperty({ description: 'Receiver of the message' })
-    @IsUUID()
-    receiver: string;
 
     @ApiProperty({
         description: 'ID of the associated reservation (optional)',

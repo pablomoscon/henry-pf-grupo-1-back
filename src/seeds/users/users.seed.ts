@@ -35,7 +35,7 @@ export class UsersSeed {
           where: { id: userData.credential.id },
         });
         user.cats = userData.cats;
-        user.caretakers = userData.caretakers;
+        user.caretakerProfile = userData.caretakerProfile;
         user.reservations = userData.reservations;
         user.sentMessages = userData.sentMessages;
         user.receivedMessages = userData.receivedMessages;

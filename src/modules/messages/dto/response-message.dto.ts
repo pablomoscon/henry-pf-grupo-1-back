@@ -50,13 +50,13 @@ export class MessageResponseDto {
         description: 'ID of the sender',
         example: '123e4567-e89b-12d3-a456-426614174001',
     })
-    sender_id: string;
+    senderId: string;
 
     @ApiProperty({
         description: 'ID of the receiver',
         example: '123e4567-e89b-12d3-a456-426614174002',
     })
-    receiver_id: string;
+    receiversIds: string[];
 
     constructor(message: Message) {
         this.id = message.id;
@@ -65,7 +65,7 @@ export class MessageResponseDto {
         this.uploaded_at = message.uploaded_at;
         this.body = message.body;
         this.timestamp = message.timestamp;
-        this.sender_id = message.sender.id;
-        this.receiver_id = message.receiver.id;
+        this.senderId = message.sender.id;
+        this.receiversIds = message.receivers.map(receiver => receiver.id);
     };
 }

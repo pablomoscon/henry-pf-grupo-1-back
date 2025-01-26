@@ -1,10 +1,11 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  OneToOne,
-  JoinColumn,
+    PrimaryGeneratedColumn,
+    Column,
+    OneToMany,
+    OneToOne,
+    JoinColumn,
+    ManyToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional, IsDate } from 'class-validator';
@@ -49,7 +50,6 @@ export class User {
   @IsString()
   @IsOptional()
   customerId: string;
-
 
   @Column({ type: 'varchar', length: 20, nullable: true })
   @ApiProperty({
@@ -110,8 +110,9 @@ export class User {
     description: 'List of caretakers managed by the user',
     type: () => [Caretaker],
   })
-  @OneToMany(() => Caretaker, (caretaker) => caretaker.user)
-  caretakers: Caretaker[];
+  @OneToOne(() => Caretaker, { nullable: true })
+  @JoinColumn()
+  caretakerProfile: Caretaker;
 
   @ApiProperty({
     description: 'List of reservations made by the user',
@@ -141,11 +142,11 @@ export class User {
   @OneToMany(() => Message, (message) => message.sender)
   sentMessages: ChatHistory[];
 
+  @ManyToMany(() => Message, (message) => message.receivers)
   @ApiProperty({
     description: 'List of messages received by the user',
     type: () => [Message],
   })
-  @OneToMany(() => Message, (message) => message.receiver)
   receivedMessages: Message[];
 
   @ApiProperty({
@@ -155,3 +156,4 @@ export class User {
   @OneToMany(() => Payment, (payment) => payment.user)
   payments?: Payment[];
 }
+
