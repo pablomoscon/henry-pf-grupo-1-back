@@ -14,11 +14,9 @@ import { NotificationGateway } from './notification.gateway';
 export class NotificationsService {
   constructor(
     @InjectRepository(Notification)
-    // private readonly notificationsRepository: Repository<Notification>,
-    // private readonly notificationGateway: NotificationGateway,
     @InjectRepository(Notification)
     private readonly notificationsRepository: Repository<Notification>,
-    @Inject(forwardRef(() => NotificationGateway)) // Usa forwardRef aquí
+    @Inject(forwardRef(() => NotificationGateway))
     private readonly notificationGateway: NotificationGateway,
   ) {}
 
@@ -29,7 +27,6 @@ export class NotificationsService {
     const savedNotification =
       await this.notificationsRepository.save(notification);
 
-    // Enviar la notificación en tiempo real
     this.notificationGateway.sendNotification(
       createNotificationDto.userId,
       createNotificationDto.message,

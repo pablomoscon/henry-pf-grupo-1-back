@@ -11,7 +11,7 @@ import { NotificationsService } from './notifications.service';
 import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 
-@WebSocketGateway({ cors: true })
+@WebSocketGateway(3030, { cors: true })
 export class NotificationGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
@@ -22,7 +22,7 @@ export class NotificationGateway
   private readonly logger = new Logger(NotificationGateway.name);
 
   constructor(
-    @Inject(forwardRef(() => NotificationsService)) // Usa forwardRef aquí también
+    @Inject(forwardRef(() => NotificationsService))
     private readonly notificationsService: NotificationsService,
     private readonly authService: AuthService,
   ) {
@@ -34,7 +34,6 @@ export class NotificationGateway
     const token = client.handshake.auth.token;
 
     try {
-      // Usa el AuthService para validar el token y extraer el userId
       const userId = await this.authService.extractUserIdFromToken(token);
 
       if (userId) {
@@ -57,7 +56,6 @@ export class NotificationGateway
     }
   }
 
-  // Método para enviar notificaciones en tiempo real
   async sendNotification(userId: string, message: string) {
     const socketId = [...this.connectedClients.entries()].find(
       ([_, id]) => id === userId,
@@ -81,12 +79,5 @@ export class NotificationGateway
     const notifications =
       await this.notificationsService.getUnreadNotifications(userId);
     client.emit('unread-notifications', notifications);
-  }
-
-  // Utilidad para extraer userId desde el token
-  private validateAndExtractUserId(token: string): string {
-    // Implementa la validación JWT (usando algún servicio como authService.verifyToken)
-    // Retorna el userId si es válido
-    return 'decodedUserId'; // Placeholder
   }
 }
