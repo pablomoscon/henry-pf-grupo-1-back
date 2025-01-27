@@ -32,14 +32,19 @@ export class NotificationGateway
 
   async handleConnection(client: Socket) {
     const token = client.handshake.auth.token;
+    this.logger.log(`Conexión recibida con token: ${token}`);
 
     try {
       const userId = await this.authService.extractUserIdFromToken(token);
+      this.logger.log(`Usuario con token ${token} es: ${userId}`);
 
       if (userId) {
         this.connectedClients.set(client.id, userId);
         this.logger.log(`Usuario conectado: ${userId} (Socket: ${client.id})`);
       } else {
+        this.logger.log(
+          `Usuario no autenticado. Desconectando socket ${client.id}`,
+        );
         client.disconnect();
       }
     } catch (err) {
@@ -53,6 +58,10 @@ export class NotificationGateway
     if (userId) {
       this.logger.log(`Usuario desconectado: ${userId} (Socket: ${client.id})`);
       this.connectedClients.delete(client.id);
+    } else {
+      this.logger.log(
+        `Cliente desconectado sin usuario asociado: ${client.id}`,
+      );
     }
   }
 
@@ -61,12 +70,20 @@ export class NotificationGateway
       ([_, id]) => id === userId,
     )?.[0];
 
+    this.logger.log(
+      `Enviando notificación a usuario: ${userId} con mensaje: ${message}`,
+    );
+
     if (socketId) {
       const client = this.server.sockets.sockets.get(socketId);
       if (client) {
         client.emit('new-notification', { message });
         this.logger.log(`Notificación enviada a usuario ${userId}: ${message}`);
+      } else {
+        this.logger.log(`No se encontró cliente para el usuario ${userId}`);
       }
+    } else {
+      this.logger.log(`No se encontró socketId para el usuario ${userId}`);
     }
   }
 
@@ -76,8 +93,14 @@ export class NotificationGateway
     client: Socket,
     @MessageBody() userId: string,
   ) {
+    this.logger.log(
+      `Recibiendo solicitud de notificaciones no leídas para usuario ${userId}`,
+    );
     const notifications =
       await this.notificationsService.getUnreadNotifications(userId);
     client.emit('unread-notifications', notifications);
+    this.logger.log(
+      `Notificaciones enviadas para ${userId}: ${notifications.length}`,
+    );
   }
 }

@@ -29,7 +29,7 @@ export class CronService {
 
   ////////// Ejecución cada 30 seg para probar nuevas notificaciones/////////
 
-  // @Cron(CronExpression.EVERY_30_SECONDS)
+  // @Cron(CronExpression.EVERY_MINUTE)
   // async handleTestTasks() {
   //   console.log('Cron ejecutándose...');
   //   await this.greetUserTask.execute();
