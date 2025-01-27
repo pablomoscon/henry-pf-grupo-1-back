@@ -8,7 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { NotificationsService } from './notifications.service';
-import { Logger } from '@nestjs/common';
+import { forwardRef, Inject, Logger } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 
 @WebSocketGateway({ cors: true })
@@ -22,9 +22,13 @@ export class NotificationGateway
   private readonly logger = new Logger(NotificationGateway.name);
 
   constructor(
+    @Inject(forwardRef(() => NotificationsService)) // Usa forwardRef aquí también
     private readonly notificationsService: NotificationsService,
     private readonly authService: AuthService,
-  ) {}
+  ) {
+    console.log('notificationsService:', notificationsService);
+    console.log('authService:', authService);
+  }
 
   async handleConnection(client: Socket) {
     const token = client.handshake.auth.token;

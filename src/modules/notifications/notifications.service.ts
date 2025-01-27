@@ -1,16 +1,24 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { User } from '../users/entities/user.entity';
 import { NotificationGateway } from './notification.gateway';
 
 @Injectable()
 export class NotificationsService {
   constructor(
     @InjectRepository(Notification)
+    // private readonly notificationsRepository: Repository<Notification>,
+    // private readonly notificationGateway: NotificationGateway,
+    @InjectRepository(Notification)
     private readonly notificationsRepository: Repository<Notification>,
+    @Inject(forwardRef(() => NotificationGateway)) // Usa forwardRef aquí
     private readonly notificationGateway: NotificationGateway,
   ) {}
 
