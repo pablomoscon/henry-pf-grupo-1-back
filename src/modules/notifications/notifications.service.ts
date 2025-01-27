@@ -4,19 +4,30 @@ import { Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { User } from '../users/entities/user.entity';
+import { NotificationGateway } from './notification.gateway';
 
 @Injectable()
 export class NotificationsService {
   constructor(
     @InjectRepository(Notification)
     private readonly notificationsRepository: Repository<Notification>,
+    private readonly notificationGateway: NotificationGateway,
   ) {}
 
   async create(createNotificationDto: CreateNotificationDto) {
     const notification = this.notificationsRepository.create(
       createNotificationDto,
     );
-    return await this.notificationsRepository.save(notification);
+    const savedNotification =
+      await this.notificationsRepository.save(notification);
+
+    // Enviar la notificación en tiempo real
+    this.notificationGateway.sendNotification(
+      createNotificationDto.userId,
+      createNotificationDto.message,
+    );
+
+    return savedNotification;
   }
 
   async markAsRead(notificationId: string) {

@@ -1,14 +1,19 @@
-import { BadRequestException, HttpException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { SignInAuthDto } from "./dto/signin-auth.dto";
-import { SignupAuthDto } from "./dto/signup-auth.dto";
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { SignInAuthDto } from './dto/signin-auth.dto';
+import { SignupAuthDto } from './dto/signup-auth.dto';
 import { UsersService } from '../users/users.service';
-import { CredentialsService } from "../credentials/credentials.service";
-import { CreateUserDto } from "../users/dto/create-user.dto";
-import { CreateCredentialDto } from "../credentials/dto/create-credential.dto";
-import { Credential } from "../credentials/entities/credential.entity";
-import { User } from "../users/entities/user.entity";
-import { JwtService } from "@nestjs/jwt";
-import { oauth2Client } from "src/config/google-auth.config";
+import { CredentialsService } from '../credentials/credentials.service';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { CreateCredentialDto } from '../credentials/dto/create-credential.dto';
+import { Credential } from '../credentials/entities/credential.entity';
+import { User } from '../users/entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import { oauth2Client } from 'src/config/google-auth.config';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -17,7 +22,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly credentialsService: CredentialsService,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
   async signUp(signUpUser: SignupAuthDto) {
     if (signUpUser.password !== signUpUser.confirmPassword) {
@@ -29,10 +34,12 @@ export class AuthService {
       throw new BadRequestException('User already exists');
     }
 
-    const { email, name, phone, address, customerId, role, password } = signUpUser;
+    const { email, name, phone, address, customerId, role, password } =
+      signUpUser;
 
     const createCredentialsDto: CreateCredentialDto = { password };
-    const credential: Credential = await this.credentialsService.create(createCredentialsDto);
+    const credential: Credential =
+      await this.credentialsService.create(createCredentialsDto);
 
     const createUserDto: CreateUserDto = {
       email,
@@ -44,12 +51,17 @@ export class AuthService {
       ...(role && { role }),
     };
 
-    const userWithCredentials = await this.usersService.create(createUserDto, credential);
+    const userWithCredentials = await this.usersService.create(
+      createUserDto,
+      credential,
+    );
 
-    await this.credentialsService.assignUserToCredentials(credential.id, { user: userWithCredentials });
+    await this.credentialsService.assignUserToCredentials(credential.id, {
+      user: userWithCredentials,
+    });
 
     return userWithCredentials;
-  };
+  }
 
   async signIn(signInAuthDto: SignInAuthDto) {
     const { email, password } = signInAuthDto;
@@ -60,7 +72,10 @@ export class AuthService {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const isPasswordValid = await this.credentialsService.validatePassword(user.credential.id, password);
+    const isPasswordValid = await this.credentialsService.validatePassword(
+      user.credential.id,
+      password,
+    );
 
     if (!isPasswordValid) {
       throw new BadRequestException('Invalid credentials');
@@ -79,7 +94,7 @@ export class AuthService {
         customerId: user.customerId,
       },
     };
-  };
+  }
 
   private async createToken(user: User) {
     const payload = {
@@ -92,25 +107,29 @@ export class AuthService {
       address: user.address,
       customerId: user.customerId,
     };
-    return this.jwtService.signAsync(payload)
-  };
+    return this.jwtService.signAsync(payload);
+  }
 
   async getUserInfo(code: string): Promise<any> {
     const { tokens } = await oauth2Client.getToken(code);
     if (!tokens) {
-      throw new Error("No tokens received");
+      throw new Error('No tokens received');
     }
     oauth2Client.setCredentials(tokens);
 
     const [userInfoData, peopleData] = await Promise.all([
-      oauth2Client.request({ url: 'https://www.googleapis.com/oauth2/v3/userinfo' }).then(res => res.data),
-      oauth2Client.request({
-        url: 'https://people.googleapis.com/v1/people/me?personFields=phoneNumbers,addresses'
-      }).then(res => res.data),
+      oauth2Client
+        .request({ url: 'https://www.googleapis.com/oauth2/v3/userinfo' })
+        .then((res) => res.data),
+      oauth2Client
+        .request({
+          url: 'https://people.googleapis.com/v1/people/me?personFields=phoneNumbers,addresses',
+        })
+        .then((res) => res.data),
     ]);
 
     return { ...(userInfoData as object), ...(peopleData as object) };
-  };
+  }
 
   async googleSignUp(code: string): Promise<any> {
     const userInfo = await this.getUserInfo(code);
@@ -119,10 +138,13 @@ export class AuthService {
     if (!user) {
       const createCredentialsDto: CreateCredentialDto = {
         googleId: userInfo.sub,
-        password: crypto.randomBytes(16).toString('hex')
+        password: crypto.randomBytes(16).toString('hex'),
       };
 
-      const credential: Credential = await this.credentialsService.createGoogleCredential(createCredentialsDto);
+      const credential: Credential =
+        await this.credentialsService.createGoogleCredential(
+          createCredentialsDto,
+        );
 
       const createUserDto: CreateUserDto = {
         email: userInfo.email,
@@ -132,9 +154,20 @@ export class AuthService {
         customerId: userInfo.customerId,
       };
       user = await this.usersService.create(createUserDto, credential);
-      await this.credentialsService.assignUserToCredentials(credential.id, { user });
+      await this.credentialsService.assignUserToCredentials(credential.id, {
+        user,
+      });
     }
     const token = await this.createToken(user);
     return { token, user };
-  };
+  }
+
+  async extractUserIdFromToken(token: string): Promise<string> {
+    try {
+      const decoded = await this.jwtService.verifyAsync(token);
+      return decoded.sub; // contiene userId segun payload
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
+  }
 }
