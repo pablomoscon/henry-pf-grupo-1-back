@@ -10,7 +10,7 @@ export class ReviewsSeed {
     constructor(
         @InjectRepository(Review)
         private readonly reviewRepository: Repository<Review>,
-        private readonly usersService: UsersService,  // Inyectar UsersService
+        private readonly usersService: UsersService,  
     ) { }
 
     async seed() {
@@ -20,7 +20,7 @@ export class ReviewsSeed {
 
         for (const reviewData of reviewsMock) {
             if (!existingReviews.includes(reviewData.id)) {
-                // Crear la reseña
+                
                 const review = new Review();
                 review.id = reviewData.id;
                 review.textBody = reviewData.textBody;
@@ -30,14 +30,14 @@ export class ReviewsSeed {
                 const user = await this.usersService.findOne(reviewData.user.id);
                 if (!user) {
                     console.error(`User with id ${reviewData.user.id} not found.`);
-                    continue; // Continuar con el siguiente dato
-                }
+                    continue; 
+                };
 
                 review.user = user;
 
-                // Guardar la reseña en la base de datos
+             
                 await this.reviewRepository.save(review);
             }
         }
-    }
+    };
 }
