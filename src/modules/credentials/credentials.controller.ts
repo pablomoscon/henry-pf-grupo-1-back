@@ -30,5 +30,5 @@ export class CredentialsController {
       updateCredentialDto.currentPassword,
       updateCredentialDto.newPassword
     );
-  }
+  };
 }
