@@ -109,12 +109,11 @@ export class User {
   @OneToMany(() => Cat, (cat) => cat.user)
   cats: Cat[];
 
-  @ApiProperty({
-    description: 'List of caretakers managed by the user',
-    type: () => [Caretaker],
-  })
   @OneToOne(() => Caretaker, { nullable: true })
   @JoinColumn()
+  @ApiProperty({
+    description: 'Caretaker profile associated with the user',
+  })
   caretakerProfile: Caretaker;
 
   @ApiProperty({
@@ -143,7 +142,7 @@ export class User {
     type: () => [Message],
   })
   @OneToMany(() => Message, (message) => message.sender)
-  sentMessages: ChatHistory[];
+  sentMessages: Message[];
 
   @ManyToMany(() => Message, (message) => message.receivers)
   @ApiProperty({
