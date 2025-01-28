@@ -48,7 +48,7 @@ export class Review {
     @IsNumber({}, { message: 'The rating must be a number.' })
     @Min(1, { message: 'The minimum rating is 1.' })
     @Max(5, { message: 'The maximum rating is 5.' })
-    calification: number;
+    rating: number;
 
     @ApiProperty({
         description: 'User who submitted the review',

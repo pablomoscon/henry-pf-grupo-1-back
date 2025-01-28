@@ -18,8 +18,6 @@ export class ReviewsController {
   };
 
   @Get()
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query('page') page: string = '1',

@@ -24,7 +24,7 @@ export class ReviewsSeed {
                 const review = new Review();
                 review.id = reviewData.id;
                 review.textBody = reviewData.textBody;
-                review.calification = reviewData.calification;
+                review.rating = reviewData.rating;
                 review.deleted_at = reviewData.deleted_at || null;
 
                 const user = await this.usersService.findOne(reviewData.user.id);
