@@ -4,7 +4,6 @@ import { MessageType } from 'src/enums/message-type';
 
 export class CreatePostDto {
 
-
     @ApiProperty({ description: 'Type of the message', example: 'CHAT' })
     @IsEnum(MessageType)
     type: MessageType;

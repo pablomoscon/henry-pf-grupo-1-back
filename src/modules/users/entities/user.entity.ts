@@ -5,7 +5,7 @@ import {
   OneToMany,
   OneToOne,
   JoinColumn,
-  CreateDateColumn,
+  ManyToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional, IsDate } from 'class-validator';
@@ -18,8 +18,6 @@ import { Role } from 'src/enums/roles.enum';
 import { Status } from 'src/enums/status.enum';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
 import { Message } from 'src/modules/messages/entities/message.entity';
-import { Notification } from 'src/modules/notifications/entities/notification.entity';
-import { Review } from 'src/modules/reviews/entities/review.entity';
 
 @Entity('users')
 export class User {
@@ -112,8 +110,9 @@ export class User {
     description: 'List of caretakers managed by the user',
     type: () => [Caretaker],
   })
-  @OneToMany(() => Caretaker, (caretaker) => caretaker.user)
-  caretakers: Caretaker[];
+  @OneToOne(() => Caretaker, { nullable: true })
+  @JoinColumn()
+  caretakerProfile: Caretaker;
 
   @ApiProperty({
     description: 'List of reservations made by the user',
@@ -122,7 +121,6 @@ export class User {
   @OneToMany(() => Reservation, (reservation) => reservation.user)
   reservations: Reservation[];
 
-  ///////////////////////Esto vuela////////////////////////
   @ApiProperty({
     description: 'List of chat messages sent by the user',
     type: () => [ChatHistory],
@@ -136,7 +134,6 @@ export class User {
   })
   @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.receiver)
   receivedChats: ChatHistory[];
-  ///////////////////////Esto vuela////////////////////////
 
   @ApiProperty({
     description: 'List of messages sent by the user',
@@ -145,11 +142,11 @@ export class User {
   @OneToMany(() => Message, (message) => message.sender)
   sentMessages: ChatHistory[];
 
+  @ManyToMany(() => Message, (message) => message.receivers)
   @ApiProperty({
     description: 'List of messages received by the user',
     type: () => [Message],
   })
-  @OneToMany(() => Message, (message) => message.receiver)
   receivedMessages: Message[];
 
   @ApiProperty({
@@ -158,24 +155,4 @@ export class User {
   })
   @OneToMany(() => Payment, (payment) => payment.user)
   payments?: Payment[];
-
-  @ApiProperty({
-    description: 'List of notifications associated with the user',
-  })
-  @OneToMany(() => Notification, (notification) => notification.user)
-  notifications: Notification[];
-
-  @ApiProperty({
-    description: 'List of reviews submitted by the user',
-  })
-  @OneToMany(() => Review, (review) => review.user)
-  reviews: Review[];
-
-  @CreateDateColumn()
-  @ApiProperty({
-    description: 'Timestamp when the user was created',
-    example: '2023-01-01T00:00:00.000Z',
-  })
-  createdAt: Date;
-
 }

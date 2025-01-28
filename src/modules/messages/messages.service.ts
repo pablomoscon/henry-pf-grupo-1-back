@@ -49,7 +49,6 @@ export class MessagesService {
       throw new Error('One or more receivers not found');
     }
 
-
     const newPost = this.messageRepository.create({
       ...createPostDto,
       sender,
@@ -71,8 +70,7 @@ export class MessagesService {
       relations: ['sender', 'receivers'],
       order: { timestamp: 'ASC' },
     });
-  }
-
+  };
 
   async findAll() {
     return await this.messageRepository.find({
