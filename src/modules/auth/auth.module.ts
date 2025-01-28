@@ -6,10 +6,11 @@ import { User } from '../users/entities/user.entity';
 import { Credential } from '../credentials/entities/credential.entity';
 import { UsersModule } from '../users/users.module';
 import { CredentialsModule } from '../credentials/credentials.module';
+import { MailsModule } from '../mail/mail.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Credential]), UsersModule, CredentialsModule,
+    TypeOrmModule.forFeature([User, Credential]), UsersModule, CredentialsModule, MailsModule
   ],
   controllers: [AuthController],
   providers: [AuthService],
