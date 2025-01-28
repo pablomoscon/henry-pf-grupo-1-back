@@ -140,7 +140,7 @@ export class User {
     type: () => [Message],
   })
   @OneToMany(() => Message, (message) => message.sender)
-  sentMessages: ChatHistory[];
+  sentMessages: Message[];
 
   @ManyToMany(() => Message, (message) => message.receivers)
   @ApiProperty({
