@@ -6,6 +6,8 @@ import { Cat } from "src/modules/cats/entities/cat.entity";
 import { Room } from "src/modules/rooms/entities/room.entity";
 import { IsOptional } from "class-validator";
 import { Payment } from "src/modules/payments/entities/payment.entity";
+import { Caretaker } from "src/modules/caretakers/entities/caretaker.entity";
+import { Message } from "src/modules/messages/entities/message.entity";
 
 @Entity("reservations")
 export class Reservation {
@@ -94,8 +96,16 @@ export class Reservation {
   @ApiProperty({
     description: 'List of payments associated with the reservation',
     type: () => [Payment],
+    isArray: true
   })
   @OneToMany(() => Payment, (payment) => payment.reservation)
   payments?: Payment[];
-  
+
+  @ApiProperty({
+    description: 'List of messages associated with the reservation',
+    type: () => [Message],
+    isArray: true
+  })
+  @OneToMany(() => Message, (message) => message.reservation)
+  messages: Message[];
 }
