@@ -6,6 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as Handlebars from 'handlebars';
 import { PaymentsService } from '../payments/payments.service';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class MailService {
@@ -19,7 +20,6 @@ export class MailService {
   }
 
   async sendInitiatedReservation(reservation: Reservation): Promise<void> {
-    try {
       const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'reservation-initiated.hbs');
       const templateSource = fs.readFileSync(templatePath, 'utf8');
       const template = Handlebars.compile(templateSource);
@@ -59,13 +59,10 @@ export class MailService {
       };
 
       await this.transporter.sendMail(mailOptions);
-    } catch (error) {
-      console.error('Error sending initiated confirmation email:', error);
-    }
   };
 
   async sendConfirmatedReservation(reservation: Reservation): Promise<void> {
-    try {
+    
       const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'reservation-confirmated.hbs');
       const templateSource = fs.readFileSync(templatePath, 'utf8');
       const template = Handlebars.compile(templateSource);
@@ -102,8 +99,41 @@ export class MailService {
       };
 
       await this.transporter.sendMail(mailOptions);
-    } catch (error) {
-      console.error('Error sending initiated confirmation email:', error);
-    }
   };  
+
+  async sendPasswordChangeAlert(user: User): Promise<void> {
+
+    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'send-confirmated-reservation.hbs');
+    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    const template = Handlebars.compile(templateSource);
+
+    const { name, email } = user;
+    const password = user.credential.password;
+
+    const data = {
+      name,
+      password,
+      email
+    };
+    console.log(`Datos: ${name}, ${password}, ${email}`);
+    
+
+    const htmlContent = template(data);
+
+    const mailOptions = {
+      from: `"The Fancy Box" <${process.env.SMTP_FROM || 'your-email@example.com'}>`,
+      to: email,
+      subject: 'Reset your Password',
+      html: htmlContent,
+      attachments: [
+        {
+          filename: 'LogoApp.png',
+          path: 'https://res.cloudinary.com/dofznnphj/image/upload/v1738092721/LogoApp_bjtclb.png',
+          cid: 'logoApp',
+        },
+      ],
+    };
+
+    await this.transporter.sendMail(mailOptions);
+  };
 }
