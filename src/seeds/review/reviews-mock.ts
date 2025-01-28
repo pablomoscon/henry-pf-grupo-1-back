@@ -5,37 +5,37 @@ import { User } from 'src/modules/users/entities/user.entity';
 export const reviewsMock: Review[] = [
     {
         id: '001e4567-e89b-12d3-a456-426614174000',
-        textBody: 'The service was amazing! Highly recommended.',
+        textBody: 'The service was absolutely amazing! Everyone was super friendly and helpful and they went above and beyond to meet my expectations. I’ll definitely come back again',
         calification: 5,
         user: { id: '123e4567-e89b-12d3-a456-426614174000' } as User, 
         deleted_at: null,
     },
     {
         id: '002e4567-e89b-12d3-a456-426614174001',
-        textBody: 'The waiting time was a bit long, but good service overall.',
+        textBody: 'It was a good experience overall. The staff was polite, but the waiting time was a bit longer than expected. Still, I’d recommend it to others.',
         calification: 4,
         user: { id: '123e4567-e89b-12d3-a456-426614174001' } as User, 
         deleted_at: null,
     },
     {
         id: '003e4567-e89b-12d3-a456-426614174002',
-        textBody: 'Average experience, could use some improvements.',
+        textBody: 'The experience was okay, but I believe there is room for improvement in terms of organization and communication. It felt a bit rushed.',
         calification: 3,
         user: { id: '123e4567-e89b-12d3-a456-426614174002' } as User, 
         deleted_at: null,
     },
     {
         id: '004e4567-e89b-12d3-a456-426614174003',
-        textBody: 'Exceptional service! Everything was perfect.',
+        textBody: 'I’m beyond satisfied with the attention to detail and the quality of the service provided. It was such a smooth process from start to finish!',
         calification: 5,
         user: { id: '123e4567-e89b-12d3-a456-426614174003' } as User, 
         deleted_at: null,
     },
     {
         id: '005e4567-e89b-12d3-a456-426614174004',
-        textBody: 'Good service, but not extraordinary.',
+        textBody: 'The service met my expectations, nothing out of the ordinary but still a good experience overall. I appreciate their effort."',
         calification: 4,
         user: { id: '123e4567-e89b-12d3-a456-426614174004' } as User, 
-        deleted_at: new Date('2025-01-15T10:00:00Z'),
+        deleted_at: null,
     },
 ];
