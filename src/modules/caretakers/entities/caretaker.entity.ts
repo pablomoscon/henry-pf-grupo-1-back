@@ -18,8 +18,7 @@ export class Caretaker {
   @OneToOne(() => User, (user) => user.caretakerProfile)
   @ApiProperty({
     description: 'User who is the caretaker',
-    example: 'Cesar Millan',
-    type: () => User,
+    example: 'Cesar Millan'
   })
   user: User;
 

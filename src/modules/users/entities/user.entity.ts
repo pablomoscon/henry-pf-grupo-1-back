@@ -148,7 +148,6 @@ export class User {
   sentMessages: Message[];
 
   @ManyToMany(() => Message, (message) => message.receivers)
-  @JoinTable()
   @ApiProperty({
     description: 'List of messages received by the user',
     type: () => [Message],

@@ -67,16 +67,14 @@ export class Message {
 
   @ManyToOne(() => User, (user) => user.sentMessages)
   @ApiProperty({
-    description: 'Sender of the message',
-    type: () => User,
+    description: 'Sender of the message'
    })
   sender: User;
 
   @ManyToMany(() => User, (user) => user.receivedMessages)
   @JoinTable()
   @ApiProperty({
-    description: 'Receivers of the message',
-    type: () => [User],
+    description: 'Receivers of the message'
    })
   receivers: User[];
 
