@@ -102,6 +102,14 @@ export class Reservation {
   payments?: Payment[];
 
   @ApiProperty({
+    description: 'Caretakers associated with the reservation',
+    type: () => [Caretaker],
+    isArray: true
+  })
+  @ManyToMany(() => Caretaker, (caretaker) => caretaker.reservations)
+  caretakers: Caretaker[];
+
+  @ApiProperty({
     description: 'List of messages associated with the reservation',
     type: () => [Message],
     isArray: true
