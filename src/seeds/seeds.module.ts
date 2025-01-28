@@ -13,11 +13,14 @@ import { SeedManager } from './seed.manager';
 import { LocationsModule } from '../modules/locations/locations.module';
 import { Cat } from 'src/modules/cats/entities/cat.entity';
 import { CatsSeed } from './cats/cats-seed';
+import { Review } from 'src/modules/reviews/entities/review.entity';
+import { ReviewsSeed } from './review/reviews-seed';
+import { UsersModule } from 'src/modules/users/users.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Room, Reservation, Credential, Cat]),
-    LocationsModule,
+    TypeOrmModule.forFeature([User, Room, Reservation, Credential, Cat, Review]),
+    LocationsModule, UsersModule
   ],
   providers: [
     SeedManager,
@@ -26,7 +29,8 @@ import { CatsSeed } from './cats/cats-seed';
     LocationsSeed,
     ReservationsSeed,
     CredentialsSeed,
-    CatsSeed
+    CatsSeed,
+    ReviewsSeed
   ],
   exports: [SeedManager],
 })

@@ -21,6 +21,7 @@ import { MessagesModule } from './modules/messages/messages.module';
 import { MailsModule } from './modules/mail/mail.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { CronsModule } from './cron/cron.module';
+import { ReviewsModule } from './modules/reviews/reviews.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { CronsModule } from './cron/cron.module';
     MessagesModule,
     MailsModule,
     NotificationsModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -50,6 +50,7 @@ export const usersMock: User[] = [
     payments: null,
     notifications: [],
     createdAt: new Date('2024-01-26T09:00:00Z'),
+    reviews:[]
   },
   {
     id: '123e4567-e89b-12d3-a456-426614174001',
@@ -93,6 +94,7 @@ export const usersMock: User[] = [
     receivedChats: [],
     notifications: [],
     createdAt: new Date(),
+    reviews: []
   },
   {
     id: '123e4567-e89b-12d3-a456-426614174002',
@@ -136,6 +138,7 @@ export const usersMock: User[] = [
     receivedChats: [],
     notifications: [],
     createdAt: new Date(),
+    reviews: []
   },
   {
     id: '123e4567-e89b-12d3-a456-426614174003',
@@ -163,5 +166,34 @@ export const usersMock: User[] = [
     receivedChats: [],
     notifications: [],
     createdAt: new Date(),
+    reviews: []
+  },
+  {
+    id: '123e4567-e89b-12d3-a456-426614174004',
+    name: 'Eve Martinez',
+    email: 'eve.martinez@mail.com',
+    phone: '+5412345682',
+    address: '987 Birch St, Central City',
+    customerId: '45980123',
+    deleted_at: null,
+    role: Role.USER,
+    status: Status.INACTIVE,
+    credential: {
+      id: '123e4567-e89b-12d3-a456-426614174004',
+      password: 'Pass1234!',
+      deleted_at: null,
+      user: null,
+    },
+    cats: [],
+    caretakers: [],
+    reservations: [],
+    sentMessages: [],
+    receivedMessages: [],
+    payments: null,
+    sentChats: [],
+    receivedChats: [],
+    notifications: [],
+    createdAt: new Date(),
+    reviews: []
   },
 ];

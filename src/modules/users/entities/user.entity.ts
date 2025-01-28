@@ -19,6 +19,7 @@ import { Status } from 'src/enums/status.enum';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
 import { Message } from 'src/modules/messages/entities/message.entity';
 import { Notification } from 'src/modules/notifications/entities/notification.entity';
+import { Review } from 'src/modules/reviews/entities/review.entity';
 
 @Entity('users')
 export class User {
@@ -158,8 +159,17 @@ export class User {
   @OneToMany(() => Payment, (payment) => payment.user)
   payments?: Payment[];
 
+  @ApiProperty({
+    description: 'List of notifications associated with the user',
+  })
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
+
+  @ApiProperty({
+    description: 'List of reviews submitted by the user',
+  })
+  @OneToMany(() => Review, (review) => review.user)
+  reviews: Review[];
 
   @CreateDateColumn()
   @ApiProperty({
@@ -167,4 +177,5 @@ export class User {
     example: '2023-01-01T00:00:00.000Z',
   })
   createdAt: Date;
+
 }
