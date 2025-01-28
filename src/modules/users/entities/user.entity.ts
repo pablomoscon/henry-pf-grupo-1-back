@@ -7,6 +7,7 @@ import {
   JoinColumn,
   CreateDateColumn,
   ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional, IsDate } from 'class-validator';
@@ -109,12 +110,11 @@ export class User {
   @OneToMany(() => Cat, (cat) => cat.user)
   cats: Cat[];
 
-  @ApiProperty({
-    description: 'List of caretakers managed by the user',
-    type: () => [Caretaker],
-  })
   @OneToOne(() => Caretaker, { nullable: true })
-  @JoinColumn()
+  @ApiProperty({
+    description: 'Caretaker profile associated with the user',
+    type: () => Caretaker,
+  })
   caretakerProfile: Caretaker;
 
   @ApiProperty({
@@ -138,12 +138,13 @@ export class User {
   @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.receiver)
   receivedChats: ChatHistory[];
 
+  
+  @OneToMany(() => Message, (message) => message.sender)
   @ApiProperty({
     description: 'List of messages sent by the user',
     type: () => [Message],
   })
-  @OneToMany(() => Message, (message) => message.sender)
-  sentMessages: ChatHistory[];
+  sentMessages: Message[];
 
   @ManyToMany(() => Message, (message) => message.receivers)
   @ApiProperty({

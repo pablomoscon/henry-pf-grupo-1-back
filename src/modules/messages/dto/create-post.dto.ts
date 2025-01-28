@@ -25,6 +25,8 @@ export class CreatePostDto {
     @IsUUID()
     receiver: string;
 
-    @ApiProperty({ description: 'Reservation associated with the message' })
-    reservation: Reservation;
+    @ApiProperty({
+        description: 'Reservation ID associated with the message',
+    })
+    reservationId: string;
 }
