@@ -148,7 +148,7 @@ export const usersMock: User[] = [
     address: '321 Pine St, Star City',
     customerId: '43989097',
     deleted_at: null,
-    role: Role.USER,
+    role: Role.CARETAKER,
     status: Status.ACTIVE,
     credential: {
       id: '123e4567-e89b-12d3-a456-426614174003',

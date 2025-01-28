@@ -1,9 +1,9 @@
 import { IsString, IsUUID, IsOptional, IsEnum, IsDate } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { MessageType } from 'src/enums/message-type';
+import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 
-export class CreateMessageDto {
-
+export class CreatePostDto {
 
     @ApiProperty({ description: 'Type of the message', example: 'CHAT' })
     @IsEnum(MessageType)
@@ -24,5 +24,7 @@ export class CreateMessageDto {
     @ApiProperty({ description: 'Receiver of the message' })
     @IsUUID()
     receiver: string;
+
+    @ApiProperty({ description: 'Reservation associated with the message' })
+    reservation: Reservation;
 }
-    

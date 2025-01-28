@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinTable, ManyToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional, IsDate } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
 import { Location } from '../../../modules/locations/entities/location.entity';
+import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 
 @Entity('caretakers')
 export class Caretaker {
@@ -14,7 +15,7 @@ export class Caretaker {
   @IsUUID()
   id: string;
 
-  @ManyToOne(() => User, (user) => user.caretakers)
+  @OneToOne(() => User, (user) => user.caretakerProfile)
   @ApiProperty({
     description: 'User who is the caretaker',
     example: 'Cesar Millan',
@@ -28,7 +29,7 @@ export class Caretaker {
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
   })
   @IsString()
-  profile: string;
+  profileData: string;
 
   @Column({ type: 'timestamp', nullable: true })
   @ApiProperty({
@@ -41,4 +42,13 @@ export class Caretaker {
   @ManyToOne(() => Location, (location) => location.caretakers)
   @ApiProperty({ description: 'Location where the caretaker works' })
   location: Location;
+
+  @ManyToMany(() => Reservation, (reservation) => reservation.caretakers)
+  @JoinTable()
+  @ApiProperty({
+    description: 'Reservations associated with the caretaker',
+    type: () => [Reservation],
+  })
+  reservations: Reservation[];
 }
+

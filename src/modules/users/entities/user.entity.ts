@@ -6,6 +6,7 @@ import {
   OneToOne,
   JoinColumn,
   CreateDateColumn,
+  ManyToMany,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional, IsDate } from 'class-validator';
@@ -112,8 +113,9 @@ export class User {
     description: 'List of caretakers managed by the user',
     type: () => [Caretaker],
   })
-  @OneToMany(() => Caretaker, (caretaker) => caretaker.user)
-  caretakers: Caretaker[];
+  @OneToOne(() => Caretaker, { nullable: true })
+  @JoinColumn()
+  caretakerProfile: Caretaker;
 
   @ApiProperty({
     description: 'List of reservations made by the user',
@@ -122,7 +124,6 @@ export class User {
   @OneToMany(() => Reservation, (reservation) => reservation.user)
   reservations: Reservation[];
 
-  ///////////////////////Esto vuela////////////////////////
   @ApiProperty({
     description: 'List of chat messages sent by the user',
     type: () => [ChatHistory],
@@ -136,7 +137,6 @@ export class User {
   })
   @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.receiver)
   receivedChats: ChatHistory[];
-  ///////////////////////Esto vuela////////////////////////
 
   @ApiProperty({
     description: 'List of messages sent by the user',
@@ -145,11 +145,11 @@ export class User {
   @OneToMany(() => Message, (message) => message.sender)
   sentMessages: ChatHistory[];
 
+  @ManyToMany(() => Message, (message) => message.receivers)
   @ApiProperty({
     description: 'List of messages received by the user',
     type: () => [Message],
   })
-  @OneToMany(() => Message, (message) => message.receiver)
   receivedMessages: Message[];
 
   @ApiProperty({
