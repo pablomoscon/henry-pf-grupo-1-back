@@ -38,6 +38,15 @@ export class UsersService {
     });
   };
 
+  async findUsersWithReservations() {
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.reservations', 'reservation')
+      .where('reservation.id IS NOT NULL') 
+      .andWhere('user.deleted_at IS NULL')
+      .getMany();
+  };
+
   async findByEmail(email: string) {
     const user = await this.userRepository.findOne({
       where: { email },

@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateMessageDto } from './dto/create-message.dto';
 import { Message } from './entities/message.entity';
-import { UpdateMessageDto } from './dto/update-message.dto';
+import { UpdateMessageDto } from './dto/update-chat.dto';
 import { FileUploadService } from '../file-upload/file-upload.service';
 import { UsersService } from '../users/users.service';
 import { ReservationsService } from '../reservations/reservations.service';
+import { MessageType } from 'src/enums/message-type';
+import { CreateChatDto } from './dto/create-chat.dto';
 
 @Injectable()
 export class MessagesService {
@@ -19,30 +20,16 @@ export class MessagesService {
 
   ) { }
 
-  async create(
-    createMessageDto: CreateMessageDto,
-    file?: Express.Multer.File,
+  async createChat(
+    createChatDto: CreateChatDto,
   ): Promise<Message> {
-    let mediaUrl: string | undefined;
-
-    if (file) {
-      const uploadedFile = await this.fileUploadService.uploadFile({
-        fieldName: file.fieldname,
-        buffer: file.buffer,
-        originalName: file.originalname,
-        mimeType: file.mimetype,
-        size: file.size,
-      });
-
-      mediaUrl = uploadedFile;
-    }
-
-    const sender = await this.usersService.findOne(createMessageDto.currentUser);
+  
+    const sender = await this.usersService.findOne(createChatDto.currentUser);
 
     const newMessage = this.messageRepository.create({
-      ...createMessageDto,
+      ...createChatDto,
       sender,
-      media_url: mediaUrl,
+      type: MessageType.CHAT
     });
 
     return await this.messageRepository.save(newMessage);

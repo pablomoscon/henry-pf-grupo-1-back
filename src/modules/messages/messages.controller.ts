@@ -13,21 +13,21 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
-import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
+import { CreateMessageDto } from './dto/create-chat.dto';
+import { UpdateMessageDto } from './dto/update-chat.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { MessageResponseDto } from './dto/response-message.dto';
+import { MessageResponseDto } from './dto/response-chat.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { ImageUploadValidationPipe } from 'src/pipes/image-upload-validation.pipe';
 
 @Controller('messages')
 export class MessagesController {
-  constructor(private readonly messagesService: MessagesService) {}
+  constructor(private readonly messagesService: MessagesService) { }
 
   @Post()
- /*  @ApiBearerAuth()
-  @UseGuards(AuthGuard) */
+  /*  @ApiBearerAuth()
+   @UseGuards(AuthGuard) */
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('file'))
   async create(
@@ -43,8 +43,8 @@ export class MessagesController {
   }
 
   @Get()
-/*   @ApiBearerAuth()
-  @UseGuards(AuthGuard) */
+  /*   @ApiBearerAuth()
+    @UseGuards(AuthGuard) */
   @HttpCode(HttpStatus.OK)
   findAll() {
     return this.messagesService.findAll();
@@ -59,8 +59,8 @@ export class MessagesController {
   }
 
   @Patch(':id')
- /*  @ApiBearerAuth()
-  @UseGuards(AuthGuard) */
+  /*  @ApiBearerAuth()
+   @UseGuards(AuthGuard) */
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('file'))
   update(

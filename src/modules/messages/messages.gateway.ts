@@ -2,12 +2,12 @@ import { Socket, Server } from 'socket.io';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
-import { CreateMessageDto } from './dto/create-message.dto';
 import { UsersService } from '../users/users.service';
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { ReservationsService } from '../reservations/reservations.service';
 import { MessageType } from 'src/enums/message-type';
 import { CaretakersService } from '../caretakers/caretakers.service';
+import { CreateChatDto } from './dto/create-chat.dto';
 
 @WebSocketGateway({ cors: { origin: '*' }, namespace: 'messages/chat' })
 export class MessagesGateway {
@@ -30,7 +30,7 @@ export class MessagesGateway {
         const clientChatRoomId = socket.handshake.query.clientChatRoomId;
         if (clientChatRoomId) {
             socket.join(clientChatRoomId);
-            console.log(`Socket ${socket.id} unido a la sala: ${clientChatRoomId }`);
+            console.log(`Socket ${socket.id} unido a la sala: ${clientChatRoomId}`);
         } else {
             console.error('userClientId no proporcionado al conectar');
         }
@@ -44,7 +44,7 @@ export class MessagesGateway {
         if (clientChatRoomId) {
             socket.join(clientChatRoomId);
             socket.data.currentUser = currentUser;
-            console.log(`Socket ${socket.id} unido a la sala: ${clientChatRoomId } y currentUser asociado`);
+            console.log(`Socket ${socket.id} unido a la sala: ${clientChatRoomId} y currentUser asociado`);
         } else {
             console.error('joinRoom falló: userClientId no proporcionado.');
         }
@@ -52,17 +52,17 @@ export class MessagesGateway {
 
     @SubscribeMessage('send_message')
     async handleSendMessage(
-        @MessageBody() createMessageDto: CreateMessageDto,
+        @MessageBody() createChatDto: CreateChatDto,
         @ConnectedSocket() socket: Socket
     ) {
         try {
-            const sender = await this.usersService.findOne(createMessageDto.currentUser);
+            const sender = await this.usersService.findOne(createChatDto.currentUser);
             if (!sender) {
                 console.error('Sender no encontrado');
                 return;
             }
 
-            const userClient = await this.usersService.findOne(createMessageDto.clientChatRoom);
+            const userClient = await this.usersService.findOne(createChatDto.clientChatRoom);
             if (!userClient) {
                 console.error('UserClient no encontrado');
                 return;
@@ -89,7 +89,7 @@ export class MessagesGateway {
             }
 
             const newMessage = this.messageRepository.create({
-                body: createMessageDto.body,
+                body: createChatDto.body,
                 sender,
                 receivers: await Promise.all(
                     receiversIds.map(receiverId => this.usersService.findOne(receiverId))
@@ -100,7 +100,7 @@ export class MessagesGateway {
 
             await this.messageRepository.save(newMessage);
 
-            console.log(`Mensaje enviado por ${ sender.name }(ID: ${ sender.id })`);
+            console.log(`Mensaje enviado por ${sender.name}(ID: ${sender.id})`);
 
             socket.to(userClient.id).emit('receive_message', {
                 body: newMessage.body,
