@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
@@ -80,7 +80,7 @@ export class CredentialsService {
     return await this.credentialsRepository.save(credential);
   };
 
-  async updatePassword(user: User, newPassword: string): Promise<Credential> {
+  async updatePassword(user: User, currentPassword: string, newPassword: string): Promise<Credential> {
     const credential = await this.credentialsRepository.findOne({
       where: { user: { id: user.id } },
       relations: ['user'],
@@ -89,6 +89,12 @@ export class CredentialsService {
     if (!credential) {
       throw new NotFoundException('Credentials not found');
     }
+
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, credential.password);
+    if (!isCurrentPasswordValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
     credential.password = await bcrypt.hash(newPassword, 10);
 
     return await this.credentialsRepository.save(credential);

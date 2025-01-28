@@ -23,8 +23,12 @@ export class CredentialsController {
   @HttpCode(HttpStatus.OK)
   async updatePassword(
     @CurrentUser() user: User,
-    @Body() updateCredentialDto: UpdateCredentialDto,
+    @Body() updateCredentialDto: UpdateCredentialDto
   ): Promise<Credential> {
-    return await this.credentialsService.updatePassword(user, updateCredentialDto.password);
+    return this.credentialsService.updatePassword(
+      user,
+      updateCredentialDto.currentPassword,
+      updateCredentialDto.newPassword
+    );
   };
 }
