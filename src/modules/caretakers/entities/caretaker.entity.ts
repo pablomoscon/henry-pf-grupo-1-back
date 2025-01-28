@@ -19,6 +19,7 @@ export class Caretaker {
   @ApiProperty({
     description: 'User who is the caretaker',
     example: 'Cesar Millan',
+    type: () => User,
   })
   user: User;
 

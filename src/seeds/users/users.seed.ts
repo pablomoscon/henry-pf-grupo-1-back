@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { usersMock } from './users-mock';
-import { hash } from 'bcrypt';
 import { Credential } from 'src/modules/credentials/entities/credential.entity';
 
 @Injectable()
@@ -41,9 +40,6 @@ export class UsersSeed {
         user.receivedMessages = userData.receivedMessages;
         user.sentChats = userData.sentChats;
         user.receivedChats = userData.receivedChats;
-        user.notifications = userData.notifications;
-        user.createdAt = userData.createdAt;
-        user.reviews = userData.reviews;
 
         await this.userRepository.save(user);
       }
