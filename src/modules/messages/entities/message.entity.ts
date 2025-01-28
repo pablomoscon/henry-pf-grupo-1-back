@@ -70,5 +70,5 @@ export class Message {
 
   @ManyToOne(() => User, (user) => user.receivedMessages)
   @ApiProperty({ description: 'Receiver of the message' })
-  receiver: User;
+  receivers: User[];
 }

@@ -66,6 +66,6 @@ export class MessageResponseDto {
         this.body = message.body;
         this.timestamp = message.timestamp;
         this.sender_id = message.sender.id;
-        this.receiver_id = message.receiver.id;
+        this.receiver_id = message.receivers.map(receiver => receiver.id).join(',');
     };
 }

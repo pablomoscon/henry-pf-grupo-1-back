@@ -2,7 +2,7 @@ import { IsString, IsUUID, IsOptional, IsEnum, IsDate } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { MessageType } from 'src/enums/message-type';
 
-export class CreateMessageDto {
+export class CreatePostDto {
 
 
     @ApiProperty({ description: 'Type of the message', example: 'CHAT' })
@@ -25,4 +25,3 @@ export class CreateMessageDto {
     @IsUUID()
     receiver: string;
 }
-    
