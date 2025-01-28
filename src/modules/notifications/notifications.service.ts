@@ -61,4 +61,10 @@ export class NotificationsService {
       where: { user: { id: userId }, isRead: false, deleted_at: null },
     });
   }
+
+  async getNotificationsByUser(userId: string) {
+    return await this.notificationsRepository.find({
+      where: { user: { id: userId }, deleted_at: null },
+    });
+  }
 }

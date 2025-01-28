@@ -42,4 +42,9 @@ export class NotificationsController {
   remove(@Param('id') id: string) {
     return this.notificationsService.remove(id);
   }
+
+  @Get('user/:userId')
+  getNotificationsByUser(@Param('userId') userId: string) {
+    return this.notificationsService.getNotificationsByUser(userId);
+  }
 }
