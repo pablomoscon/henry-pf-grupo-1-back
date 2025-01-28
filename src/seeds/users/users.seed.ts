@@ -43,6 +43,7 @@ export class UsersSeed {
         user.receivedChats = userData.receivedChats;
         user.notifications = userData.notifications;
         user.createdAt = userData.createdAt;
+        user.reviews = userData.reviews;
 
         await this.userRepository.save(user);
       }
