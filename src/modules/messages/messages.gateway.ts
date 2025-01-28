@@ -8,6 +8,7 @@ import { ReservationsService } from '../reservations/reservations.service';
 import { MessageType } from 'src/enums/message-type';
 import { CaretakersService } from '../caretakers/caretakers.service';
 import { CreateChatDto } from './dto/create-chat.dto';
+import { MessagesService } from './messages.service';
 
 @WebSocketGateway({ cors: { origin: '*' }, namespace: 'messages/chat' })
 export class MessagesGateway {
@@ -20,8 +21,8 @@ export class MessagesGateway {
         private readonly usersService: UsersService,
         private readonly reservationsService: ReservationsService,
         private readonly caretakersService: CaretakersService,
+        private readonly messagesService: MessagesService,
     ) { }
-
 
     @SubscribeMessage('connect')
     handleConnection(socket: Socket) {
@@ -30,25 +31,36 @@ export class MessagesGateway {
         const clientChatRoomId = socket.handshake.query.clientChatRoomId;
         if (clientChatRoomId) {
             socket.join(clientChatRoomId);
-            console.log(`Socket ${socket.id} unido a la sala: ${clientChatRoomId}`);
+            console.log(`Socket ${socket.id} joined the room: ${clientChatRoomId}`);
         } else {
-            console.error('userClientId no proporcionado al conectar');
+            console.error('clientChatRoomId not provided upon connection');
         }
-    }
+    };
 
     @SubscribeMessage('joinRoom')
     async handleJoinRoom(@ConnectedSocket() socket: Socket, @MessageBody() data: { clientChatRoomId: string, currentUser: any }) {
         const { clientChatRoomId, currentUser } = data;
-        console.log('userClientId recibido:', clientChatRoomId);
+        console.log('clientChatRoomId received:', clientChatRoomId);
 
-        if (clientChatRoomId) {
+        if (clientChatRoomId && currentUser) {
             socket.join(clientChatRoomId);
             socket.data.currentUser = currentUser;
-            console.log(`Socket ${socket.id} unido a la sala: ${clientChatRoomId} y currentUser asociado`);
+
+            const messages = await this.messagesService.findMessagesByReservationUser(currentUser.id, clientChatRoomId)
+
+            const messagesWithUsernames = messages.map(message => ({
+                ...message,
+                senderName: message.sender.name,
+                receiversNames: message.receivers.map(receiver => receiver.name)
+            }));
+
+            socket.emit('initial_messages', { messages: messagesWithUsernames, chatRoomName: clientChatRoomId });
+
+            console.log(`Socket ${socket.id} joined the room: ${clientChatRoomId} and ${currentUser.id} associated`);
         } else {
-            console.error('joinRoom falló: userClientId no proporcionado.');
+            console.error('joinRoom failed: clientChatRoomId not provided.');
         }
-    }
+    };
 
     @SubscribeMessage('send_message')
     async handleSendMessage(
@@ -58,19 +70,19 @@ export class MessagesGateway {
         try {
             const sender = await this.usersService.findOne(createChatDto.currentUser);
             if (!sender) {
-                console.error('Sender no encontrado');
+                console.error('Sender not found');
                 return;
             }
 
-            const userClient = await this.usersService.findOne(createChatDto.clientChatRoom);
-            if (!userClient) {
-                console.error('UserClient no encontrado');
+            const clientChatRoom = await this.usersService.findOne(createChatDto.clientChatRoom);
+            if (!clientChatRoom) {
+                console.error('Client not found');
                 return;
             }
 
-            const reservation = await this.reservationsService.findOne(userClient.id);
+            const reservation = await this.reservationsService.findOne(clientChatRoom.id);
             if (!reservation) {
-                console.error('Reserva no encontrada para UserClient');
+                console.error('Reservation not found for the client');
                 return;
             }
 
@@ -79,12 +91,12 @@ export class MessagesGateway {
                 caretakers.map(caretaker => this.caretakersService.findUserFromCaretaker(caretaker.id))
             );
 
-            let receiversIds = [userClient.id, ...userCaretakers.map(userCaretaker => userCaretaker.id)];
+            let receiversIds = [clientChatRoom.id, ...userCaretakers.map(userCaretaker => userCaretaker.id)];
 
             receiversIds = receiversIds.filter(receiverId => receiverId !== sender.id);
 
             if (receiversIds.length === 0) {
-                console.error('No hay receptores válidos.');
+                console.error('No valid receivers.');
                 return;
             }
 
@@ -96,35 +108,36 @@ export class MessagesGateway {
                 ),
                 timestamp: new Date(),
                 type: MessageType.CHAT,
+                reservation
             });
 
             await this.messageRepository.save(newMessage);
 
-            console.log(`Mensaje enviado por ${sender.name}(ID: ${sender.id})`);
+            console.log(`Message sent by ${sender.name}(ID: ${sender.id})`);
 
-            socket.to(userClient.id).emit('receive_message', {
+            socket.to(clientChatRoom.id).emit('receive_message', {
                 body: newMessage.body,
-                sender: { id: sender.id, username: sender.name },
+                senderName: sender.name,
                 timestamp: newMessage.timestamp,
             });
 
             receiversIds.forEach(receiverId => {
-                if (receiverId !== userClient.id) {
+                if (receiverId !== clientChatRoom.id) {
                     socket.to(receiverId).emit('receive_message', {
                         body: newMessage.body,
-                        sender: { id: sender.id, username: sender.name },
+                        senderName: sender.name,
                         timestamp: newMessage.timestamp,
                     });
                 }
             });
 
         } catch (error) {
-            console.error('Error enviando mensaje:', error);
+            console.error('Error sending message:', error);
         }
-    }
+    };
 
     @SubscribeMessage('disconnect')
     handleDisconnect(socket: Socket) {
         console.log('Client disconnected:', socket.id);
-    }
+    };
 }

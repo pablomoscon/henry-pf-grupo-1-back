@@ -146,7 +146,7 @@ export class ReservationsService {
   async findUserReservations(userId: string): Promise<Reservation[]> {
     return await this.reservationRepository.find({
       where: { user: { id: userId } },
-      relations: ['room', 'cats', 'payments'],
+      relations: ['room', 'cats', 'payments', 'messages'],
     });
   };
 }

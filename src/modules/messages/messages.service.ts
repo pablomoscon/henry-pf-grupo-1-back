@@ -2,12 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
-import { UpdateMessageDto } from './dto/update-chat.dto';
+import { UpdateChatDto } from './dto/update-chat.dto';
 import { FileUploadService } from '../file-upload/file-upload.service';
 import { UsersService } from '../users/users.service';
 import { ReservationsService } from '../reservations/reservations.service';
-import { MessageType } from 'src/enums/message-type';
-import { CreateChatDto } from './dto/create-chat.dto';
+
 
 @Injectable()
 export class MessagesService {
@@ -20,46 +19,47 @@ export class MessagesService {
 
   ) { }
 
-  async createChat(
-    createChatDto: CreateChatDto,
-  ): Promise<Message> {
-  
-    const sender = await this.usersService.findOne(createChatDto.currentUser);
-
-    const newMessage = this.messageRepository.create({
-      ...createChatDto,
-      sender,
-      type: MessageType.CHAT
+  async findAll(): Promise<Message[]> {
+    return this.messageRepository.find({
+      relations: ['sender', 'receivers', 'reservation'],
     });
-
-    return await this.messageRepository.save(newMessage);
   };
 
-  async findMessagesByReservationUser(userId: string): Promise<Message[]> {
-
-    const reservations = await this.reservationsService.findUserReservations(userId);
+  async findMessagesByReservationUser(userId: string, userClientId: string): Promise<Message[]> {
+    // Obtener las reservas solo para el cliente
+    const reservations = await this.reservationsService.findUserReservations(userClientId);
 
     if (!reservations || reservations.length === 0) {
-      console.warn(`No se encontraron reservas para el usuario con ID: ${userId}`);
+      console.warn(`No reservations found for client with ID: ${userClientId}`);
       return [];
     }
 
-    const messages = reservations.flatMap((reservation) => reservation.messages);
+    const reservationIds = reservations.map(reservation => reservation.id);
+
+    // Obtener los mensajes donde el usuario es tanto sender como receiver, relacionado con las reservas del cliente
+    const messages = await this.messageRepository
+      .createQueryBuilder('message')
+      .leftJoinAndSelect('message.sender', 'sender')
+      .leftJoinAndSelect('message.receivers', 'receivers')
+      .leftJoinAndSelect('message.reservation', 'reservation')
+      .where('message.reservation.id IN (:...reservationIds)', { reservationIds })
+      .andWhere(
+        '(message.sender.id = :userId OR receivers.id = :userId)',
+        { userId }
+      )
+      .getMany();
+
+    if (messages.length === 0) {
+      console.warn(`No messages found for user with ID: ${userId}.`);
+    }
 
     return messages;
-  };
-
-  async findAll(): Promise<Message[]> {
-    return this.messageRepository.find({
-      relations: ['sender', 'receivers'],
-    });
   }
-
   async findOne(id: string): Promise<Message> {
     return this.messageRepository.findOne({ where: { id } });
-  }
+  };
 
-  async update(id: string, updateMessageDto: UpdateMessageDto, file?: Express.Multer.File): Promise<Message> {
+  async update(id: string, updateMessageDto: UpdateChatDto, file?: Express.Multer.File): Promise<Message> {
     const existingMessage = await this.messageRepository.findOne({ where: { id } });
 
     if (!existingMessage) {
@@ -87,7 +87,6 @@ export class MessagesService {
 
     return this.messageRepository.save(updatedMessage);
   };
-
 
   async remove(id: string): Promise<void> {
     await this.messageRepository.delete(id);
