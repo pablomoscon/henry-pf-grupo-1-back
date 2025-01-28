@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCaretakerDto } from './dto/create-caretaker.dto';
 import { UpdateCaretakerDto } from './dto/update-caretaker.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -43,6 +43,19 @@ export class CaretakersService {
     });
 
     return await this.caretakerRepository.save(newCaretaker);
+  }
+
+  async findUserFromCaretaker(caretakerId: string) {
+    const caretaker = await this.caretakerRepository.findOne({
+      where: { id: caretakerId },
+      relations: ['user'], // Asegúrate de cargar la relación 'user'
+    });
+
+    if (!caretaker) {
+      throw new HttpException('Caretaker not found', HttpStatus.NOT_FOUND);
+    }
+
+    return caretaker.user;
   }
 
   findAll() {

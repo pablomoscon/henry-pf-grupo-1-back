@@ -13,17 +13,15 @@ export class CreateMessageDto {
     @IsOptional()
     body?: string;
 
-    @ApiProperty({ description: 'Sender of the message' })
+    @ApiProperty({ description: 'Unique identifier of the chat user' })
     @IsUUID()
-    sender: string;
+    currentUser: string;
 
     @ApiProperty({
-        description: 'ID of the associated reservation (optional)',
+        description: 'ID of the user client associated with the reservation (optional)',
         example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-        required: false
     })
     @IsUUID()
     @IsOptional()
-    reservationId: string;
+    clientChatRoom: string;
 }
-    

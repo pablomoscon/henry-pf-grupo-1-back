@@ -109,7 +109,7 @@ export class ReservationsService {
   async findOne(id: string): Promise<Reservation> {
     const reservation = await this.reservationRepository.findOne({
       where: { id },
-      relations: ['user', 'room', 'cats', 'caretakers'],
+      relations: ['user', 'room', 'cats', 'caretakers', 'messages'],
     });
 
     if (!reservation) {

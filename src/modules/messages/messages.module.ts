@@ -8,9 +8,10 @@ import { MessagesGateway } from './messages.gateway';
 import { FileUploadModule } from '../file-upload/file-upload.module';
 import { ReservationsModule } from '../reservations/reservations.module';
 import { UsersModule } from '../users/users.module';
+import { CaretakersModule } from '../caretakers/caretakers.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Message]), UsersModule, FileUploadModule, ReservationsModule,
+  imports: [TypeOrmModule.forFeature([Message]), UsersModule, FileUploadModule, ReservationsModule, CaretakersModule
   ],
   controllers: [MessagesController],
   providers: [MessagesService,  MessagesGateway, CloudinaryService],

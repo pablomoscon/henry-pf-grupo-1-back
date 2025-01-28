@@ -6,6 +6,7 @@ import { Message } from './entities/message.entity';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { FileUploadService } from '../file-upload/file-upload.service';
 import { UsersService } from '../users/users.service';
+import { ReservationsService } from '../reservations/reservations.service';
 
 @Injectable()
 export class MessagesService {
@@ -14,6 +15,7 @@ export class MessagesService {
     private messageRepository: Repository<Message>,
     private readonly fileUploadService: FileUploadService,
     private readonly usersService: UsersService,
+    private readonly reservationsService: ReservationsService,
 
   ) { }
 
@@ -35,7 +37,7 @@ export class MessagesService {
       mediaUrl = uploadedFile;
     }
 
-    const sender = await this.usersService.findOne(createMessageDto.sender);
+    const sender = await this.usersService.findOne(createMessageDto.currentUser);
 
     const newMessage = this.messageRepository.create({
       ...createMessageDto,
@@ -44,6 +46,20 @@ export class MessagesService {
     });
 
     return await this.messageRepository.save(newMessage);
+  };
+
+  async findMessagesByReservationUser(userId: string): Promise<Message[]> {
+
+    const reservations = await this.reservationsService.findUserReservations(userId);
+
+    if (!reservations || reservations.length === 0) {
+      console.warn(`No se encontraron reservas para el usuario con ID: ${userId}`);
+      return [];
+    }
+
+    const messages = reservations.flatMap((reservation) => reservation.messages);
+
+    return messages;
   };
 
   async findAll(): Promise<Message[]> {
@@ -84,6 +100,7 @@ export class MessagesService {
 
     return this.messageRepository.save(updatedMessage);
   };
+
 
   async remove(id: string): Promise<void> {
     await this.messageRepository.delete(id);

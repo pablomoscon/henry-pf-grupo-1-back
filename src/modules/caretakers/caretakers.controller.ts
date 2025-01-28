@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
 import { CaretakersService } from './caretakers.service';
 import { CreateCaretakerDto } from './dto/create-caretaker.dto';
 import { UpdateCaretakerDto } from './dto/update-caretaker.dto';
@@ -20,6 +20,16 @@ export class CaretakersController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.caretakersService.findOne(+id);
+  }
+
+  @Get(':id/user')
+  async getUserFromCaretaker(@Param('id') caretakerId: string) {
+    try {
+      const user = await this.caretakersService.findUserFromCaretaker(caretakerId);
+      return user;
+    } catch (error) {
+      throw new NotFoundException('Caretaker not found');
+    }
   }
 
   @Patch(':id')
