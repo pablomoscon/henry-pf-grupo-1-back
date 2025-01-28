@@ -112,7 +112,6 @@ export class Reservation {
   @ApiProperty({
     description: 'List of messages associated with the reservation',
     type: () => [Message],
-    isArray: true
   })
   @OneToMany(() => Message, (message) => message.reservation)
   messages: Message[];

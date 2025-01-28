@@ -79,6 +79,7 @@ export class Message {
   receivers: User[];
 
   @ManyToOne(() => Reservation, (reservation) => reservation.messages)
-  @ApiProperty({ description: 'Reservation associated with the message' })
+  @ApiProperty({ description: 'Reservation associated with the message',
+   })
   reservation: Reservation;
 }

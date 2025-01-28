@@ -111,7 +111,6 @@ export class User {
   cats: Cat[];
 
   @OneToOne(() => Caretaker, { nullable: true })
-  @JoinColumn()
   @ApiProperty({
     description: 'Caretaker profile associated with the user',
     type: () => Caretaker,

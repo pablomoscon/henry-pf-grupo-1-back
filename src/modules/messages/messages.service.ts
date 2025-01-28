@@ -7,6 +7,7 @@ import { UsersService } from '../users/users.service';
 import { MessageType } from 'src/enums/message-type';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { ReservationsService } from '../reservations/reservations.service';
 
 @Injectable()
 export class MessagesService {
@@ -15,6 +16,7 @@ export class MessagesService {
     private messageRepository: Repository<Message>,
     private readonly fileUploadService: FileUploadService,
     private readonly usersService: UsersService,
+    private readonly reservationsService: ReservationsService,
 
   ) { }
 
@@ -47,6 +49,14 @@ export class MessagesService {
 
     if (receivers.some((receiver) => !receiver)) {
       throw new Error('One or more receivers not found');
+    }
+
+    let reservation = null;
+    if (createPostDto.reservationId) {
+      reservation = await this.reservationsService.findOne(createPostDto.reservationId);
+      if (!reservation) {
+        throw new Error('Reservation not found');
+      }
     }
 
     const newPost = this.messageRepository.create({
