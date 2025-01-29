@@ -92,7 +92,7 @@ export class MailService {
         attachments: [
           {
             filename: 'LogoApp.png',
-            path: 'https://res.cloudinary.com/dofznnphj/image/upload/v1737408225/LogoApp_xslnki.png',
+            path: 'https://res.cloudinary.com/dofznnphj/image/upload/v1738092721/LogoApp_bjtclb.png',
             cid: 'logoApp',
           },
         ],
@@ -103,7 +103,7 @@ export class MailService {
 
   async sendPasswordChangeAlert(user: User): Promise<void> {
 
-    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'send-confirmated-reservation.hbs');
+    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'send-password-change-alert.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 

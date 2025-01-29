@@ -1,95 +1,103 @@
-<html lang='en'>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <meta charset='UTF-8' />
-    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reservation Confirmation</title>
-    <link href='https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap' rel='stylesheet' />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
     <style>
         body {
             font-family: 'Roboto', Arial, sans-serif;
-            background-color:
-                #f4f4f4;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-            color: white;
+            color: #333;
         }
 
         .container {
             width: 100%;
             max-width: 600px;
             margin: 20px auto;
-            background-color: rgb(34, 34, 34);
-            padding: 25px;
+            background-color: #ffffff;
+            padding: 0;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0,
-                    0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
         .header {
             text-align: center;
-            padding: 15px 0;
-            background-color:
-                rgb(212, 175, 55);
-            color: rgb(34, 34, 34);
-            border-radius: 10px 10px 0 0;
+            padding: 20px 0;
+            background-color: #2c3e50;
+            color: #ffffff;
         }
 
         .header h2 {
             margin: 0;
             font-size: 24px;
+            font-weight: 700;
         }
 
         .content {
-            padding: 20px;
-            color: rgb(253, 246, 227);
+            padding: 25px;
+            color: #333;
         }
 
         .content h1 {
             text-align: center;
-            font-size:
-                28px;
-            margin-bottom: 10px;
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #2c3e50;
         }
 
         .content h2 {
             font-size: 18px;
             margin-top: 0;
+            color: #2c3e50;
         }
 
         .content ul {
             list-style-type: none;
             padding: 0;
-            margin: 10px 0 20px;
+            margin: 15px 0 20px;
         }
 
         .content ul li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-size: 14px;
             line-height: 1.5;
-            color: rgb(212, 175, 55);
+            color: #555;
+        }
+
+        .content ul li strong {
+            color: #2c3e50;
+        }
+
+        .contact-us {
+            margin-top: 20px;
+            text-align: center;
         }
 
         .contact-us a {
-            color: #f4f4f4;
+            color: #3498db;
             text-decoration: none;
             font-weight: bold;
-            text-decoration: underline
+            text-decoration: underline;
         }
 
         .footer {
             text-align: center;
-            padding: 12px 0;
-            background-color: #9CB380;
-            color: #555555;
+            padding: 15px 0;
+            background-color: #2c3e50;
+            color: #ffffff;
             font-size: 12px;
-            border-radius: 0 0 10px 10px;
-            margin-top: 5px;
+            margin-top: 0;
         }
 
         .footer img {
             max-width: 30px;
-            margin-bottom: 0px;
+            margin-bottom: 10px;
         }
 
         .footer p {
@@ -104,15 +112,9 @@
             <h2>Reservation Confirmed!</h2>
         </div>
         <div class="content">
-            <h1 class="greeting">
-                Hello, <span>{{user}}</span>.
-            </h1>
-            <h2 class="confirmation-message">
-                Your reservation has been successfully confirmed!
-            </h2>
-            <p class="details-intro">
-                Here are the details of your reservation:
-            </p>
+            <h1 class="greeting">Hello, <span>{{user}}</span>.</h1>
+            <h2 class="confirmation-message">Your reservation has been successfully confirmed!</h2>
+            <p class="details-intro">Here are the details of your reservation:</p>
             <ul class="reservation-details">
                 <li><strong>Check-In Date:</strong> {{checkIn}}</li>
                 <li><strong>Check-Out Date:</strong> {{checkOut}}</li>
@@ -122,10 +124,7 @@
                 <li><strong>Payment Status:</strong> {{payment}}</li>
             </ul>
             <div class="contact-us">
-                <p>
-                    We hope you enjoy your stay. Please feel free to contact us for any
-                    questions or additional requests.
-                </p>
+                <p>We hope you enjoy your stay. Please feel free to contact us for any questions or additional requests.</p>
                 <a href=".">Visit Our Website</a>
             </div>
         </div>
@@ -135,4 +134,5 @@
         </div>
     </div>
 </body>
+
 </html>

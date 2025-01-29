@@ -66,7 +66,7 @@ export class ReservationsService {
     });
 
     await this.reservationRepository.save(reservation)
-    this.MailService.sendInitiatedReservation(reservation)
+   /*  this.MailService.sendInitiatedReservation(reservation) */
 
     return reservation;
   };
