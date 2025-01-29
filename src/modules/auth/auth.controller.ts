@@ -58,7 +58,7 @@ export class AuthController {
         maxAge: 60 * 60 * 1000
       }
     );
-
+    
     res.redirect('http://localhost:3001/dashboard');
   };
 }

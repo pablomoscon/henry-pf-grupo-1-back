@@ -11,6 +11,7 @@ import { JwtService } from "@nestjs/jwt";
 import { oauth2Client } from "src/config/google-auth.config";
 import * as crypto from 'crypto';
 import { MailService } from "../mail/mail.service";
+import { Role } from "src/enums/roles.enum";
 
 @Injectable()
 export class AuthService {
@@ -132,6 +133,7 @@ export class AuthService {
         phone: userInfo.phoneNumbers?.[0]?.value,
         address: userInfo.addresses?.[0]?.value,
         customerId: userInfo.customerId,
+        role:Role.USER
       };
       user = await this.usersService.create(createUserDto, credential);
       await this.credentialsService.assignUserToCredentials(credential.id, { user });
