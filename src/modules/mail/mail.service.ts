@@ -7,6 +7,7 @@ import * as path from 'path';
 import * as Handlebars from 'handlebars';
 import { PaymentsService } from '../payments/payments.service';
 import { User } from '../users/entities/user.entity';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class MailService {
@@ -92,7 +93,7 @@ export class MailService {
         attachments: [
           {
             filename: 'LogoApp.png',
-            path: 'https://res.cloudinary.com/dofznnphj/image/upload/v1738092721/LogoApp_bjtclb.png',
+            path: 'https://res.cloudinary.com/dofznnphj/image/upload/v1737408225/LogoApp_xslnki.png',
             cid: 'logoApp',
           },
         ],
@@ -107,16 +108,24 @@ export class MailService {
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
-    const { name, email } = user;
+    const { name, email, id } = user;
     const password = user.credential.password;
+
+   
+    const token = jwt.sign(
+      { userId: id },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    const resetLink = `http://localhost:3001/reset-password/${id}?token=${token}`;
 
     const data = {
       name,
-      password,
-      email
+      email,
+      resetLink,
+      password
     };
-    console.log(`Datos: ${name}, ${password}, ${email}`);
-    
 
     const htmlContent = template(data);
 
