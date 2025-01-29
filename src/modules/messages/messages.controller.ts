@@ -27,8 +27,8 @@ export class MessagesController {
   constructor(private readonly messagesService: MessagesService) { }
 
   @Post('posts')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+ /*  @ApiBearerAuth()
+  @UseGuards(AuthGuard) */
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('file'))
   async createPosts(

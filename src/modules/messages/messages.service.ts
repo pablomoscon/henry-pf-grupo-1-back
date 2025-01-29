@@ -58,9 +58,9 @@ export class MessagesService {
         throw new Error('Reservation not found');
       }
     }
-
     const newPost = this.messageRepository.create({
       ...createPostDto,
+      reservation,
       sender,
       receivers,
       media_url: mediaUrl,
@@ -70,14 +70,13 @@ export class MessagesService {
     return await this.messageRepository.save(newPost);
   };
 
-
   async findReceivedMessagesByUser(userId: string): Promise<Message[]> {
     return this.messageRepository.find({
       where: {
         receivers: { id: userId },
         type: MessageType.POST,
       },
-      relations: ['sender', 'receivers'],
+      relations: ['sender', 'receivers', 'reservation'],
       order: { timestamp: 'ASC' },
     });
   };

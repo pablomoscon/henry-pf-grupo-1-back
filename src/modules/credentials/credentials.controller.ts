@@ -18,17 +18,13 @@ export class CredentialsController {
     return await this.credentialsService.findAll();
   };
 
-  @Patch()
+  @Patch(':id')
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async updatePassword(
-    @CurrentUser() user: User,
+    @Param('id') id: string,
     @Body() updateCredentialDto: UpdateCredentialDto
   ): Promise<Credential> {
-    return this.credentialsService.updatePassword(
-      user,
-      updateCredentialDto.currentPassword,
-      updateCredentialDto.newPassword
-    );
+    return this.credentialsService.updatePassword(id, updateCredentialDto);
   };
 }

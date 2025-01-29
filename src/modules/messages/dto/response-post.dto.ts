@@ -58,6 +58,11 @@ export class MessageResponseDto {
     })
     receiver_id: string;
 
+    @ApiProperty({
+        description: 'Reservation ID associated with the message',
+    })
+    reservationId: string;
+
     constructor(message: Message) {
         this.id = message.id;
         this.media_url = message.media_url;
@@ -67,5 +72,6 @@ export class MessageResponseDto {
         this.timestamp = message.timestamp;
         this.sender_id = message.sender.id;
         this.receiver_id = message.receivers.map(receiver => receiver.id).join(',');
+        this.reservationId = message.reservation.id;
     };
 }

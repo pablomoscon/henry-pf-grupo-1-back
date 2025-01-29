@@ -52,9 +52,10 @@ export class AuthController {
     res.cookie(
       'auth',
       JSON.stringify({ token, user: new ResponseUserDto(user) }),
-      { httpOnly: false, 
-       secure: false,
-      maxAge: 60 * 60 * 1000
+      {
+        httpOnly: false,
+        secure: false,
+        maxAge: 60 * 60 * 1000
       }
     );
 
