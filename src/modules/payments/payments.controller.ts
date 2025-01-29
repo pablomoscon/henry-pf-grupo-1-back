@@ -14,7 +14,6 @@ import { PaymentsService } from './payments.service';
 import { Response } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
-import { Url } from 'url';
 
 @Controller('payments')
 export class PaymentsController {
