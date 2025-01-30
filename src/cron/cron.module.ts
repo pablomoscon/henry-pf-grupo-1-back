@@ -9,11 +9,13 @@ import { JoinedAnniversaryTask } from './tasks/joinedAnniversary.task';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Notification } from 'src/modules/notifications/entities/notification.entity';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
+import { RoomsModule } from 'src/modules/rooms/rooms.module';
+import { ReservationsModule } from 'src/modules/reservations/reservations.module';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(), // Activar el módulo de Schedule aquí
-    TypeOrmModule.forFeature([User, Notification, Reservation]), // Registrar entidades necesarias
+    TypeOrmModule.forFeature([User, Notification, Reservation]), RoomsModule, ReservationsModule
   ],
   providers: [
     CronService,

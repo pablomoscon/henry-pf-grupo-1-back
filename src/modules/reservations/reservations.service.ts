@@ -66,11 +66,10 @@ export class ReservationsService {
     });
 
     await this.reservationRepository.save(reservation)
-   /*  this.MailService.sendInitiatedReservation(reservation) */
+    /*  this.MailService.sendInitiatedReservation(reservation) */
 
     return reservation;
   };
-
 
   private async isRoomAvailable(roomId: string, checkInDate: Date, checkOutDate: Date): Promise<boolean> {
     const conflictingReservations = await this.reservationRepository.find({
@@ -148,5 +147,23 @@ export class ReservationsService {
       where: { user: { id: userId } },
       relations: ['room', 'cats', 'payments'],
     });
+  };
+  async completeExpiredReservations(): Promise<void> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const expiredReservations = await this.reservationRepository.find({
+      where: {
+        checkOutDate: LessThanOrEqual(today),
+        status: ReservationStatus.CONFIRMED,
+      },
+    });
+
+    for (const reservation of expiredReservations) {
+      reservation.status = ReservationStatus.COMPLETED;
+      await this.reservationRepository.save(reservation);
+    }
+
+    console.log(`${expiredReservations.length} reservations have been completed.`);
   };
 }
