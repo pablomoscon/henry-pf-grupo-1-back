@@ -26,9 +26,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @ApiBearerAuth()
+/*   @ApiBearerAuth()
   @Roles(Role.ADMIN, Role.CARETAKER)
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard) */
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query('page') page: string = '1',
