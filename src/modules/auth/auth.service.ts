@@ -10,7 +10,6 @@ import { User } from "../users/entities/user.entity";
 import { JwtService } from "@nestjs/jwt";
 import { oauth2Client } from "src/config/google-auth.config";
 import * as crypto from 'crypto';
-import { MailService } from "../mail/mail.service";
 import { Role } from "src/enums/roles.enum";
 import * as jwt from 'jsonwebtoken';
 
@@ -20,7 +19,6 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly credentialsService: CredentialsService,
     private readonly jwtService: JwtService,
-    private readonly mailService: MailService,
   ) { }
 
   async signUp(signUpUser: SignupAuthDto) {
@@ -138,7 +136,6 @@ export class AuthService {
       user = await this.usersService.create(createUserDto, credential);
       await this.credentialsService.assignUserToCredentials(credential.id, { user });
       
-      this.mailService.sendPasswordChangeAlert(user)
 
     }
     const token = await this.createToken(user);
