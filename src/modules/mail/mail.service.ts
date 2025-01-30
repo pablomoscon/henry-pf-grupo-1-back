@@ -46,9 +46,9 @@ export class MailService {
     const htmlContent = template(data);
 
     const mailOptions = {
-      from: `"The Fancy Box" <${process.env.SMTP_FROM || 'your-email@example.com'}>`,
+      from: `"The Fancy Box" <${process.env.SMTP_FROM}>`,
       to: user.email,
-      subject: 'Reservation initiated',
+      subject: `Your Cat's Reservation is Confirmed! A Cozy Getaway Awaits at The Fancy Box, ${user.name}!`,
       html: htmlContent,
       attachments: [
         {
@@ -86,7 +86,7 @@ export class MailService {
     const htmlContent = template(data);
 
     const mailOptions = {
-      from: `"The Fancy Box" <${process.env.SMTP_FROM || 'your-email@example.com'}>`,
+      from: `"The Fancy Box" <${process.env.SMTP_FROM}>`,
       to: user.email,
       subject: 'Reservation confirmated',
       html: htmlContent,
@@ -115,7 +115,7 @@ export class MailService {
     const token = jwt.sign(
       { userId: id },
       process.env.JWT_SECRET,
-      { expiresIn: '2h' }
+      { expiresIn: '4h' }
     );
 
     const resetLink = `http://localhost:3001/change-password/${id}?token=${token}`;
@@ -130,9 +130,41 @@ export class MailService {
     const htmlContent = template(data);
 
     const mailOptions = {
-      from: `"The Fancy Box" <${process.env.SMTP_FROM || 'your-email@example.com'}>`,
+      from: `"The Fancy Box" <${process.env.SMTP_FROM}>`,
       to: email,
-      subject: 'Reset your Password',
+      subject: 'Your Password Change Request – Action Required',
+      html: htmlContent,
+      attachments: [
+        {
+          filename: 'LogoApp.png',
+          path: 'https://res.cloudinary.com/dofznnphj/image/upload/v1738092721/LogoApp_bjtclb.png',
+          cid: 'logoApp',
+        },
+      ],
+    };
+
+    await this.transporter.sendMail(mailOptions);
+  };
+
+  async sendSuccessfulregistration(userWithCredentials: User): Promise<void> {
+    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'successful-registration.hbs');
+    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    const template = Handlebars.compile(templateSource);
+
+    const { name, email } = userWithCredentials;
+
+    const data = {
+      name,
+      email,
+      appName: 'The Fancy Box',
+    };
+
+    const htmlContent = template(data);
+
+    const mailOptions = {
+      from: `"The Fancy Box" <${process.env.SMTP_FROM}>`,
+      to: email,
+      subject: `Welcome to The Fancy Box, ${name}! Your registration was successful`,
       html: htmlContent,
       attachments: [
         {
