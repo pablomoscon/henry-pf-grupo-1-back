@@ -115,10 +115,10 @@ export class MailService {
     const token = jwt.sign(
       { userId: id },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '2h' }
     );
 
-    const resetLink = `http://localhost:3001/reset-password/${id}?token=${token}`;
+    const resetLink = `http://localhost:3001/change-password/${id}?token=${token}`;
 
     const data = {
       name,

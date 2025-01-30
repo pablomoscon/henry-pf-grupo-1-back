@@ -13,6 +13,6 @@ export class UpdateCredentialDto extends PartialType(CreateCredentialDto) {
 
     @IsString()
     @MinLength(6)
-    confirmNewPassword?: string;
+    confirmPassword?: string;
 
 }

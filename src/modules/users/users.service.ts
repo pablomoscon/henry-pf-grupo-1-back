@@ -80,5 +80,5 @@ export class UsersService {
       relations: ['cats'],
     });
     return user?.cats.map(cat => ({ id: cat.id, name: cat.name })) || [];
-  }
+  };
 }

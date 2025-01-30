@@ -12,6 +12,7 @@ import { oauth2Client } from "src/config/google-auth.config";
 import * as crypto from 'crypto';
 import { MailService } from "../mail/mail.service";
 import { Role } from "src/enums/roles.enum";
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -142,5 +143,14 @@ export class AuthService {
     }
     const token = await this.createToken(user);
     return { token, user };
+  };
+
+  async verifyToken(token: string): Promise<string> {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      return decoded['userId'];  
+    } catch (err) {
+      throw new UnauthorizedException('Token is expired or invalid.');
+    }
   };
 }
