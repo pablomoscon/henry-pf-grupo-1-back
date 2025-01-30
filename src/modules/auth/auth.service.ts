@@ -133,7 +133,6 @@ export class AuthService {
         phone: userInfo.phoneNumbers?.[0]?.value,
         address: userInfo.addresses?.[0]?.value,
         customerId: userInfo.customerId,
-        role: Role.USER
       };
       user = await this.usersService.create(createUserDto, credential);
       await this.credentialsService.assignUserToCredentials(credential.id, { user });
