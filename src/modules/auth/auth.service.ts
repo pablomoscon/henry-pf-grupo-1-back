@@ -10,6 +10,8 @@ import { User } from "../users/entities/user.entity";
 import { JwtService } from "@nestjs/jwt";
 import { oauth2Client } from "src/config/google-auth.config";
 import * as crypto from 'crypto';
+import * as jwt from 'jsonwebtoken';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +19,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly credentialsService: CredentialsService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) { }
 
   async signUp(signUpUser: SignupAuthDto) {
@@ -114,7 +117,7 @@ export class AuthService {
 
   async googleSignUp(code: string): Promise<any> {
     const userInfo = await this.getUserInfo(code);
-    let user = await this.usersService.findByEmail(userInfo.email);
+    let user: User = await this.usersService.findByEmail(userInfo.email);
 
     if (!user) {
       const createCredentialsDto: CreateCredentialDto = {
@@ -133,8 +136,19 @@ export class AuthService {
       };
       user = await this.usersService.create(createUserDto, credential);
       await this.credentialsService.assignUserToCredentials(credential.id, { user });
+      
+      this.mailService.sendPasswordChangeAlert(user)
     }
     const token = await this.createToken(user);
     return { token, user };
+  };
+
+  async verifyToken(token: string): Promise<string> {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      return decoded['userId'];  
+    } catch (err) {
+      throw new UnauthorizedException('Token is expired or invalid.');
+    }
   };
 }

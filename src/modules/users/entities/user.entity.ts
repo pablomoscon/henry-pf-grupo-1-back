@@ -1,11 +1,13 @@
 import {
   Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    OneToMany,
-    OneToOne,
-    JoinColumn,
-    ManyToMany,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+  CreateDateColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional, IsDate } from 'class-validator';
@@ -18,6 +20,8 @@ import { Role } from 'src/enums/roles.enum';
 import { Status } from 'src/enums/status.enum';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
 import { Message } from 'src/modules/messages/entities/message.entity';
+import { Notification } from 'src/modules/notifications/entities/notification.entity';
+import { Review } from 'src/modules/reviews/entities/review.entity';
 
 @Entity('users')
 export class User {
@@ -106,11 +110,11 @@ export class User {
   @OneToMany(() => Cat, (cat) => cat.user)
   cats: Cat[];
 
-  @ApiProperty({
-    description: 'List of caretakers managed by the user',
-    type: () => [Caretaker],
-  })
   @OneToOne(() => Caretaker, { nullable: true })
+  @ApiProperty({
+    description: 'Caretaker profile associated with the user',
+    type: () => Caretaker,
+  })
   @JoinColumn()
   caretakerProfile: Caretaker;
 
@@ -135,11 +139,12 @@ export class User {
   @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.receiver)
   receivedChats: ChatHistory[];
 
+
+  @OneToMany(() => Message, (message) => message.sender)
   @ApiProperty({
     description: 'List of messages sent by the user',
     type: () => [Message],
   })
-  @OneToMany(() => Message, (message) => message.sender)
   sentMessages: Message[];
 
   @ManyToMany(() => Message, (message) => message.receivers)
@@ -155,5 +160,26 @@ export class User {
   })
   @OneToMany(() => Payment, (payment) => payment.user)
   payments?: Payment[];
+
+  @ApiProperty({
+    description: 'List of notifications associated with the user',
+  })
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications: Notification[];
+
+  @ApiProperty({
+    description: 'List of reviews submitted by the user',
+  })
+  @OneToMany(() => Review, (review) => review.user)
+  reviews: Review[];
+
+  @CreateDateColumn()
+  @ApiProperty({
+    description: 'Timestamp when the user was created',
+    example: '2023-01-01T00:00:00.000Z',
+  })
+  createdAt: Date;
+
 }
+
 

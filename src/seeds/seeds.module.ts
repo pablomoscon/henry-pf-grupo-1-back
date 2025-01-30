@@ -12,11 +12,16 @@ import { Credential } from 'src/modules/credentials/entities/credential.entity';
 import { SeedManager } from './seed.manager';
 import { Cat } from 'src/modules/cats/entities/cat.entity';
 import { CatsSeed } from './cats/cats-seed';
+import { Review } from 'src/modules/reviews/entities/review.entity';
+import { ReviewsSeed } from './review/reviews-seed';
+import { UsersModule } from 'src/modules/users/users.module';
 import { Location } from 'src/modules/locations/entities/location.entity';
+import { LocationsModule } from 'src/modules/locations/locations.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Room, Reservation, Credential, Cat, Location]),
+    TypeOrmModule.forFeature([User, Room, Reservation, Credential, Cat, Review, Location]),
+    LocationsModule, UsersModule
   ],
   providers: [
     SeedManager,
@@ -26,6 +31,7 @@ import { Location } from 'src/modules/locations/entities/location.entity';
     ReservationsSeed,
     CredentialsSeed,
     CatsSeed,
+    ReviewsSeed
   ],
   exports: [SeedManager],
 })

@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../entities/user.entity';
 import { Cat } from 'src/modules/cats/entities/cat.entity';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
+import { Role } from 'src/enums/roles.enum';
 
 export class ResponseUserDto {
     @ApiProperty({
@@ -40,6 +41,13 @@ export class ResponseUserDto {
     })
     customerId?: string;
 
+    @ApiProperty({
+        description: 'Role of the user',
+        example: 'ADMIN',
+        required: false,
+    })
+    role?: Role;
+
     constructor(user: User) {
         this.id = user.id;
         this.name = user.name;
@@ -47,6 +55,7 @@ export class ResponseUserDto {
         this.phone = user.phone;
         this.address = user.address;
         this.customerId = user.customerId;
+        this.role = user.role;
     }
 }
 

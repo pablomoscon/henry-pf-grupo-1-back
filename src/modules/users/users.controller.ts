@@ -37,7 +37,7 @@ export class UsersController {
     const pageNumber = Number(page);
     const limitNumber = Number(limit);
     return await this.usersService.findAll(pageNumber, limitNumber);
-  }
+  };
 
   @Get('clients-reservations')
   @HttpCode(HttpStatus.OK)
@@ -45,42 +45,42 @@ export class UsersController {
     return await this.usersService.findUsersWithReservations()
   };
 
-@Get(':id')
-@ApiBearerAuth()
-@UseGuards(AuthGuard)
-@HttpCode(HttpStatus.OK)
-async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-  const user = await this.usersService.findOne(id);
-  if (!user) {
-    throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-  }
-  return user;
-}
+  @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const user = await this.usersService.findOne(id);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    return user;
+  };
 
-@Patch(':id')
-@ApiBearerAuth()
-@UseGuards(AuthGuard)
-@HttpCode(HttpStatus.OK)
-async update(
-  @Param('id', new ParseUUIDPipe()) id: string,
-  @Body() updateUserDto: UpdateUserDto,
-) {
-  return await this.usersService.update(id, updateUserDto);
-}
+  @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return await this.usersService.update(id, updateUserDto);
+  };
 
-@Delete(':id')
-@ApiBearerAuth()
-@UseGuards(AuthGuard)
-@HttpCode(HttpStatus.OK)
-async remove(@Param('id', new ParseUUIDPipe()) id: string) {
-  return await this.usersService.remove(id);
-}
+  @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.usersService.remove(id);
+  };
 
-@Get('cats/:id')
-@ApiBearerAuth()
-@UseGuards(AuthGuard)
-@HttpCode(HttpStatus.OK)
-async usersCats(@Param('id', new ParseUUIDPipe()) id: string) {
-  return await this.usersService.usersCats(id);
-}
+  @Get('cats/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async usersCats(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.usersService.usersCats(id);
+  };
 }

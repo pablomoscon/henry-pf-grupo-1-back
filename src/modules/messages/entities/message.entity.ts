@@ -5,6 +5,7 @@ import { User } from 'src/modules/users/entities/user.entity';
 import { MessageType } from 'src/enums/message-type';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 
+
 @Entity()
 export class Message {
   @PrimaryGeneratedColumn('uuid')
@@ -66,15 +67,20 @@ export class Message {
   timestamp: Date;
 
   @ManyToOne(() => User, (user) => user.sentMessages)
-  @ApiProperty({ description: 'Sender of the message' })
+  @ApiProperty({
+    description: 'Sender of the message'
+   })
   sender: User;
 
   @ManyToMany(() => User, (user) => user.receivedMessages)
   @JoinTable()
-  @ApiProperty({ description: 'Receivers of the message' })
+  @ApiProperty({
+    description: 'Receivers of the message'
+   })
   receivers: User[];
 
-  @ManyToOne(() => Reservation, (reservation) => reservation.messages) 
-  @ApiProperty({ description: 'Reservation associated with the message' })
-  reservation?: Reservation;
+  @ManyToOne(() => Reservation, (reservation) => reservation.messages)
+  @ApiProperty({ description: 'Reservation associated with the message',
+   })
+  reservation: Reservation;
 }

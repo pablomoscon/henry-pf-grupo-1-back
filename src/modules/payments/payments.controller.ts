@@ -8,6 +8,7 @@ import {
   Query,
   Get,
   UseGuards,
+  Post,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { Response } from 'express';
@@ -18,26 +19,25 @@ import { AuthGuard } from 'src/guards/auth/auth.guard';
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Get('create-checkout-session/:reservationId')
+  @Post('create-checkout-session/:reservationId')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async createCheckoutSession(
     @Param('reservationId') reservationId: string,
     @Res() res: Response,
-  ): Promise<void> {
+  ): Promise<any> {
     try {
-      const sessionUrl =
-        await this.paymentsService.createCheckoutSession(reservationId);
+      const sessionUrl = await this.paymentsService.createCheckoutSession(reservationId);
 
-      return res.redirect(sessionUrl);
+      return res.json({ sessionUrl });
     } catch (error) {
       throw new HttpException(
         'Error creating the Stripe session',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-  }
+  };
 
   @Get('status')
   @ApiBearerAuth()
@@ -66,5 +66,5 @@ export class PaymentsController {
       console.error('Error processing payment:', error);
       throw error;
     }
-  }
+  };
 }

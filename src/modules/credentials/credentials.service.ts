@@ -1,12 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateCredentialDto } from './dto/create-credential.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { Credential } from './entities/credential.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
-import { User } from '../users/entities/user.entity';
-import * as crypto from 'crypto';
 
 @Injectable()
 export class CredentialsService {
@@ -80,15 +78,25 @@ export class CredentialsService {
     return await this.credentialsRepository.save(credential);
   };
 
-  async updatePassword(user: User, newPassword: string): Promise<Credential> {
+  async updatePassword(
+    id: string,
+    updateCredentialDto: UpdateCredentialDto
+  ): Promise<Credential> {
+    const { newPassword, confirmPassword } = updateCredentialDto;
+
+    if (newPassword !== confirmPassword) {
+      throw new BadRequestException('New password and confirmation do not match');
+    }
+
     const credential = await this.credentialsRepository.findOne({
-      where: { user: { id: user.id } },
+      where: { user: { id } },
       relations: ['user'],
     });
 
     if (!credential) {
       throw new NotFoundException('Credentials not found');
     }
+
     credential.password = await bcrypt.hash(newPassword, 10);
 
     return await this.credentialsRepository.save(credential);

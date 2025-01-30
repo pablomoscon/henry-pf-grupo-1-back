@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { usersMock } from './users-mock';
-import { hash } from 'bcrypt';
 import { Credential } from 'src/modules/credentials/entities/credential.entity';
 
 @Injectable()

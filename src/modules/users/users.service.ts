@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,7 +14,7 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) { }
 
-  async create(createUserDto: CreateUserDto, credential: Credential) {
+  async create(createUserDto: CreateUserDto, credential: Credential):Promise<User> {
     const newUser = this.userRepository.create({
       ...createUserDto,
       credential,
@@ -63,7 +63,13 @@ export class UsersService {
   };
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+    const existingUser = await this.userRepository.findOne({ where: { id } });
+    if (!existingUser) {
+      throw new HttpException(`User with ID ${id} not found`, HttpStatus.NOT_FOUND);
+    }
+
     await this.userRepository.update(id, updateUserDto);
+
     return this.findOne(id);
   };
 
@@ -80,8 +86,8 @@ export class UsersService {
   async usersCats(id: string): Promise<{ id: string; name: string }[]> {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['cats'], 
+      relations: ['cats'],
     });
     return user?.cats.map(cat => ({ id: cat.id, name: cat.name })) || [];
-  }
+  };
 }
