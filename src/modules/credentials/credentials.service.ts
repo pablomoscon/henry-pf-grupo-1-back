@@ -5,8 +5,6 @@ import { IsNull, Repository } from 'typeorm';
 import { Credential } from './entities/credential.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
-import { User } from '../users/entities/user.entity';
-import * as crypto from 'crypto';
 
 @Injectable()
 export class CredentialsService {
@@ -84,9 +82,9 @@ export class CredentialsService {
     id: string,
     updateCredentialDto: UpdateCredentialDto
   ): Promise<Credential> {
-    const { newPassword, confirmNewPassword } = updateCredentialDto;
+    const { newPassword, confirmPassword } = updateCredentialDto;
 
-    if (newPassword !== confirmNewPassword) {
+    if (newPassword !== confirmPassword) {
       throw new BadRequestException('New password and confirmation do not match');
     }
 
@@ -97,7 +95,7 @@ export class CredentialsService {
 
     if (!credential) {
       throw new NotFoundException('Credentials not found');
-    } 
+    }
 
     credential.password = await bcrypt.hash(newPassword, 10);
 

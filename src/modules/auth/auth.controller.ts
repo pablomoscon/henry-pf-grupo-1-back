@@ -59,7 +59,7 @@ export class AuthController {
       }
     );
 
-    res.redirect('http://localhost:3001/profile');
+    res.redirect('http://localhost:3001/loading');
   };
 }
 

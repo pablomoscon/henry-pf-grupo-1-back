@@ -8,7 +8,6 @@ import { CloudinaryService } from 'src/services/cloudinary/cloudinary.service';
 import { UsersModule } from '../users/users.module';
 import { CatsModule } from '../cats/cats.module';
 import { RoomsModule } from '../rooms/rooms.module';
-import { MailsModule } from '../mail/mail.module';
 import { PaymentsModule } from '../payments/payments.module';
 
 @Module({
@@ -17,7 +16,6 @@ import { PaymentsModule } from '../payments/payments.module';
     RoomsModule,
     CatsModule,
     FileUploadModule,
-    MailsModule,
     forwardRef(() => PaymentsModule)
   ],
   controllers: [ReservationsController],
