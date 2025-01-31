@@ -31,8 +31,8 @@ export class PaymentsService {
         payment_method_types: ['card'],
         customer_email: reservation.user.email,
         mode: 'payment',
-        success_url: `http://localhost:3001/success?&status=succeeded&sessionId={CHECKOUT_SESSION_ID}`,
-        cancel_url: `http://localhost:3001/cancel?&status=canceled&sessionId={CHECKOUT_SESSION_ID}`,
+        success_url: `http://localhost:3001/payment?&status=succeeded&sessionId={CHECKOUT_SESSION_ID}`,
+        cancel_url: `http://localhost:3001/payment?&status=canceled&sessionId={CHECKOUT_SESSION_ID}`,
         line_items: [
           {
             price_data: {

@@ -117,15 +117,16 @@ export class AuthService {
   };
 
   async googleSignUp(code: string): Promise<any> {
+    
     const userInfo = await this.getUserInfo(code);
+
     let user: User = await this.usersService.findByEmail(userInfo.email);
 
     if (!user) {
+      
       const createCredentialsDto: CreateCredentialDto = {
         googleId: userInfo.sub,
-        // No necesitamos la contraseña aquí, se generará en el servicio
       };
-
       const credential: Credential = await this.credentialsService.createGoogleCredential(createCredentialsDto);
 
       const createUserDto: CreateUserDto = {
@@ -136,19 +137,25 @@ export class AuthService {
         customerId: userInfo.customerId,
       };
       user = await this.usersService.create(createUserDto, credential);
-      await this.credentialsService.assignUserToCredentials(credential.id, { user });
 
+      await this.credentialsService.assignUserToCredentials(credential.id, { user });
+      
       this.mailService.sendPasswordChangeAlert(user);
     }
+
     const token = await this.createToken(user);
+
     return { token, user };
   };
 
   async verifyToken(token: string): Promise<string> {
     try {
+      console.log("Verificando token:", token); 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      console.log("Token decodificado correctamente:", decoded);
       return decoded['userId'];
     } catch (err) {
+      console.error("Error en la verificación del token:", err);
       throw new UnauthorizedException('Token is expired or invalid.');
     }
   };

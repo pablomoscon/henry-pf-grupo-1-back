@@ -25,4 +25,8 @@ export class CreatePostDto {
         description: 'Reservation ID associated with the message',
     })
     reservationId: string;
+
+    @ApiProperty({ description: 'Type of the message', example: 'CHAT' })
+    @IsEnum(MessageType)
+    type: MessageType;
 }

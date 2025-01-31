@@ -23,12 +23,12 @@ import { RolesGuard } from 'src/guards/roles/roles.guard';
 @Controller('users')
 @ApiTags('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Get()
-/*   @ApiBearerAuth()
+  @ApiBearerAuth()
   @Roles(Role.ADMIN, Role.CARETAKER)
-  @UseGuards(AuthGuard, RolesGuard) */
+  @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query('page') page: string = '1',
@@ -37,6 +37,25 @@ export class UsersController {
     const pageNumber = Number(page);
     const limitNumber = Number(limit);
     return await this.usersService.findAll(pageNumber, limitNumber);
+  };
+
+  @Get('caretakers')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async findCaretakers(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10
+  ) {
+    return this.usersService.findCaretakers(page, limit);
+  };
+
+  @Get('cats/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async usersCats(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.usersService.usersCats(id);
   };
 
   @Get(':id')
@@ -68,13 +87,5 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.usersService.remove(id);
-  };
-
-  @Get('cats/:id')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @HttpCode(HttpStatus.OK)
-  async usersCats(@Param('id', new ParseUUIDPipe()) id: string) {
-    return await this.usersService.usersCats(id);
   };
 }
