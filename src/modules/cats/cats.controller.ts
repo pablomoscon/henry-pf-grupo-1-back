@@ -37,7 +37,7 @@ export class CatsController {
     @Body() createCatDto: CreateCatDto,
   ) {
     return await this.catsService.create(createCatDto, file);
-  }
+  };
 
   @Get()
   @ApiBearerAuth()
@@ -45,7 +45,7 @@ export class CatsController {
   @HttpCode(HttpStatus.OK)
   async findAll() {
     return await this.catsService.findAll();
-  }
+  };
 
   @Get(':id')
   @ApiBearerAuth()
@@ -57,7 +57,7 @@ export class CatsController {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     return cat;
-  }
+  };
 
   @Patch(':id')
   @ApiBearerAuth()
@@ -70,7 +70,7 @@ export class CatsController {
     @UploadedFile(new ImageUploadValidationPipe()) file?: Express.Multer.File,
   ) {
     return await this.catsService.update(id, updateCatDto, file);
-  }
+  };
 
   @Delete(':id')
   @ApiBearerAuth()
@@ -78,5 +78,5 @@ export class CatsController {
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.catsService.remove(id);
-  }
+  };
 }

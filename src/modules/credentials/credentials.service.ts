@@ -5,6 +5,7 @@ import { IsNull, Repository } from 'typeorm';
 import { Credential } from './entities/credential.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class CredentialsService {
@@ -14,8 +15,8 @@ export class CredentialsService {
   ) { }
 
   async create(createCredentialsDto: CreateCredentialDto): Promise<Credential> {
+    const { password } = await this.handlePasswordAndExpiration(createCredentialsDto);
 
-    const { password } = createCredentialsDto;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const credential = this.credentialsRepository.create({
@@ -23,25 +24,33 @@ export class CredentialsService {
       password: hashedPassword,
     });
 
-    return await this.credentialsRepository.save(credential);
+    return this.credentialsRepository.save(credential);
+  };
+
+  private async handlePasswordAndExpiration(createCredentialsDto: CreateCredentialDto): Promise<{ password: string}> {
+    let { password } = createCredentialsDto;
+
+    if (!password) {
+      password = crypto.randomBytes(16).toString('hex');
+    }
+
+    return { password };
   };
 
   async createGoogleCredential(createCredentialsDto: CreateCredentialDto): Promise<Credential> {
-    const { googleId, password } = createCredentialsDto;
+    const { googleId } = createCredentialsDto;
+
     const hashedCredential = await bcrypt.hash(googleId, 10);
+    const { password: generatedPassword } = await this.handlePasswordAndExpiration(createCredentialsDto);
 
     const googleCredential = this.credentialsRepository.create({
       ...createCredentialsDto,
       googleId: hashedCredential,
+      password: await bcrypt.hash(generatedPassword, 10),
+
     });
 
-    const savedCredential = await this.credentialsRepository.save(googleCredential);
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    savedCredential.password = hashedPassword;
-
-    return await this.credentialsRepository.save(savedCredential);
+    return await this.credentialsRepository.save(googleCredential);
   };
 
   async validatePassword(credentialId: string, password: string): Promise<boolean> {
@@ -50,6 +59,7 @@ export class CredentialsService {
     if (!credential) {
       throw new NotFoundException('Credentials not found');
     }
+    
     return bcrypt.compare(password, credential.password);
   };
 

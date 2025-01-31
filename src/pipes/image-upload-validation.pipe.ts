@@ -6,15 +6,20 @@ export class ImageUploadValidationPipe implements PipeTransform {
 
   private readonly maxSizeInBytes = 2097152; //2mb
   transform(file: Express.Multer.File) {
-    if (!file) {
+   /*  if (!file) {
       throw new BadRequestException('No file recieved');
+    } */
+    
+    if (file) {
+      // Validaciones si hay un archivo
+      if (!this.allowedMimeTypes.includes(file.mimetype)) {
+        throw new BadRequestException('Invalid file type');
+      }
+      if (file.size > this.maxSizeInBytes) {
+        throw new BadRequestException('File exceeds max size');
+      }
     }
-    if (!this.allowedMimeTypes.includes(file.mimetype)) {
-      throw new BadRequestException('Invalid file type');
-    }
-    if (file.size > this.maxSizeInBytes) {
-      throw new BadRequestException('File exceeds max size');
-    }
+    
     return file;
   }
 }

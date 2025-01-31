@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
 import { CaretakersService } from './caretakers.service';
 import { CaretakersController } from './caretakers.controller';
-import { Caretaker } from './entities/caretaker.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Caretaker } from './entities/caretaker.entity';
+import { LocationsModule } from '../locations/locations.module';
 import { UsersModule } from '../users/users.module';
 import { ReservationsModule } from '../reservations/reservations.module';
-import { LocationsModule } from '../locations/locations.module';
 
 @Module({
-
-  imports: [TypeOrmModule.forFeature([Caretaker]), UsersModule, ReservationsModule, LocationsModule],
+  imports: [TypeOrmModule.forFeature([Caretaker]), LocationsModule, UsersModule, ReservationsModule],
   controllers: [CaretakersController],
   providers: [CaretakersService],
-  exports: [CaretakersService]
+  exports:[CaretakersService]
 })
 export class CaretakersModule {}

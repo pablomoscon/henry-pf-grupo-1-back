@@ -101,13 +101,32 @@ export class RoomsService {
     return await this.roomsRepository.findOneBy({ id });
   };
 
-  async update(id: string, updateRoomDto: UpdateRoomDto) {
-    const updateResult = await this.roomsRepository.update(id, updateRoomDto);
+  async update(id: string, updateRoomDto: UpdateRoomDto, file?: Express.Multer.File): Promise<Room> {
+    let imgUrl: string | undefined;
 
-    if (updateResult.affected === 0) {
+    if (file) {
+      imgUrl = await this.fileUploadService.uploadFile({
+        fieldName: file.fieldname,
+        buffer: file.buffer,
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+        size: file.size,
+      });
+    }
+
+    const updateRoom = await this.roomsRepository.preload({
+      id,
+      ...updateRoomDto,
+      img: imgUrl || undefined,
+    });
+
+    if (!updateRoom) {
       throw new NotFoundException(`Room with ID ${id} not found`);
     }
-    return await this.findOne(id);
+
+    await this.roomsRepository.save(updateRoom);
+
+    return updateRoom;
   };
 
   async remove(id: string): Promise<Room> {
@@ -118,5 +137,32 @@ export class RoomsService {
     }
     room.deleted_at = new Date();
     return this.roomsRepository.save(room);
+  };
+
+  async updateAvailability() {
+    const rooms = await this.roomsRepository.find({
+      relations: ['reservations'],
+      where: { deleted_at: IsNull() },
+    });
+
+    const now = new Date();
+    const updatedRooms = [];
+
+    for (const room of rooms) {
+      const isOccupied = room.reservations.some(reservation =>
+        new Date(reservation.checkInDate) <= now &&
+        new Date(reservation.checkOutDate) >= now
+      );
+
+      if (room.available !== !isOccupied) {
+        room.available = !isOccupied;
+        updatedRooms.push(room);
+      }
+    }
+
+    if (updatedRooms.length > 0) {
+      await this.roomsRepository.save(updatedRooms);
+      console.log(`${updatedRooms.length} Rooms updated.`);
+    }
   };
 }

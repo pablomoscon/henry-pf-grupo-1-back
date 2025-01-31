@@ -17,7 +17,6 @@ export class MessagesGateway {
 
     constructor(
         @InjectRepository(Message)
-        private messageRepository: Repository<Message>,
         private readonly usersService: UsersService,
         private readonly reservationsService: ReservationsService,
         private readonly caretakersService: CaretakersService,

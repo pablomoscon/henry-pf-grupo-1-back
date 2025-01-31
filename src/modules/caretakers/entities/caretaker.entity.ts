@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinTable, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinTable, ManyToMany, JoinColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional, IsDate } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
@@ -16,6 +16,7 @@ export class Caretaker {
   id: string;
 
   @OneToOne(() => User, (user) => user.caretakerProfile)
+  @JoinColumn()
   @ApiProperty({
     description: 'User who is the caretaker',
     example: 'Cesar Millan'

@@ -6,6 +6,7 @@ import { User } from './entities/user.entity';
 import { IsNull, Repository } from 'typeorm';
 import { Credential } from '../credentials/entities/credential.entity';
 import { Cat } from '../cats/entities/cat.entity';
+import { Role } from 'src/enums/roles.enum';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +15,7 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) { }
 
-  async create(createUserDto: CreateUserDto, credential: Credential):Promise<User> {
+  async create(createUserDto: CreateUserDto, credential: Credential): Promise<User> {
     const newUser = this.userRepository.create({
       ...createUserDto,
       credential,
@@ -89,5 +90,23 @@ export class UsersService {
       relations: ['cats'],
     });
     return user?.cats.map(cat => ({ id: cat.id, name: cat.name })) || [];
+  };
+
+  async findCaretakers(pageNumber: number, limitNumber: number) {
+    return await this.userRepository.find({
+      where: { role: Role.CARETAKER, deleted_at: IsNull() },
+      skip: (pageNumber - 1) * limitNumber,
+      take: limitNumber,
+      relations: ['caretakerProfile', 'reservations', 'cats'],
+    });
+  };
+
+  async findUserRole(pageNumber: number, limitNumber: number) {
+    return await this.userRepository.find({
+      where: { role: Role.USER, deleted_at: IsNull() },
+      skip: (pageNumber - 1) * limitNumber,
+      take: limitNumber,
+      relations: ['reservations', 'cats'],
+    });
   };
 }

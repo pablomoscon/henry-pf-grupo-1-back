@@ -39,10 +39,34 @@ export class UsersController {
     return await this.usersService.findAll(pageNumber, limitNumber);
   };
 
-  @Get('clients-reservations')
+  @Get('caretakers')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
-  async findUsersWithReservations() {
-    return await this.usersService.findUsersWithReservations()
+  async findCaretakers(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10
+  ) {
+    return this.usersService.findCaretakers(page, limit);
+  };
+
+  @Get('user-role')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async findUserRole(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 12
+  ) {
+    return this.usersService.findCaretakers(page, limit);
+  };
+
+  @Get('cats/:id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async usersCats(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.usersService.usersCats(id);
   };
 
   @Get(':id')
@@ -74,13 +98,5 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.usersService.remove(id);
-  };
-
-  @Get('cats/:id')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
-  @HttpCode(HttpStatus.OK)
-  async usersCats(@Param('id', new ParseUUIDPipe()) id: string) {
-    return await this.usersService.usersCats(id);
   };
 }

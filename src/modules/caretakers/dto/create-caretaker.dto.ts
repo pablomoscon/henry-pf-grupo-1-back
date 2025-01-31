@@ -1,48 +1,36 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID, IsOptional, IsDate, IsArray } from 'class-validator';
+import { IsString, IsUUID, IsOptional, IsDate, IsNotEmpty } from 'class-validator';
+import { User } from '../../users/entities/user.entity';
+import { Location } from '../../../modules/locations/entities/location.entity';
+import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 
 export class CreateCaretakerDto {
     @ApiProperty({
-        description: 'Unique identifier for the caretaker',
-        example: '123e4567-e89b-12d3-a456-426614174000',
-    })
-    @IsUUID()
-    id: string;
-
-    @ApiProperty({
         description: 'User who is the caretaker',
-        example: { id: '123e4567-e89b-12d3-a456-426614174000', name: 'Cesar Millan' },
+        example: 'Bob Johnson',
     })
+    @IsNotEmpty()
     userId: string;
 
     @ApiProperty({
         description: 'Profile information of the caretaker',
-        example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        example: 'Lorem ipsum dolor sit amet...',
     })
     @IsString()
     profileData: string;
 
     @ApiProperty({
-        description: 'Timestamp when the caretaker was deleted',
-        example: '2025-01-10T00:00:00.000Z',
-        required: false,
+        description: 'Location where the caretaker works',
+        example: 'New York',
     })
-    @IsOptional()
-    @IsDate()
-    deleted_at?: Date;
-
+    @IsUUID()
+    locationId: string;
 
     @ApiProperty({
         description: 'Reservations associated with the caretaker',
-        required: false,
+        type: [String],
     })
     @IsOptional()
-    @IsArray()
-    reservationsId: string[];
-
-    @ApiProperty({
-        description: 'Location where the caretaker works',
-        example: { id: '123e4567-e89b-12d3-a456-426614174000', name: 'New York' },
-    })
-    locationId: string;
+    @IsUUID('all', { each: true })
+    reservationIds?: string[];
 }

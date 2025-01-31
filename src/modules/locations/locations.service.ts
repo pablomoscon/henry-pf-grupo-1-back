@@ -4,12 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { Location } from './entities/location.entity';
-
 @Injectable()
 export class LocationsService {
   constructor(
-    @InjectRepository(Location) private readonly locationRepository: Repository<Location>,
+    @InjectRepository(Location)
+    private locationsRepository: Repository<Location>,
   ) { }
 
   create(createLocationDto: CreateLocationDto) {
@@ -20,28 +22,15 @@ export class LocationsService {
     return await this.locationRepository.find();
   };
 
-  async findOne(id: string): Promise<Location> {
-    return await this.locationRepository.findOne({
-      where: { id }
-    })
+  async findOne(id: string): Promise<Location | null> {
+    return await this.locationsRepository.findOne({ where: { id } });
   };
-  
-  async update(id: string, updateLocationDto: UpdateLocationDto): Promise<Location> {
-    const location = await this.locationRepository.preload({
-      id,
-      ...updateLocationDto,
-    });
-    if (!location) {
-      throw new Error(`Location with id ${id} not found`);
-    }
-    return await this.locationRepository.save(location);
-  }
 
-  async remove(id: string): Promise<void> {
-    const location = await this.locationRepository.findOne({ where: { id } })
-    if (!location) {
-      throw new Error(`Location with id ${id} not found`);
-    }
-    await this.locationRepository.remove(location);
-  }
+  update(id: string, updateLocationDto: UpdateLocationDto) {
+    return `This action updates a #${id} location`;
+  };
+
+  remove(id: string) {
+    return `This action removes a #${id} location`;
+  };
 }

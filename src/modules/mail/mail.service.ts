@@ -20,47 +20,6 @@ export class MailService {
     this.transporter = nodemailerTransport();
   }
 
-  async sendInitiatedReservation(reservation: Reservation): Promise<void> {
-    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'reservation-initiated.hbs');
-    const templateSource = fs.readFileSync(templatePath, 'utf8');
-    const template = Handlebars.compile(templateSource);
-
-    const { user, checkInDate, checkOutDate, totalAmount, room, cats, status } = reservation;
-
-    const sessionUrl = await this.paymentsService.createCheckoutSession(reservation.id);
-
-    const checkIn = new Date(checkInDate);
-    const checkOut = new Date(checkOutDate);
-
-    const data = {
-      user: user.name,
-      checkIn: checkIn.toISOString().split('T')[0],
-      checkOut: checkOut.toISOString().split('T')[0],
-      totalAmount: totalAmount.toFixed(2),
-      room: room?.name || 'Not Assigned',
-      cats: cats.map(cat => cat.name).join(', ') || 'None',
-      status,
-      paymentLink: sessionUrl,
-    };
-
-    const htmlContent = template(data);
-
-    const mailOptions = {
-      from: `"The Fancy Box" <${process.env.SMTP_FROM || 'your-email@example.com'}>`,
-      to: user.email,
-      subject: 'Reservation initiated',
-      html: htmlContent,
-      attachments: [
-        {
-          filename: 'LogoApp.png',
-          path: 'https://res.cloudinary.com/dofznnphj/image/upload/v1737408225/LogoApp_xslnki.png',
-          cid: 'logoApp',
-        },
-      ],
-    };
-
-    await this.transporter.sendMail(mailOptions);
-  };
 
   async sendConfirmatedReservation(reservation: Reservation): Promise<void> {
 
@@ -86,14 +45,14 @@ export class MailService {
     const htmlContent = template(data);
 
     const mailOptions = {
-      from: `"The Fancy Box" <${process.env.SMTP_FROM || 'your-email@example.com'}>`,
+      from: `"The Fancy Box" <${process.env.SMTP_FROM}>`,
       to: user.email,
-      subject: 'Reservation confirmated',
+      subject: 'Your Reservation at The Fancy Box is Officially Confirmed! 🎉',
       html: htmlContent,
       attachments: [
         {
           filename: 'LogoApp.png',
-          path: 'https://res.cloudinary.com/dofznnphj/image/upload/v1737408225/LogoApp_xslnki.png',
+          path: 'https://res.cloudinary.com/dofznnphj/image/upload/v1738092721/LogoApp_bjtclb.png',
           cid: 'logoApp',
         },
       ],
@@ -115,7 +74,7 @@ export class MailService {
     const token = jwt.sign(
       { userId: id },
       process.env.JWT_SECRET,
-      { expiresIn: '2h' }
+      { expiresIn: '4h' }
     );
 
     const resetLink = `http://localhost:3001/change-password/${id}?token=${token}`;
@@ -130,9 +89,41 @@ export class MailService {
     const htmlContent = template(data);
 
     const mailOptions = {
-      from: `"The Fancy Box" <${process.env.SMTP_FROM || 'your-email@example.com'}>`,
+      from: `"The Fancy Box" <${process.env.SMTP_FROM}>`,
       to: email,
-      subject: 'Reset your Password',
+      subject: 'Your Password Change Request – Action Required',
+      html: htmlContent,
+      attachments: [
+        {
+          filename: 'LogoApp.png',
+          path: 'https://res.cloudinary.com/dofznnphj/image/upload/v1738092721/LogoApp_bjtclb.png',
+          cid: 'logoApp',
+        },
+      ],
+    };
+
+    await this.transporter.sendMail(mailOptions);
+  };
+
+  async sendSuccessfulregistration(userWithCredentials: User): Promise<void> {
+    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'successful-registration.hbs');
+    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    const template = Handlebars.compile(templateSource);
+
+    const { name, email } = userWithCredentials;
+
+    const data = {
+      name,
+      email,
+      appName: 'The Fancy Box',
+    };
+
+    const htmlContent = template(data);
+
+    const mailOptions = {
+      from: `"The Fancy Box" <${process.env.SMTP_FROM}>`,
+      to: email,
+      subject: `Welcome to The Fancy Box, ${name}! Your registration was successful`,
       html: htmlContent,
       attachments: [
         {

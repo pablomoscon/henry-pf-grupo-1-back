@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { Column } from 'typeorm';
 
 export class CreateCredentialDto {
     @ApiProperty({
@@ -8,7 +9,8 @@ export class CreateCredentialDto {
     })
     @IsString()
     @IsNotEmpty()
-    password: string;
+    @IsOptional()
+    password?: string;
 
     @ApiProperty({
         description: 'Unique identifier assigned by Google OAuth2 for the user',
@@ -17,5 +19,7 @@ export class CreateCredentialDto {
     @IsOptional()
     @IsString()
     @IsUUID()
+    @IsOptional()
     googleId?: string;
+
 }

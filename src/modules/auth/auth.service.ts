@@ -9,7 +9,6 @@ import { Credential } from "../credentials/entities/credential.entity";
 import { User } from "../users/entities/user.entity";
 import { JwtService } from "@nestjs/jwt";
 import { oauth2Client } from "src/config/google-auth.config";
-import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
 import { MailService } from '../mail/mail.service';
 
@@ -50,6 +49,8 @@ export class AuthService {
     const userWithCredentials = await this.usersService.create(createUserDto, credential);
 
     await this.credentialsService.assignUserToCredentials(credential.id, { user: userWithCredentials });
+
+    this.mailService.sendSuccessfulregistration(userWithCredentials)
 
     return userWithCredentials;
   };
@@ -116,15 +117,16 @@ export class AuthService {
   };
 
   async googleSignUp(code: string): Promise<any> {
+    
     const userInfo = await this.getUserInfo(code);
+
     let user: User = await this.usersService.findByEmail(userInfo.email);
 
     if (!user) {
+      
       const createCredentialsDto: CreateCredentialDto = {
         googleId: userInfo.sub,
-        password: crypto.randomBytes(16).toString('hex')
       };
-
       const credential: Credential = await this.credentialsService.createGoogleCredential(createCredentialsDto);
 
       const createUserDto: CreateUserDto = {
@@ -135,19 +137,25 @@ export class AuthService {
         customerId: userInfo.customerId,
       };
       user = await this.usersService.create(createUserDto, credential);
+
       await this.credentialsService.assignUserToCredentials(credential.id, { user });
       
-      this.mailService.sendPasswordChangeAlert(user)
+      this.mailService.sendPasswordChangeAlert(user);
     }
+
     const token = await this.createToken(user);
+
     return { token, user };
   };
 
   async verifyToken(token: string): Promise<string> {
     try {
+      console.log("Verificando token:", token); 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      return decoded['userId'];  
+      console.log("Token decodificado correctamente:", decoded);
+      return decoded['userId'];
     } catch (err) {
+      console.error("Error en la verificación del token:", err);
       throw new UnauthorizedException('Token is expired or invalid.');
     }
   };
