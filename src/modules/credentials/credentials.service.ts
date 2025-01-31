@@ -5,7 +5,6 @@ import { IsNull, Repository } from 'typeorm';
 import { Credential } from './entities/credential.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
-import { User } from '../users/entities/user.entity';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -16,34 +15,44 @@ export class CredentialsService {
   ) { }
 
   async create(createCredentialsDto: CreateCredentialDto): Promise<Credential> {
+    const { password, passwordExpiration } = await this.handlePasswordAndExpiration(createCredentialsDto);
 
-    const { password } = createCredentialsDto;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const credential = this.credentialsRepository.create({
       ...createCredentialsDto,
       password: hashedPassword,
+      passwordExpiration,
     });
 
-    return await this.credentialsRepository.save(credential);
+    return this.credentialsRepository.save(credential);
+  };
+
+  private async handlePasswordAndExpiration(createCredentialsDto: CreateCredentialDto): Promise<{ password: string, passwordExpiration: Date }> {
+    let { password, passwordExpiration } = createCredentialsDto;
+
+    if (!password) {
+      password = crypto.randomBytes(16).toString('hex');
+      passwordExpiration = new Date(Date.now() + 4 * 60 * 60 * 1000); // 4 horas
+    }
+
+    return { password, passwordExpiration };
   };
 
   async createGoogleCredential(createCredentialsDto: CreateCredentialDto): Promise<Credential> {
     const { googleId, password } = createCredentialsDto;
+
     const hashedCredential = await bcrypt.hash(googleId, 10);
+    const { password: generatedPassword, passwordExpiration } = await this.handlePasswordAndExpiration(createCredentialsDto);
 
     const googleCredential = this.credentialsRepository.create({
       ...createCredentialsDto,
       googleId: hashedCredential,
+      password: await bcrypt.hash(generatedPassword, 10),
+      passwordExpiration,
     });
 
-    const savedCredential = await this.credentialsRepository.save(googleCredential);
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    savedCredential.password = hashedPassword;
-
-    return await this.credentialsRepository.save(savedCredential);
+    return await this.credentialsRepository.save(googleCredential);
   };
 
   async validatePassword(credentialId: string, password: string): Promise<boolean> {
@@ -52,6 +61,11 @@ export class CredentialsService {
     if (!credential) {
       throw new NotFoundException('Credentials not found');
     }
+
+    //if (new Date() > new Date(credential.passwordExpiration)) {
+    //  throw new UnauthorizedException('Password has expired');
+    //}
+    
     return bcrypt.compare(password, credential.password);
   };
 
@@ -84,9 +98,9 @@ export class CredentialsService {
     id: string,
     updateCredentialDto: UpdateCredentialDto
   ): Promise<Credential> {
-    const { newPassword, confirmNewPassword } = updateCredentialDto;
+    const { newPassword, confirmPassword } = updateCredentialDto;
 
-    if (newPassword !== confirmNewPassword) {
+    if (newPassword !== confirmPassword) {
       throw new BadRequestException('New password and confirmation do not match');
     }
 
@@ -97,7 +111,7 @@ export class CredentialsService {
 
     if (!credential) {
       throw new NotFoundException('Credentials not found');
-    } 
+    }
 
     credential.password = await bcrypt.hash(newPassword, 10);
 

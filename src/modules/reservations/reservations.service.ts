@@ -9,7 +9,6 @@ import { CatsService } from '../cats/cats.service';
 import { ReservationStatus } from 'src/enums/reservation-status.enum';
 import { Cat } from '../cats/entities/cat.entity';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
-import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class ReservationsService {
@@ -19,7 +18,7 @@ export class ReservationsService {
     private readonly usersService: UsersService,
     private readonly roomsService: RoomsService,
     private readonly catsService: CatsService,
-    private readonly MailService: MailService,
+
   ) { }
 
   async create(createReservationDto: CreateReservationDto): Promise<Reservation> {
@@ -66,7 +65,6 @@ export class ReservationsService {
     });
 
     await this.reservationRepository.save(reservation)
-    /*  this.MailService.sendInitiatedReservation(reservation) */
 
     return reservation;
   };

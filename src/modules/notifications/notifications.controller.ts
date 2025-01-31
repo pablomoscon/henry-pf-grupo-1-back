@@ -47,4 +47,9 @@ export class NotificationsController {
   getNotificationsByUser(@Param('userId') userId: string) {
     return this.notificationsService.getNotificationsByUser(userId);
   }
+
+  @Patch('read/:id')
+  markAsRead(@Param('id') id: string) {
+    return this.notificationsService.markAsRead(id);
+  }
 }

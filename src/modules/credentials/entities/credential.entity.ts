@@ -42,6 +42,13 @@ export class Credential {
   @IsOptional()
   deleted_at?: Date;
 
+  @Column({ type: 'timestamp', nullable: true })
+  @ApiProperty({
+    description: 'Expiration date of the password, after which the password is no longer valid',
+    example: '2025-01-30T18:00:00.000Z',
+  })
+  passwordExpiration?: Date;
+
   @OneToOne(() => User, (user) => user.credential)
   @ApiProperty({
     description: 'User associated with the user',

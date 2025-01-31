@@ -9,8 +9,8 @@ import { Credential } from "../credentials/entities/credential.entity";
 import { User } from "../users/entities/user.entity";
 import { JwtService } from "@nestjs/jwt";
 import { oauth2Client } from "src/config/google-auth.config";
-import * as crypto from 'crypto';
-import { Role } from "src/enums/roles.enum";
+import * as jwt from 'jsonwebtoken';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +18,7 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly credentialsService: CredentialsService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) { }
 
   async signUp(signUpUser: SignupAuthDto) {
@@ -48,6 +49,8 @@ export class AuthService {
     const userWithCredentials = await this.usersService.create(createUserDto, credential);
 
     await this.credentialsService.assignUserToCredentials(credential.id, { user: userWithCredentials });
+
+    this.mailService.sendSuccessfulregistration(userWithCredentials)
 
     return userWithCredentials;
   };
@@ -120,7 +123,7 @@ export class AuthService {
     if (!user) {
       const createCredentialsDto: CreateCredentialDto = {
         googleId: userInfo.sub,
-        password: crypto.randomBytes(16).toString('hex')
+        // No necesitamos la contraseña aquí, se generará en el servicio
       };
 
       const credential: Credential = await this.credentialsService.createGoogleCredential(createCredentialsDto);
@@ -131,14 +134,22 @@ export class AuthService {
         phone: userInfo.phoneNumbers?.[0]?.value,
         address: userInfo.addresses?.[0]?.value,
         customerId: userInfo.customerId,
-        role: Role.USER
       };
       user = await this.usersService.create(createUserDto, credential);
       await this.credentialsService.assignUserToCredentials(credential.id, { user });
-      
 
+      this.mailService.sendPasswordChangeAlert(user);
     }
     const token = await this.createToken(user);
     return { token, user };
+  };
+
+  async verifyToken(token: string): Promise<string> {
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      return decoded['userId'];
+    } catch (err) {
+      throw new UnauthorizedException('Token is expired or invalid.');
+    }
   };
 }

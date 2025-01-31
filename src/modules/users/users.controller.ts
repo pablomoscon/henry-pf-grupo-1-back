@@ -26,9 +26,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @ApiBearerAuth()
+/*   @ApiBearerAuth()
   @Roles(Role.ADMIN, Role.CARETAKER)
-  @UseGuards(AuthGuard, RolesGuard)
+  @UseGuards(AuthGuard, RolesGuard) */
   @HttpCode(HttpStatus.OK)
   async findAll(
     @Query('page') page: string = '1',
@@ -37,7 +37,7 @@ export class UsersController {
     const pageNumber = Number(page);
     const limitNumber = Number(limit);
     return await this.usersService.findAll(pageNumber, limitNumber);
-  }
+  };
 
   @Get(':id')
   @ApiBearerAuth()
@@ -49,7 +49,7 @@ export class UsersController {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     return user;
-  }
+  };
 
   @Patch(':id')
   @ApiBearerAuth()
@@ -60,7 +60,7 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return await this.usersService.update(id, updateUserDto);
-  }
+  };
 
   @Delete(':id')
   @ApiBearerAuth()
@@ -68,7 +68,7 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.usersService.remove(id);
-  }
+  };
 
   @Get('cats/:id')
   @ApiBearerAuth()
@@ -76,5 +76,5 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async usersCats(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.usersService.usersCats(id);
-  }
+  };
 }

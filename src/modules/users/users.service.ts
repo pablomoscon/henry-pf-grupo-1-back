@@ -34,7 +34,7 @@ export class UsersService {
       where: { deleted_at: IsNull() },
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
-      relations: ['reservations', 'cats'],
+      relations: ['reservations', 'cats', 'credential'],
     });
   };
 
@@ -80,5 +80,5 @@ export class UsersService {
       relations: ['cats'],
     });
     return user?.cats.map(cat => ({ id: cat.id, name: cat.name })) || [];
-  }
+  };
 }
