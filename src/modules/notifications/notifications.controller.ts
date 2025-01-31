@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
@@ -44,12 +46,17 @@ export class NotificationsController {
   }
 
   @Get('user/:userId')
-  getNotificationsByUser(@Param('userId') userId: string) {
-    return this.notificationsService.getNotificationsByUser(userId);
-  }
-
-  @Patch('read/:id')
-  markAsRead(@Param('id') id: string) {
-    return this.notificationsService.markAsRead(id);
+  getNotificationsByUser(
+    @Param('userId') userId: string,
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+  ) {
+    const pageNumber = Number(page);
+    const limitNumber = Number(limit);
+    return this.notificationsService.getNotificationsByUser(
+      userId,
+      pageNumber,
+      limitNumber,
+    );
   }
 }
