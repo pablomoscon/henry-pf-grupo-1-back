@@ -147,7 +147,6 @@ export class MessagesService {
     return await this.messageRepository.save(existingMessage);
   };
 
-
   async findMessagesByReservationUser(userId: string, userClientId: string): Promise<Message[]> {
 
     const reservations = await this.reservationsService.findUserReservations(userClientId);
