@@ -75,6 +75,7 @@ export class MessagesService {
       where: {
         receivers: { id: userId },
         type: MessageType.POST,
+        deleted_at: IsNull() 
       },
       relations: ['sender', 'receivers', 'reservation'],
       order: { timestamp: 'ASC' },

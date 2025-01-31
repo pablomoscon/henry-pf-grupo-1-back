@@ -14,6 +14,7 @@ import {
   UploadedFile,
   UseInterceptors,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
@@ -110,7 +111,7 @@ export class RoomsController {
   };
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
     const room = await this.roomsService.findOne(id);
     if (!room || room.deleted_at) {
       throw new NotFoundException(
@@ -125,8 +126,12 @@ export class RoomsController {
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
-  async update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-    return await this.roomsService.update(id, updateRoomDto);
+  @UseInterceptors(FileInterceptor('img'))
+  async update(@Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateCatDto: UpdateRoomDto,
+    @UploadedFile(new ImageUploadValidationPipe()) file?: Express.Multer.File,
+  ) {
+    return await this.roomsService.update(id, updateCatDto, file);
   };
 
   @Delete(':id')
@@ -134,7 +139,7 @@ export class RoomsController {
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.roomsService.remove(id);
   };
 }

@@ -101,13 +101,32 @@ export class RoomsService {
     return await this.roomsRepository.findOneBy({ id });
   };
 
-  async update(id: string, updateRoomDto: UpdateRoomDto) {
-    const updateResult = await this.roomsRepository.update(id, updateRoomDto);
+  async update(id: string, updateRoomDto: UpdateRoomDto, file?: Express.Multer.File): Promise<Room> {
+    let imgUrl: string | undefined;
 
-    if (updateResult.affected === 0) {
+    if (file) {
+      imgUrl = await this.fileUploadService.uploadFile({
+        fieldName: file.fieldname,
+        buffer: file.buffer,
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+        size: file.size,
+      });
+    }
+
+    const updateRoom = await this.roomsRepository.preload({
+      id,
+      ...updateRoomDto,
+      img: imgUrl || undefined,
+    });
+
+    if (!updateRoom) {
       throw new NotFoundException(`Room with ID ${id} not found`);
     }
-    return await this.findOne(id);
+
+    await this.roomsRepository.save(updateRoom);
+
+    return updateRoom;
   };
 
   async remove(id: string): Promise<Room> {
@@ -135,7 +154,7 @@ export class RoomsService {
         new Date(reservation.checkOutDate) >= now
       );
 
-      if (room.available !== !isOccupied) { 
+      if (room.available !== !isOccupied) {
         room.available = !isOccupied;
         updatedRooms.push(room);
       }
@@ -146,5 +165,4 @@ export class RoomsService {
       console.log(`${updatedRooms.length} Rooms updated.`);
     }
   };
-
 }
