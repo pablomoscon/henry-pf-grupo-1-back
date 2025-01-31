@@ -30,7 +30,7 @@ import { ImageUploadValidationPipe } from 'src/pipes/image-upload-validation.pip
 @ApiTags('Rooms')
 @Controller('rooms')
 export class RoomsController {
-  constructor(private readonly roomsService: RoomsService) {}
+  constructor(private readonly roomsService: RoomsService) { }
 
   @Post()
   @ApiBearerAuth()
@@ -42,15 +42,9 @@ export class RoomsController {
     @UploadedFile(new ImageUploadValidationPipe()) file: Express.Multer.File,
     @Body() createRoomDto: CreateRoomDto,
   ) {
-    if (typeof createRoomDto.features === 'string') {
-      try {
-        createRoomDto.features = JSON.parse(createRoomDto.features);
-      } catch (error) {
-        throw new BadRequestException('Invalid format for features');
-      }
-    }
+    console.log('Datos recibidos:', createRoomDto);
     return await this.roomsService.create(createRoomDto, file);
-  }
+  };
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -69,7 +63,7 @@ export class RoomsController {
       throw new BadRequestException('Invalid limit number');
     }
     return await this.roomsService.findAll(pageNumber, limitNumber);
-  }
+  };
 
   @Get('filters')
   @HttpCode(HttpStatus.OK)
@@ -113,7 +107,7 @@ export class RoomsController {
     };
 
     return await this.roomsService.findRooms(filters);
-  }
+  };
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
@@ -124,7 +118,7 @@ export class RoomsController {
       );
     }
     return room;
-  }
+  };
 
   @Patch(':id')
   @ApiBearerAuth()
@@ -133,7 +127,7 @@ export class RoomsController {
   @HttpCode(HttpStatus.OK)
   async update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
     return await this.roomsService.update(id, updateRoomDto);
-  }
+  };
 
   @Delete(':id')
   @ApiBearerAuth()
@@ -142,5 +136,5 @@ export class RoomsController {
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id') id: string) {
     return await this.roomsService.remove(id);
-  }
+  };
 }
