@@ -17,9 +17,9 @@ export class CreateChatDto {
 
     @ApiProperty({ description: 'User who is the sender of the message' })
     @IsUUID()
-    currentUser: string;
+    currentUser?: string;
 
-    @ApiProperty({ description: 'Array of users who are the receivers of the message' })
+    @ApiProperty({ description: 'The user who is the sender of the message' })
     @IsUUID()
     sender?: User;
 

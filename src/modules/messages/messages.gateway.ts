@@ -100,7 +100,7 @@ export class MessagesGateway {
                 return;
             }
 
-            const newMessage = this.messageRepository.create({
+            const newChatMessage = await this.messagesService.createChatMessage({
                 body: createChatDto.body,
                 sender,
                 receivers: await Promise.all(
@@ -111,22 +111,21 @@ export class MessagesGateway {
                 reservation
             });
 
-            await this.messageRepository.save(newMessage);
 
             console.log(`Message sent by ${sender.name}(ID: ${sender.id})`);
 
             socket.to(clientChatRoom.id).emit('receive_message', {
-                body: newMessage.body,
+                body: newChatMessage.body,
                 senderName: sender.name,
-                timestamp: newMessage.timestamp,
+                timestamp: newChatMessage.timestamp,
             });
 
             receiversIds.forEach(receiverId => {
                 if (receiverId !== clientChatRoom.id) {
                     socket.to(receiverId).emit('receive_message', {
-                        body: newMessage.body,
+                        body: newChatMessage.body,
                         senderName: sender.name,
-                        timestamp: newMessage.timestamp,
+                        timestamp: newChatMessage.timestamp,
                     });
                 }
             });

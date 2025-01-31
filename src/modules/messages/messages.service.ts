@@ -9,6 +9,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ReservationsService } from '../reservations/reservations.service';
 import { UpdateChatDto } from './dto/update-chat.dto';
+import { CreateChatDto } from './dto/create-chat.dto';
 
 @Injectable()
 export class MessagesService {
@@ -69,6 +70,13 @@ export class MessagesService {
     });
 
     return await this.messageRepository.save(newPost);
+  };
+
+  async createChatMessage(createChatDto: CreateChatDto): Promise<Message> {
+    const newChatMessage = this.messageRepository.create({
+      ...createChatDto
+    });
+    return this.messageRepository.save(newChatMessage);
   };
 
   async findReceivedMessagesByUser(userId: string): Promise<Message[]> {
@@ -141,7 +149,7 @@ export class MessagesService {
 
 
   async findMessagesByReservationUser(userId: string, userClientId: string): Promise<Message[]> {
-  
+
     const reservations = await this.reservationsService.findUserReservations(userClientId);
 
     if (!reservations || reservations.length === 0) {

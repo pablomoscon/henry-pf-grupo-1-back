@@ -69,18 +69,19 @@ export class Message {
   @ManyToOne(() => User, (user) => user.sentMessages)
   @ApiProperty({
     description: 'Sender of the message'
-   })
+  })
   sender: User;
 
   @ManyToMany(() => User, (user) => user.receivedMessages)
   @JoinTable()
   @ApiProperty({
     description: 'Receivers of the message'
-   })
+  })
   receivers: User[];
 
   @ManyToOne(() => Reservation, (reservation) => reservation.messages)
-  @ApiProperty({ description: 'Reservation associated with the message',
-   })
+  @ApiProperty({
+    description: 'Reservation associated with the message',
+  })
   reservation: Reservation;
 }
