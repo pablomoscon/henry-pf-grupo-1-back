@@ -15,41 +15,39 @@ export class CredentialsService {
   ) { }
 
   async create(createCredentialsDto: CreateCredentialDto): Promise<Credential> {
-    const { password, passwordExpiration } = await this.handlePasswordAndExpiration(createCredentialsDto);
+    const { password } = await this.handlePasswordAndExpiration(createCredentialsDto);
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const credential = this.credentialsRepository.create({
       ...createCredentialsDto,
       password: hashedPassword,
-      passwordExpiration,
     });
 
     return this.credentialsRepository.save(credential);
   };
 
-  private async handlePasswordAndExpiration(createCredentialsDto: CreateCredentialDto): Promise<{ password: string, passwordExpiration: Date }> {
-    let { password, passwordExpiration } = createCredentialsDto;
+  private async handlePasswordAndExpiration(createCredentialsDto: CreateCredentialDto): Promise<{ password: string}> {
+    let { password } = createCredentialsDto;
 
     if (!password) {
       password = crypto.randomBytes(16).toString('hex');
-      passwordExpiration = new Date(Date.now() + 4 * 60 * 60 * 1000); // 4 horas
     }
 
-    return { password, passwordExpiration };
+    return { password };
   };
 
   async createGoogleCredential(createCredentialsDto: CreateCredentialDto): Promise<Credential> {
-    const { googleId, password } = createCredentialsDto;
+    const { googleId } = createCredentialsDto;
 
     const hashedCredential = await bcrypt.hash(googleId, 10);
-    const { password: generatedPassword, passwordExpiration } = await this.handlePasswordAndExpiration(createCredentialsDto);
+    const { password: generatedPassword } = await this.handlePasswordAndExpiration(createCredentialsDto);
 
     const googleCredential = this.credentialsRepository.create({
       ...createCredentialsDto,
       googleId: hashedCredential,
       password: await bcrypt.hash(generatedPassword, 10),
-      passwordExpiration,
+
     });
 
     return await this.credentialsRepository.save(googleCredential);
@@ -61,10 +59,6 @@ export class CredentialsService {
     if (!credential) {
       throw new NotFoundException('Credentials not found');
     }
-
-    //if (new Date() > new Date(credential.passwordExpiration)) {
-    //  throw new UnauthorizedException('Password has expired');
-    //}
     
     return bcrypt.compare(password, credential.password);
   };

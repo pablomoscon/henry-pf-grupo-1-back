@@ -25,7 +25,7 @@ export class CredentialsController {
     @Param('id') id: string,
     @Query('token') token: string, 
     @Body() updateCredentialDto: UpdateCredentialDto
-  ): Promise<Credential> {
+  ): Promise<{ message: string }> {
     
     const userId = await this.authService.verifyToken(token);
     
@@ -33,6 +33,8 @@ export class CredentialsController {
       throw new UnauthorizedException('Token no válido o ID no coincide.');
     }
 
-    return this.credentialsService.updatePassword(id, updateCredentialDto);
+    await this.credentialsService.updatePassword(id, updateCredentialDto);
+
+    return { message: 'Password updated successfully' };
   };
 }

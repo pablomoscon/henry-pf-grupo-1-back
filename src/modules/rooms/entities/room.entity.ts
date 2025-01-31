@@ -103,9 +103,8 @@ export class Room {
   number_of_cats: number;
 
   @Column({
-    type: 'enum',
     enum: RoomFeatures,
-    array: true,
+    type: 'simple-array' 
   })
   @ApiProperty({
     description: 'Features of the room',

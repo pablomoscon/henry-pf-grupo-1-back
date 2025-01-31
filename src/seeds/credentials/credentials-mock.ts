@@ -23,4 +23,9 @@ export const credentialsMock = [
     password: 'Pass1234!',
     deleted_at: null,
   },
+  {
+    id: '123e4567-e89b-12d3-a456-426614174004',
+    password: 'Pass1234!',
+    deleted_at: null,
+  },
 ];
