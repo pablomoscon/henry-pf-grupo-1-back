@@ -22,10 +22,4 @@ export class CreateCredentialDto {
     @IsOptional()
     googleId?: string;
 
-    @ApiProperty({
-        description: 'Expiration date of the password, after which the password is no longer valid',
-        example: '2025-01-30T18:00:00.000Z',
-    })
-    @IsOptional()
-    passwordExpiration?: Date;
 }

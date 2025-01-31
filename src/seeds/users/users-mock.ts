@@ -1,8 +1,8 @@
 import { User } from '../../modules/users/entities/user.entity';
 import { Role } from '../../enums/roles.enum';
 import { Status } from '../../enums/status.enum';
-import { CatCompatibility } from 'src/enums/cat-compatibility.enum'; // Importado
-import { CatVaccinations } from 'src/enums/cat-vaccinations.enum'; // Importado
+import { CatCompatibility } from 'src/enums/cat-compatibility.enum';
+import { CatVaccinations } from 'src/enums/cat-vaccinations.enum'; 
 
 export const usersMock: User[] = [
   {
@@ -152,34 +152,6 @@ export const usersMock: User[] = [
     status: Status.ACTIVE,
     credential: {
       id: '123e4567-e89b-12d3-a456-426614174003',
-      password: 'Pass1234!',
-      deleted_at: null,
-      user: null,
-    },
-    cats: [],
-    caretakerProfile: null,
-    reservations: [],
-    sentMessages: [],
-    receivedMessages: [],
-    payments: null,
-    sentChats: [],
-    receivedChats: [],
-    notifications: [],
-    createdAt: new Date(),
-    reviews: []
-  },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174004',
-    name: 'Eve Martinez',
-    email: 'eve.martinez@mail.com',
-    phone: '+5412345682',
-    address: '987 Birch St, Central City',
-    customerId: '45980123',
-    deleted_at: null,
-    role: Role.USER,
-    status: Status.INACTIVE,
-    credential: {
-      id: '123e4567-e89b-12d3-a456-426614174004',
       password: 'Pass1234!',
       deleted_at: null,
       user: null,
