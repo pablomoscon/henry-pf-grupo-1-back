@@ -87,6 +87,12 @@ export class MessagesGateway {
             }
 
             const caretakers = reservation.caretakers;
+            if (!caretakers || caretakers.length === 0) {
+                console.error('No caretakers assigned to this reservation.');
+                socket.emit('error', { message: 'No caretakers assigned to this reservation.' });
+                return;
+            };
+
             const userCaretakers = await Promise.all(
                 caretakers.map(caretaker => this.caretakersService.findUserFromCaretaker(caretaker.id))
             );
