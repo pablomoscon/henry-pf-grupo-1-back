@@ -46,8 +46,8 @@ export class MessagesController {
   };
 
   @Get()
-  /* @ApiBearerAuth()
-  @UseGuards(AuthGuard) */
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   findAll(): Promise<Message[]> {
     return this.messagesService.findAll();
@@ -80,7 +80,7 @@ export class MessagesController {
     @Body() updatePostDto: UpdatePostDto,
     @UploadedFile(new ImageUploadValidationPipe()) file: Express.Multer.File,
   ): Promise<Message> {
-    return this.messagesService.update(id, updatePostDto);
+    return this.messagesService.updatePost(id, updatePostDto);
   };
 
   @Get('received/:userId')
@@ -96,7 +96,7 @@ export class MessagesController {
     @Param('id') id: string,
     @Body() updateChatDto: UpdateChatDto,
   ): Promise<Message> {
-    return this.messagesService.update(id, updateChatDto);
+    return this.messagesService.updateChat(id, updateChatDto);
   };
 
   @Delete(':id')
