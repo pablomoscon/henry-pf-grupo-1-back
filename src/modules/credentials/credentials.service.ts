@@ -62,9 +62,9 @@ export class CredentialsService {
       throw new NotFoundException('Credentials not found');
     }
 
-    if (new Date() > new Date(credential.passwordExpiration)) {
-      throw new UnauthorizedException('Password has expired');
-    }
+    //if (new Date() > new Date(credential.passwordExpiration)) {
+    //  throw new UnauthorizedException('Password has expired');
+    //}
     
     return bcrypt.compare(password, credential.password);
   };
