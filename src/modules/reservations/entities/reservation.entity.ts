@@ -90,6 +90,7 @@ export class Reservation {
     type: () => Room,
     nullable: true,
   })
+  @JoinColumn({ name: 'room_id' })
   @ManyToOne(() => Room, (room) => room.reservations)
   room: Room;
 

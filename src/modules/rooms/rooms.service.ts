@@ -119,4 +119,32 @@ export class RoomsService {
     room.deleted_at = new Date();
     return this.roomsRepository.save(room);
   };
+
+  async updateAvailability() {
+    const rooms = await this.roomsRepository.find({
+      relations: ['reservations'],
+      where: { deleted_at: IsNull() },
+    });
+
+    const now = new Date();
+    const updatedRooms = [];
+
+    for (const room of rooms) {
+      const isOccupied = room.reservations.some(reservation =>
+        new Date(reservation.checkInDate) <= now &&
+        new Date(reservation.checkOutDate) >= now
+      );
+
+      if (room.available !== !isOccupied) { 
+        room.available = !isOccupied;
+        updatedRooms.push(room);
+      }
+    }
+
+    if (updatedRooms.length > 0) {
+      await this.roomsRepository.save(updatedRooms);
+      console.log(`${updatedRooms.length} Rooms updated.`);
+    }
+  };
+
 }

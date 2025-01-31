@@ -146,4 +146,22 @@ export class ReservationsService {
       relations: ['room', 'cats', 'payments'],
     });
   };
+  async completeExpiredReservations(): Promise<void> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const expiredReservations = await this.reservationRepository.find({
+      where: {
+        checkOutDate: LessThanOrEqual(today),
+        status: ReservationStatus.CONFIRMED,
+      },
+    });
+
+    for (const reservation of expiredReservations) {
+      reservation.status = ReservationStatus.COMPLETED;
+      await this.reservationRepository.save(reservation);
+    }
+
+    console.log(`${expiredReservations.length} reservations have been completed.`);
+  };
 }
