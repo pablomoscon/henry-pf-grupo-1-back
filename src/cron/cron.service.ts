@@ -60,6 +60,22 @@ export class CronService {
     }
   }
 
+  ////////// Ejecución cada X minutos para probar en la demo/////////
+
+  @Cron('*/3 * * * *') // Ejecuta cada 3 minutos
+  async handlePreDemoTask() {
+    const now = moment().tz('America/Argentina/Buenos_Aires');
+
+    if (
+      now.format('YYYY-MM-DD HH:mm') >= '2025-01-31 22:00' && //aca va la fecha y hora de la demo arg
+      now.format('YYYY-MM-DD HH:mm') <= '2025-01-31 23:59' // de esta manera no importa donde corra es hora arg
+    ) {
+      console.log('Ejecutando en horario correcto (Argentina)');
+      await this.sendStartingReminderTask.execute();
+      await this.sendEndingReminderTask.execute();
+    }
+  }
+
   ////////// Ejecución cada 30 seg para probar nuevas notificaciones/////////
 
   // @Cron(CronExpression.EVERY_10_SECONDS)
