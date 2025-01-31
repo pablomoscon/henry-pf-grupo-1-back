@@ -37,7 +37,7 @@ export class CronService {
     await this.roomsService.updateAvailability();
   };
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleCompletedReservations() {
     console.log('Checking for expired reservations...');
     await this.reservationsService.completeExpiredReservations();
