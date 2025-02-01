@@ -106,7 +106,7 @@ export class UsersService {
       where: { role: Role.USER, deleted_at: IsNull() },
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
-      relations: ['reservations', 'cats', 'messages', 'reviews'],
+      relations: ['reservations', 'cats', 'reviews', 'sentMessages', 'receivedMessages'],
     });
   };
 }
