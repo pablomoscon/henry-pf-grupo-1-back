@@ -6,7 +6,6 @@ import { Reservation } from 'src/modules/reservations/entities/reservation.entit
 
 export class CreateChatDto {
 
-
     @ApiProperty({
         description: 'Content of the message',
         example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',

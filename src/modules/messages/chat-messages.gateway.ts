@@ -1,6 +1,4 @@
 import { Socket, Server } from 'socket.io';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Message } from './entities/message.entity';
 import { UsersService } from '../users/users.service';
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { ReservationsService } from '../reservations/reservations.service';
@@ -15,14 +13,12 @@ export class MessagesGateway {
     server: Server;
 
     constructor(
-        @InjectRepository(Message)
         private readonly usersService: UsersService,
         private readonly reservationsService: ReservationsService,
         private readonly caretakersService: CaretakersService,
         private readonly messagesService: MessagesService,
     ) { }
 
-    @SubscribeMessage('connect')
     handleConnection(socket: Socket) {
         console.log('Client connected:', socket.id);
 
@@ -66,34 +62,29 @@ export class MessagesGateway {
         @ConnectedSocket() socket: Socket
     ) {
         try {
+
+            console.log('createChatDto.currentUser:', createChatDto.currentUser);
+
             const sender = await this.usersService.findOne(createChatDto.currentUser);
             if (!sender) {
                 console.error('Sender not found');
                 return;
-            }
+            };
 
             const clientChatRoom = await this.usersService.findOne(createChatDto.clientChatRoom);
             if (!clientChatRoom) {
                 console.error('Client not found');
                 return;
-            }
+            };
 
             const reservation = await this.reservationsService.findOne(clientChatRoom.id);
             if (!reservation) {
                 console.error('Reservation not found for the client');
                 return;
-            }
-
-            const caretakers = reservation.caretakers;
-            if (!caretakers || caretakers.length === 0) {
-                console.error('No caretakers assigned to this reservation.');
-                socket.emit('error', { message: 'No caretakers assigned to this reservation.' });
-                return;
             };
 
-            const userCaretakers = await Promise.all(
-                caretakers.map(caretaker => this.caretakersService.findUserFromCaretaker(caretaker.id))
-            );
+            const caretakers = reservation.caretakers.map(caretaker => caretaker.id);
+            const userCaretakers = await this.caretakersService.findUsersFromCaretakers(caretakers);
 
             let receiversIds = [clientChatRoom.id, ...userCaretakers.map(userCaretaker => userCaretaker.id)];
 
@@ -102,7 +93,7 @@ export class MessagesGateway {
             if (receiversIds.length === 0) {
                 console.error('No valid receivers.');
                 return;
-            }
+            };
 
             const newChatMessage = await this.messagesService.createChatMessage({
                 body: createChatDto.body,
@@ -114,7 +105,6 @@ export class MessagesGateway {
                 type: MessageType.CHAT,
                 reservation
             });
-
 
             console.log(`Message sent by ${sender.name}(ID: ${sender.id})`);
 
@@ -139,7 +129,6 @@ export class MessagesGateway {
         }
     };
 
-    @SubscribeMessage('disconnect')
     handleDisconnect(socket: Socket) {
         console.log('Client disconnected:', socket.id);
     };

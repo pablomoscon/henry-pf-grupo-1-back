@@ -60,6 +60,7 @@ export class MessagesService {
         throw new Error('Reservation not found');
       }
     }
+    
     const newPost = this.messageRepository.create({
       ...createPostDto,
       reservation,

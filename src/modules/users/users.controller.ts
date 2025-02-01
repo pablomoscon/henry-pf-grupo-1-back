@@ -61,6 +61,12 @@ export class UsersController {
     return this.usersService.findCaretakers(page, limit);
   };
 
+  @Get('clients-reservations')
+  @HttpCode(HttpStatus.OK)
+  async findUsersWithReservations() {
+    return await this.usersService.findUsersWithReservations()
+  };
+
   @Get('cats/:id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)

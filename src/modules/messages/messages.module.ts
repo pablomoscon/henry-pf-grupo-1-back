@@ -7,7 +7,7 @@ import { MessagesService } from './messages.service';
 import { FileUploadModule } from '../file-upload/file-upload.module';
 import { UsersModule } from '../users/users.module';
 import { ReservationsModule } from '../reservations/reservations.module';
-import { MessagesGateway } from './messages.gateway';
+import { MessagesGateway } from './chat-messages.gateway';
 import { CaretakersModule } from '../caretakers/caretakers.module';
 import { User } from '../users/entities/user.entity';
 
