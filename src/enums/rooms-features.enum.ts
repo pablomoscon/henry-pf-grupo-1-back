@@ -1,6 +1,6 @@
 export enum RoomFeatures {
-    HidingPlace = 'hidingPlace',
-    Hammocks = 'hammocks',
-    Scratchers = 'scratchers',
-    SuspensionBridges = 'suspensionBridges',
+    hidingPlace = 'Hiding Place',
+    hammocks = 'Hammocks',
+    scratchers = 'Scratchers',
+    suspensionBridges = 'Suspension Bridges',
 }

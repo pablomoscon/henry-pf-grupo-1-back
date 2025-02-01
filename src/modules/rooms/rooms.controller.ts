@@ -27,6 +27,7 @@ import { Role } from 'src/enums/roles.enum';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { RolesGuard } from 'src/guards/roles/roles.guard';
 import { ImageUploadValidationPipe } from 'src/pipes/image-upload-validation.pipe';
+import { RoomFeatures } from 'src/enums/rooms-features.enum';
 
 @ApiTags('Rooms')
 @Controller('rooms')
@@ -44,9 +45,13 @@ export class RoomsController {
     @Body() createRoomDto: CreateRoomDto,
   ): Promise<Room> {
 
-    if (typeof createRoomDto.features === 'string') {
-      createRoomDto.features = JSON.parse(createRoomDto.features);
-    }
+    const featuresArray: string[] = createRoomDto.features;
+
+    const featuresEnumArray = featuresArray.map(
+      (feature) => RoomFeatures[feature as keyof typeof RoomFeatures]
+    );
+
+    createRoomDto.features = featuresEnumArray;
 
     console.log('Datos recibidos:', createRoomDto);
     return await this.roomsService.create(createRoomDto, file);

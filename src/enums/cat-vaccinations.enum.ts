@@ -1,5 +1,5 @@
 export enum CatVaccinations {
-    RABIES = 'rabies',
-    TRIPLE_FELINE = 'tripleFeline',
+    RABIES = 'Rabies',
+    TRIPLE_FELINE = 'TripleFeline',
     FIV_FELV_TEST = 'FIV/FelvTest',
 }
