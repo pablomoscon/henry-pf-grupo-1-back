@@ -58,7 +58,7 @@ export class UsersController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 12
   ) {
-    return this.usersService.findCaretakers(page, limit);
+    return this.usersService.findUserRole(page, limit);
   };
 
   @Get('clients-reservations')
