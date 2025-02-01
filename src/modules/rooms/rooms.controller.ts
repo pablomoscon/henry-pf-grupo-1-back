@@ -42,7 +42,12 @@ export class RoomsController {
   async create(
     @UploadedFile(new ImageUploadValidationPipe()) file: Express.Multer.File,
     @Body() createRoomDto: CreateRoomDto,
-  ) {
+  ): Promise<Room> {
+
+    if (typeof createRoomDto.features === 'string') {
+      createRoomDto.features = JSON.parse(createRoomDto.features);
+    }
+
     console.log('Datos recibidos:', createRoomDto);
     return await this.roomsService.create(createRoomDto, file);
   };

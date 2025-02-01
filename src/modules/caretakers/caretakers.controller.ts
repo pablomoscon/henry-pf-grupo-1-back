@@ -1,5 +1,5 @@
 import { Controller, Post, Get, Body, Param, Patch, Delete, UseGuards, HttpStatus, HttpCode } from '@nestjs/common';
-import { ApiTags, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CaretakersService } from './caretakers.service';
 import { CreateCaretakerDto } from './dto/create-caretaker.dto';
 import { Caretaker } from './entities/caretaker.entity';

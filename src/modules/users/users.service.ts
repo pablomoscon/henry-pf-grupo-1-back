@@ -35,8 +35,17 @@ export class UsersService {
       where: { deleted_at: IsNull() },
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
-      relations: ['reservations', 'cats'],
+      relations: ['reservations', 'cats', 'caretakerProfile'],
     });
+  };
+
+  async findUsersWithReservations() {
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.reservations', 'reservation')
+      .where('reservation.id IS NOT NULL') 
+      .andWhere('user.deleted_at IS NULL')
+      .getMany();
   };
 
   async findByEmail(email: string) {
@@ -89,6 +98,15 @@ export class UsersService {
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
       relations: ['caretakerProfile', 'reservations', 'cats'],
+    });
+  };
+
+  async findUserRole(pageNumber: number, limitNumber: number) {
+    return await this.userRepository.find({
+      where: { role: Role.USER, deleted_at: IsNull() },
+      skip: (pageNumber - 1) * limitNumber,
+      take: limitNumber,
+      relations: ['reservations', 'cats', 'messages', 'reviews'],
     });
   };
 }

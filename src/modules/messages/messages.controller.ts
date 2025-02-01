@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -21,6 +22,8 @@ import { ImageUploadValidationPipe } from 'src/pipes/image-upload-validation.pip
 import { Message } from './entities/message.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { CreateChatDto } from './dto/create-chat.dto';
+import { UpdateChatDto } from './dto/update-chat.dto';
 
 @Controller('messages')
 export class MessagesController {
@@ -50,6 +53,15 @@ export class MessagesController {
     return this.messagesService.findAll();
   };
 
+  @Get('user/:userId')
+  async findMessagesByReservationUser(@Param('userId') userId: string, userClientId: string): Promise<Message[]> {
+      const messages = await this.messagesService.findMessagesByReservationUser(userId, userClientId);
+      if (messages.length === 0) {
+        throw new NotFoundException(`No messages found for user with ID: ${userId}`);
+      }
+      return messages;
+  };
+
   @Get(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
@@ -63,17 +75,28 @@ export class MessagesController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('file'))
-  update(
+  updatePost(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
     @UploadedFile(new ImageUploadValidationPipe()) file: Express.Multer.File,
   ): Promise<Message> {
-    return this.messagesService.update(id, updatePostDto);
+    return this.messagesService.updatePost(id, updatePostDto);
   };
 
   @Get('received/:userId')
   async findReceivedMessages(@Param('userId') userId: string): Promise<Message[]> {
     return this.messagesService.findReceivedMessagesByUser(userId);
+  };
+
+  @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  updateChat(
+    @Param('id') id: string,
+    @Body() updateChatDto: UpdateChatDto,
+  ): Promise<Message> {
+    return this.messagesService.updateChat(id, updateChatDto);
   };
 
   @Delete(':id')

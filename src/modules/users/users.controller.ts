@@ -50,6 +50,23 @@ export class UsersController {
     return this.usersService.findCaretakers(page, limit);
   };
 
+  @Get('user-role')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async findUserRole(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 12
+  ) {
+    return this.usersService.findCaretakers(page, limit);
+  };
+
+  @Get('clients-reservations')
+  @HttpCode(HttpStatus.OK)
+  async findUsersWithReservations() {
+    return await this.usersService.findUsersWithReservations()
+  };
+
   @Get('cats/:id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)

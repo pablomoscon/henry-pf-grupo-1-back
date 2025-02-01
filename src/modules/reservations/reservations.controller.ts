@@ -37,7 +37,7 @@ export class ReservationsController {
       await this.reservationsService.create(createReservationDto);
 
     return new ReservationResponseDto(reservation);
-  }
+  };
 
   @Get()
   @ApiBearerAuth()
@@ -45,7 +45,7 @@ export class ReservationsController {
   @HttpCode(HttpStatus.OK)
   async findAll() {
     return await this.reservationsService.findAll();
-  }
+  };
 
   @Get('unavailable-rooms')
   @ApiBearerAuth()
@@ -53,15 +53,15 @@ export class ReservationsController {
   @HttpCode(HttpStatus.OK)
   unavailableRoomsDates(@Query('roomId') roomId: string) {
     return this.reservationsService.unavailableRoomsDates(roomId);
-  }
+  };
 
   @Get('users-reservations')
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+/*   @ApiBearerAuth()
+  @UseGuards(AuthGuard) */
   @HttpCode(HttpStatus.OK)
   async usersReservations(@Query('userId') userId: string) {
     return await this.reservationsService.findUserReservations(userId);
-  }
+  };
 
   @Get(':id')
   @ApiBearerAuth()
@@ -69,7 +69,7 @@ export class ReservationsController {
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string) {
     return await this.reservationsService.findOne(id);
-  }
+  };
 
   @Patch(':id')
   @ApiBearerAuth()
@@ -81,7 +81,7 @@ export class ReservationsController {
     @Body() updateReservationDto: UpdateReservationDto,
   ) {
     return await this.reservationsService.update(id, updateReservationDto);
-  }
+  };
 
   @Delete(':id')
   @ApiBearerAuth()
@@ -89,5 +89,5 @@ export class ReservationsController {
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id') id: string) {
     return await this.reservationsService.remove(id);
-  }
+  };
 }

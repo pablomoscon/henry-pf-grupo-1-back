@@ -1,8 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID, IsOptional, IsDate, IsNotEmpty } from 'class-validator';
-import { User } from '../../users/entities/user.entity';
-import { Location } from '../../../modules/locations/entities/location.entity';
-import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
+import { IsString, IsUUID, IsOptional, IsDate, IsNotEmpty, IsArray } from 'class-validator';
 
 export class CreateCaretakerDto {
     @ApiProperty({
@@ -28,9 +25,18 @@ export class CreateCaretakerDto {
 
     @ApiProperty({
         description: 'Reservations associated with the caretaker',
-        type: [String],
+        required: false,
     })
     @IsOptional()
-    @IsUUID('all', { each: true })
-    reservationIds?: string[];
+    @IsArray()
+    reservationsId: string[];
+
+    @ApiProperty({
+        description: 'Timestamp when the caretaker was deleted',
+        example: '2025-01-10T00:00:00.000Z',
+        required: false,
+    })
+    @IsOptional()
+    @IsDate()
+    deleted_at?: Date;
 }

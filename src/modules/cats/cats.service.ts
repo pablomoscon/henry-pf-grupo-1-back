@@ -39,6 +39,7 @@ export class CatsService {
     if (!user) {
       throw new BadRequestException('There is no user with that ID.');
     }
+
     const newCat = this.catRepository.create({
       ...createCatDto,
       photo: imgUrl,

@@ -117,3 +117,4 @@ export class Reservation {
   @OneToMany(() => Message, (message) => message.reservation)
   messages: Message[];
 }
+

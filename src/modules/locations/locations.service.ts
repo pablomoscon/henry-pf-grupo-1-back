@@ -15,9 +15,9 @@ export class LocationsService {
     return 'This action adds a new location';
   };
 
-  findAll() {
-    return `This action returns all locations`;
-  }
+  async findAll(): Promise<Location[]> {
+    return await this.locationsRepository.find();
+  };
 
   async findOne(id: string): Promise<Location | null> {
     return await this.locationsRepository.findOne({ where: { id } });

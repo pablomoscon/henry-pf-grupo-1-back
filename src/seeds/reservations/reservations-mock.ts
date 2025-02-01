@@ -18,8 +18,7 @@ export const reservationsMock: Reservation[] = [
     totalAmount: 100.0,
     payments: null,
     caretakers: [],
-    messages:[]
-    
+    messages: []
   },
   {
     id: '123e4567-e89b-12d3-a456-426614174001',

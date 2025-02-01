@@ -106,7 +106,7 @@ export class ReservationsService {
   async findOne(id: string): Promise<Reservation> {
     const reservation = await this.reservationRepository.findOne({
       where: { id },
-      relations: ['user', 'room', 'cats'],
+      relations: ['user', 'room', 'cats', 'caretakers', 'messages'],
     });
 
     if (!reservation) {
@@ -143,7 +143,7 @@ export class ReservationsService {
   async findUserReservations(userId: string): Promise<Reservation[]> {
     return await this.reservationRepository.find({
       where: { user: { id: userId } },
-      relations: ['room', 'cats', 'payments'],
+      relations: ['room', 'cats', 'payments', 'messages'],
     });
   };
   async completeExpiredReservations(): Promise<void> {

@@ -8,6 +8,8 @@ import { MessageType } from 'src/enums/message-type';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ReservationsService } from '../reservations/reservations.service';
+import { UpdateChatDto } from './dto/update-chat.dto';
+import { CreateChatDto } from './dto/create-chat.dto';
 
 @Injectable()
 export class MessagesService {
@@ -58,6 +60,7 @@ export class MessagesService {
         throw new Error('Reservation not found');
       }
     }
+    
     const newPost = this.messageRepository.create({
       ...createPostDto,
       reservation,
@@ -68,6 +71,13 @@ export class MessagesService {
     });
 
     return await this.messageRepository.save(newPost);
+  };
+
+  async createChatMessage(createChatDto: CreateChatDto): Promise<Message> {
+    const newChatMessage = this.messageRepository.create({
+      ...createChatDto
+    });
+    return this.messageRepository.save(newChatMessage);
   };
 
   async findReceivedMessagesByUser(userId: string): Promise<Message[]> {
@@ -96,7 +106,7 @@ export class MessagesService {
     });
   };
 
-  async update(id: string, updatePostDto: UpdatePostDto, file?: Express.Multer.File) {
+  async updatePost(id: string, updatePostDto: UpdatePostDto, file?: Express.Multer.File) {
     let mediaUrl: string | undefined;
 
     if (file) {
@@ -137,6 +147,65 @@ export class MessagesService {
     existingMessage.media_url = mediaUrl ?? existingMessage.media_url;
 
     return await this.messageRepository.save(existingMessage);
+  };
+
+  async findMessagesByReservationUser(userId: string, userClientId: string): Promise<Message[]> {
+
+    const reservations = await this.reservationsService.findUserReservations(userClientId);
+
+    if (!reservations || reservations.length === 0) {
+      console.warn(`No reservations found for client with ID: ${userClientId}`);
+      return [];
+    }
+
+    const reservationIds = reservations.map(reservation => reservation.id);
+
+    const messages = await this.messageRepository
+      .createQueryBuilder('message')
+      .leftJoinAndSelect('message.sender', 'sender')
+      .leftJoinAndSelect('message.receivers', 'receivers')
+      .leftJoinAndSelect('message.reservation', 'reservation')
+      .where('message.reservation.id IN (:...reservationIds)', { reservationIds })
+      .andWhere(
+        '(message.sender.id = :userId OR receivers.id = :userId)',
+        { userId }
+      )
+      .getMany();
+
+    if (messages.length === 0) {
+      console.warn(`No messages found for user with ID: ${userId}.`);
+    }
+
+    return messages;
+  };
+
+  async updateChat(id: string, updateMessageDto: UpdateChatDto, file?: Express.Multer.File): Promise<Message> {
+    const existingMessage = await this.messageRepository.findOne({ where: { id } });
+
+    if (!existingMessage) {
+      throw new Error('Message not found');
+    }
+
+    let mediaUrl: string | undefined = existingMessage.media_url;
+
+    if (file) {
+      const uploadedFile = await this.fileUploadService.uploadFile({
+        fieldName: file.fieldname,
+        buffer: file.buffer,
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+        size: file.size,
+      });
+
+      mediaUrl = uploadedFile;
+    }
+
+    const updatedMessage = Object.assign(existingMessage, {
+      ...updateMessageDto,
+      media_url: mediaUrl,
+    });
+
+    return this.messageRepository.save(updatedMessage);
   };
 
   async remove(id: string): Promise<Message> {
