@@ -104,11 +104,11 @@ export class Room {
 
   @Column({
     enum: RoomFeatures,
-    type: 'simple-array' 
+    type: 'simple-array'
   })
   @ApiProperty({
     description: 'Features of the room',
-    example: [RoomFeatures.HidingPlace, RoomFeatures.Hammocks],
+    example: [RoomFeatures.hidingPlace, RoomFeatures.hammocks],
   })
   @IsEnum(RoomFeatures, { each: true })
   @IsArray()

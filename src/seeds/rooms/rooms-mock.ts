@@ -9,10 +9,10 @@ export const roomsMock: Room[] = [
       'A cozy and luxurious suite with a hiding place, hammocks, scratchers, and suspension bridges to keep your cat entertained all day long.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427710/room_7_slcqfi.jpg',
     features: [
-      RoomFeatures.HidingPlace,
-      RoomFeatures.Hammocks,
-      RoomFeatures.Scratchers,
-      RoomFeatures.SuspensionBridges,
+      RoomFeatures.hidingPlace,
+      RoomFeatures.hammocks,
+      RoomFeatures.scratchers,
+      RoomFeatures.suspensionBridges,
     ],
     number_of_cats: 1,
     price: 20.0,
@@ -38,7 +38,7 @@ export const roomsMock: Room[] = [
     description:
       'A spacious room designed for cats to relax and play, featuring multiple hammocks, scratchers, and a cozy hiding spot.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427713/room_19_p9j7k7.jpg',
-    features: [RoomFeatures.HidingPlace, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hidingPlace, RoomFeatures.scratchers],
     number_of_cats: 2,
     price: 35.0,
     available: true,
@@ -63,7 +63,7 @@ export const roomsMock: Room[] = [
     description:
       'This suite offers comfort and fun with hammocks, scratchers, and bridges, perfect for active cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427712/room_20_rjkcjf.jpg',
-    features: [RoomFeatures.Hammocks, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hammocks, RoomFeatures.scratchers],
     number_of_cats: 3,
     price: 25.0,
     available: true,
@@ -89,9 +89,9 @@ export const roomsMock: Room[] = [
       'An exclusive suite for cats who love climbing and scratching, with suspension bridges and comfy hammocks.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427710/room_5_wq2qny.png',
     features: [
-      RoomFeatures.Hammocks,
-      RoomFeatures.Scratchers,
-      RoomFeatures.SuspensionBridges,
+      RoomFeatures.hammocks,
+      RoomFeatures.scratchers,
+      RoomFeatures.suspensionBridges,
     ],
     number_of_cats: 1,
     price: 30.0,
@@ -118,9 +118,9 @@ export const roomsMock: Room[] = [
       'Perfect for solo feline guests, this suite includes a hiding place, scratchers, and a hammock for ultimate relaxation.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427710/room_5_wq2qny.png',
     features: [
-      RoomFeatures.HidingPlace,
-      RoomFeatures.Hammocks,
-      RoomFeatures.Scratchers,
+      RoomFeatures.hidingPlace,
+      RoomFeatures.hammocks,
+      RoomFeatures.scratchers,
     ],
     number_of_cats: 1,
     price: 20.0,
@@ -146,7 +146,7 @@ export const roomsMock: Room[] = [
     description:
       'A premium suite designed for adventurous cats, featuring all the amenities for climbing, scratching, and hiding.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427712/room_21_pxia5w.jpg',
-    features: [RoomFeatures.HidingPlace, RoomFeatures.SuspensionBridges],
+    features: [RoomFeatures.hidingPlace, RoomFeatures.suspensionBridges],
     number_of_cats: 2,
     price: 40.0,
     available: true,
@@ -172,7 +172,7 @@ export const roomsMock: Room[] = [
     description:
       'A relaxing suite with a focus on comfort, offering a hiding place and hammocks to make your cat feel at home.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427716/room_36_umziwv.jpg',
-    features: [RoomFeatures.HidingPlace, RoomFeatures.Hammocks],
+    features: [RoomFeatures.hidingPlace, RoomFeatures.hammocks],
     number_of_cats: 2,
     price: 25.0,
     available: true,
@@ -198,9 +198,9 @@ export const roomsMock: Room[] = [
       'A luxury suite with suspension bridges, hammocks, and scratchers for the ultimate cat experience.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427710/room_4_vxhpbe.png',
     features: [
-      RoomFeatures.Hammocks,
-      RoomFeatures.Scratchers,
-      RoomFeatures.SuspensionBridges,
+      RoomFeatures.hammocks,
+      RoomFeatures.scratchers,
+      RoomFeatures.suspensionBridges,
     ],
     number_of_cats: 4,
     price: 50.0,
@@ -226,7 +226,7 @@ export const roomsMock: Room[] = [
     description:
       'A small and cozy room perfect for shy cats, featuring a hiding place and soft hammocks.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427710/room_4_vxhpbe.png',
-    features: [RoomFeatures.HidingPlace, RoomFeatures.Hammocks],
+    features: [RoomFeatures.hidingPlace, RoomFeatures.hammocks],
     number_of_cats: 1,
     price: 15.0,
     available: true,
@@ -251,7 +251,7 @@ export const roomsMock: Room[] = [
     description:
       'An exciting room with climbing structures and scratchers for playful cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427708/room_12_r81enw.jpg',
-    features: [RoomFeatures.Scratchers, RoomFeatures.SuspensionBridges],
+    features: [RoomFeatures.scratchers, RoomFeatures.suspensionBridges],
     number_of_cats: 2,
     price: 30.0,
     available: true,
@@ -276,7 +276,7 @@ export const roomsMock: Room[] = [
     description:
       'A bright room with plenty of sunlight, perfect for cats who love to lounge.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427710/room_16_yosnlq.jpg',
-    features: [RoomFeatures.Hammocks],
+    features: [RoomFeatures.hammocks],
     number_of_cats: 1,
     price: 20.0,
     available: true,
@@ -301,7 +301,7 @@ export const roomsMock: Room[] = [
     description:
       'A fun room filled with toys, scratchers, and climbing areas for active cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427713/room_24_v2gf5z.jpg',
-    features: [RoomFeatures.Hammocks, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hammocks, RoomFeatures.scratchers],
     number_of_cats: 3,
     price: 35.0,
     available: true,
@@ -326,7 +326,7 @@ export const roomsMock: Room[] = [
     description:
       'A peaceful room designed for relaxation, featuring soft bedding and a cozy atmosphere.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427714/room_28_az1wj1.jpg',
-    features: [RoomFeatures.HidingPlace],
+    features: [RoomFeatures.hidingPlace],
     number_of_cats: 1,
     price: 18.0,
     available: true,
@@ -351,7 +351,7 @@ export const roomsMock: Room[] = [
     description:
       'A luxurious room with all the amenities for a pampered cat experience.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427715/room_29_nffwkl.jpg',
-    features: [RoomFeatures.Hammocks, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hammocks, RoomFeatures.scratchers],
     number_of_cats: 2,
     price: 45.0,
     available: true,
@@ -376,7 +376,7 @@ export const roomsMock: Room[] = [
     description:
       'A whimsical room filled with climbing structures and fun hiding spots.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427708/room_3_sqdabw.jpg',
-    features: [RoomFeatures.HidingPlace, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hidingPlace, RoomFeatures.scratchers],
     number_of_cats: 3,
     price: 40.0,
     available: true,
@@ -401,7 +401,7 @@ export const roomsMock: Room[] = [
     description:
       'A dream room for cats, featuring hammocks, scratchers, and plenty of space to play.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427712/room_11_vtflkn.jpg',
-    features: [RoomFeatures.Hammocks, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hammocks, RoomFeatures.scratchers],
     number_of_cats: 4,
     price: 50.0,
     available: true,
@@ -426,7 +426,7 @@ export const roomsMock: Room[] = [
     description:
       'A spacious room designed for multiple cats, featuring climbing areas and cozy spots.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427713/room_17_qccglv.jpg',
-    features: [RoomFeatures.HidingPlace, RoomFeatures.Hammocks],
+    features: [RoomFeatures.hidingPlace, RoomFeatures.hammocks],
     number_of_cats: 5,
     price: 60.0,
     available: true,
@@ -451,7 +451,7 @@ export const roomsMock: Room[] = [
     description:
       'A secluded room for cats who enjoy their privacy, with plenty of hiding spots.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427714/room_27_lb3wbr.jpg',
-    features: [RoomFeatures.HidingPlace],
+    features: [RoomFeatures.hidingPlace],
     number_of_cats: 1,
     price: 15.0,
     available: true,
@@ -476,7 +476,7 @@ export const roomsMock: Room[] = [
     description:
       'A warm and inviting room perfect for cuddly cats, featuring soft bedding and hammocks.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427715/room_33_vedx3s.jpg',
-    features: [RoomFeatures.Hammocks],
+    features: [RoomFeatures.hammocks],
     number_of_cats: 2,
     price: 25.0,
     available: true,
@@ -501,7 +501,7 @@ export const roomsMock: Room[] = [
     description:
       'A vibrant room filled with toys and climbing structures for energetic cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427708/room_2_axwrzk.jpg',
-    features: [RoomFeatures.Scratchers, RoomFeatures.Hammocks],
+    features: [RoomFeatures.scratchers, RoomFeatures.hammocks],
     number_of_cats: 3,
     price: 40.0,
     available: true,
@@ -526,7 +526,7 @@ export const roomsMock: Room[] = [
     description:
       'A delightful room with a mix of climbing and hiding spots for curious cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427709/room_1_z9wwl4.png',
-    features: [RoomFeatures.HidingPlace, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hidingPlace, RoomFeatures.scratchers],
     number_of_cats: 2,
     price: 30.0,
     available: true,
@@ -551,7 +551,7 @@ export const roomsMock: Room[] = [
     description:
       'An elegant room designed for the royal feline, featuring luxurious amenities.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427710/room_15_cmmwzx.jpg',
-    features: [RoomFeatures.Hammocks, RoomFeatures.SuspensionBridges],
+    features: [RoomFeatures.hammocks, RoomFeatures.suspensionBridges],
     number_of_cats: 4,
     price: 55.0,
     available: true,
@@ -576,7 +576,7 @@ export const roomsMock: Room[] = [
     description:
       'A spacious room with plenty of climbing and scratching opportunities for active cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427711/room_9_ihwstb.jpg',
-    features: [RoomFeatures.Hammocks, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hammocks, RoomFeatures.scratchers],
     number_of_cats: 3,
     price: 45.0,
     available: true,
@@ -601,7 +601,7 @@ export const roomsMock: Room[] = [
     description:
       'A lively room filled with climbing structures and toys for playful cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427709/room_13_ghcc1f.jpg',
-    features: [RoomFeatures.Hammocks, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hammocks, RoomFeatures.scratchers],
     number_of_cats: 4,
     price: 50.0,
     available: true,
@@ -626,7 +626,7 @@ export const roomsMock: Room[] = [
     description:
       'A cozy room designed for cuddly cats, featuring soft bedding and hammocks.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427713/room_22_hvcvgv.jpg',
-    features: [RoomFeatures.HidingPlace, RoomFeatures.Hammocks],
+    features: [RoomFeatures.hidingPlace, RoomFeatures.hammocks],
     number_of_cats: 2,
     price: 25.0,
     available: true,
@@ -651,7 +651,7 @@ export const roomsMock: Room[] = [
     description:
       'A magical room filled with climbing structures and cozy spots for cats to explore.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427711/room_10_rtr50j.jpg',
-    features: [RoomFeatures.HidingPlace, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hidingPlace, RoomFeatures.scratchers],
     number_of_cats: 3,
     price: 40.0,
     available: true,
@@ -676,7 +676,7 @@ export const roomsMock: Room[] = [
     description:
       'A serene room designed for relaxation, featuring soft bedding and a cozy atmosphere.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427715/room_31_jcenfw.jpg',
-    features: [RoomFeatures.HidingPlace],
+    features: [RoomFeatures.hidingPlace],
     number_of_cats: 1,
     price: 15.0,
     available: true,
@@ -701,7 +701,7 @@ export const roomsMock: Room[] = [
     description:
       'A vibrant room filled with toys and climbing structures for energetic cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427715/room_30_ccnysi.jpg',
-    features: [RoomFeatures.Scratchers, RoomFeatures.Hammocks],
+    features: [RoomFeatures.scratchers, RoomFeatures.hammocks],
     number_of_cats: 3,
     price: 40.0,
     available: true,
@@ -726,7 +726,7 @@ export const roomsMock: Room[] = [
     description:
       'A delightful room with a mix of climbing and hiding spots for curious cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427708/room_14_b9uxk3.jpg',
-    features: [RoomFeatures.HidingPlace, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hidingPlace, RoomFeatures.scratchers],
     number_of_cats: 2,
     price: 30.0,
     available: true,
@@ -751,7 +751,7 @@ export const roomsMock: Room[] = [
     description:
       'An elegant room designed for the royal feline, featuring luxurious amenities.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427715/room_32_gpwlw6.jpg',
-    features: [RoomFeatures.Hammocks, RoomFeatures.SuspensionBridges],
+    features: [RoomFeatures.hammocks, RoomFeatures.suspensionBridges],
     number_of_cats: 4,
     price: 55.0,
     available: true,
@@ -776,7 +776,7 @@ export const roomsMock: Room[] = [
     description:
       'A spacious room with plenty of climbing and scratching opportunities for active cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427713/room_23_z675vn.jpg',
-    features: [RoomFeatures.Hammocks, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hammocks, RoomFeatures.scratchers],
     number_of_cats: 3,
     price: 45.0,
     available: true,
@@ -801,7 +801,7 @@ export const roomsMock: Room[] = [
     description:
       'A lively room filled with climbing structures and toys for playful cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427713/room_18_usahkk.jpg',
-    features: [RoomFeatures.Hammocks, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hammocks, RoomFeatures.scratchers],
     number_of_cats: 4,
     price: 50.0,
     available: true,
@@ -826,7 +826,7 @@ export const roomsMock: Room[] = [
     description:
       'A magical room filled with climbing structures and cozy spots for cats to explore.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427714/room_26_gyftps.jpg',
-    features: [RoomFeatures.HidingPlace, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hidingPlace, RoomFeatures.scratchers],
     number_of_cats: 3,
     price: 40.0,
     available: true,
@@ -851,7 +851,7 @@ export const roomsMock: Room[] = [
     description:
       'A serene room designed for relaxation, featuring soft bedding and a cozy atmosphere.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427714/room_25_wudtjw.jpg',
-    features: [RoomFeatures.HidingPlace],
+    features: [RoomFeatures.hidingPlace],
     number_of_cats: 1,
     price: 15.0,
     available: true,
@@ -876,7 +876,7 @@ export const roomsMock: Room[] = [
     description:
       'A vibrant room filled with toys and climbing structures for energetic cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427711/room_8_p5mt7u.jpg',
-    features: [RoomFeatures.Scratchers, RoomFeatures.Hammocks],
+    features: [RoomFeatures.scratchers, RoomFeatures.hammocks],
     number_of_cats: 3,
     price: 40.0,
     available: true,
@@ -901,7 +901,7 @@ export const roomsMock: Room[] = [
     description:
       'A delightful room with a mix of climbing and hiding spots for curious cats.',
     img: 'https://res.cloudinary.com/dawjlfvoj/image/upload/v1737427716/room_35_rnaa3i.jpg',
-    features: [RoomFeatures.HidingPlace, RoomFeatures.Scratchers],
+    features: [RoomFeatures.hidingPlace, RoomFeatures.scratchers],
     number_of_cats: 2,
     price: 30.0,
     available: true,

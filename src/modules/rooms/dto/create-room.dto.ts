@@ -8,6 +8,7 @@ import {
   IsOptional,
 } from 'class-validator';
 import { RoomFeatures } from '../../../enums/rooms-features.enum';
+import { Transform } from 'class-transformer';
 
 export class CreateRoomDto {
   @ApiProperty({
@@ -49,10 +50,16 @@ export class CreateRoomDto {
 
   @ApiProperty({
     description: 'Features of the room',
-    example: [RoomFeatures.HidingPlace, RoomFeatures.Hammocks],
+    example: [RoomFeatures.hidingPlace, RoomFeatures.hammocks],
   })
   @IsArray()
   @IsEnum(RoomFeatures, { each: true })
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return JSON.parse(value);
+    }
+    return value;
+  })
   features: RoomFeatures[];
 
   @IsOptional()
