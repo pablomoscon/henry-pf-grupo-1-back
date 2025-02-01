@@ -4,8 +4,6 @@ import { Repository } from 'typeorm';
 import { Caretaker } from './entities/caretaker.entity';
 import { CreateCaretakerDto } from './dto/create-caretaker.dto';
 import { UpdateCaretakerDto } from './dto/update-caretaker.dto';
-import { Reservation } from '../reservations/entities/reservation.entity';
-import { User } from '../users/entities/user.entity';
 import { ReservationsService } from '../reservations/reservations.service';
 import { UsersService } from '../users/users.service';
 import { LocationsService } from '../locations/locations.service';
@@ -51,6 +49,19 @@ export class CaretakersService {
     return await this.caretakerRepository.find({
       relations: ['user', 'reservations'],
     });
+  };
+
+  async findUserFromCaretaker(caretakerId: string) {
+    const caretaker = await this.caretakerRepository.findOne({
+      where: { id: caretakerId },
+      relations: ['user'],
+    });
+
+    if (!caretaker) {
+      throw new HttpException('Caretaker not found', HttpStatus.NOT_FOUND);
+    }
+
+    return caretaker.user;
   };
 
   async findOne(id: string): Promise<Caretaker> {

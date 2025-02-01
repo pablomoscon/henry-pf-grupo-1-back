@@ -140,7 +140,6 @@ export class User {
   @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.receiver)
   receivedChats: ChatHistory[];
 
-
   @OneToMany(() => Message, (message) => message.sender)
   @ApiProperty({
     description: 'List of messages sent by the user',

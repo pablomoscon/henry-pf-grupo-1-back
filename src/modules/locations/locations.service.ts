@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,7 +16,7 @@ export class LocationsService {
   };
 
   async findAll(): Promise<Location[]> {
-    return await this.locationRepository.find();
+    return await this.locationsRepository.find();
   };
 
   async findOne(id: string): Promise<Location | null> {

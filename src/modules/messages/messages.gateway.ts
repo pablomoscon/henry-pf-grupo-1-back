@@ -1,6 +1,5 @@
 import { Socket, Server } from 'socket.io';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 import { UsersService } from '../users/users.service';
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';

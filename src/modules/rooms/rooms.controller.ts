@@ -27,7 +27,6 @@ import { Role } from 'src/enums/roles.enum';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { RolesGuard } from 'src/guards/roles/roles.guard';
 import { ImageUploadValidationPipe } from 'src/pipes/image-upload-validation.pipe';
-import { ResponseRoomDto } from './dto/response-room.dto';
 
 @ApiTags('Rooms')
 @Controller('rooms')
@@ -35,15 +34,20 @@ export class RoomsController {
   constructor(private readonly roomsService: RoomsService) { }
 
   @Post()
-/*   @ApiBearerAuth()
+  @ApiBearerAuth()
   @Roles(Role.ADMIN)
-  @UseGuards(AuthGuard, RolesGuard) */
+  @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('img'))
   async create(
     @UploadedFile(new ImageUploadValidationPipe()) file: Express.Multer.File,
     @Body() createRoomDto: CreateRoomDto,
   ): Promise<Room> {
+
+    if (typeof createRoomDto.features === 'string') {
+      createRoomDto.features = JSON.parse(createRoomDto.features);
+    }
+
     console.log('Datos recibidos:', createRoomDto);
     return await this.roomsService.create(createRoomDto, file);
   };
