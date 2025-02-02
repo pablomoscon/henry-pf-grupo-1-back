@@ -11,8 +11,6 @@ import { JwtService } from "@nestjs/jwt";
 import { oauth2Client } from "src/config/google-auth.config";
 import * as jwt from 'jsonwebtoken';
 import { MailService } from '../mail/mail.service';
-import { CaretakerSignupAuthDto } from "./dto/caretaker-signup-auth.dto";
-import { CaretakersService } from "../caretakers/caretakers.service";
 
 @Injectable()
 export class AuthService {
@@ -20,7 +18,6 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly credentialsService: CredentialsService,
     private readonly jwtService: JwtService,
-    private readonly caretakersService: CaretakersService,
     private readonly mailService: MailService,
   ) { }
 
@@ -153,7 +150,7 @@ export class AuthService {
 
   async verifyToken(token: string): Promise<string> {
     try {
-      console.log("Verificando token:", token);
+      console.log("Verificando token:", token); 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       console.log("Token decodificado correctamente:", decoded);
       return decoded['userId'];
@@ -161,44 +158,5 @@ export class AuthService {
       console.error("Error en la verificación del token:", err);
       throw new UnauthorizedException('Token is expired or invalid.');
     }
-  };
-
-  async caretakerSignUp(caretakerSignupAuthDto: CaretakerSignupAuthDto) {
-    const { email, password, confirmPassword, name, phone, address, customerId, role, profileData } = caretakerSignupAuthDto;
-
-    const userWithCredentials = await this.signUp({
-      email,
-      password,
-      confirmPassword,
-      name,
-      phone,
-      address,
-      customerId,
-      role,
-    });
-
-    const caretaker = await this.caretakersService.create({
-      userId: userWithCredentials.id,
-      profileData,
-    });
-
-    const token = await this.createToken(userWithCredentials);
-
-    return {
-      token,
-      user: {
-        id: userWithCredentials.id,
-        email: userWithCredentials.email,
-        name: userWithCredentials.name,
-        role: userWithCredentials.role,
-        phone: userWithCredentials.phone,
-        address: userWithCredentials.address,
-        customerId: userWithCredentials.customerId,
-      },
-      caretaker: {
-        id: caretaker.id,
-        profileData,
-      },
-    };
   };
 }

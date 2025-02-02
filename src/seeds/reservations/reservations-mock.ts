@@ -3,7 +3,6 @@ import { User } from '../../modules/users/entities/user.entity';
 import { Room } from '../../modules/rooms/entities/room.entity';
 import { Cat } from '../../modules/cats/entities/cat.entity';
 import { ReservationStatus } from '../../enums/reservation-status.enum';
-import { Caretaker } from 'src/modules/caretakers/entities/caretaker.entity';
 
 export const reservationsMock: Reservation[] = [
   {
@@ -38,36 +37,21 @@ export const reservationsMock: Reservation[] = [
   },
   {
     id: '123e4567-e89b-12d3-a456-426614174002',
-    user: { id: '123e4567-e89b-12d3-a456-426614174001' } as User,
-    cats: [{ id: '123e4567-e89b-12d3-a456-426614174001' } as Cat],
-    room: { id: '123e4567-e89b-12d3-a456-426614174005' } as Room,
-    checkInDate: new Date('2024-12-15T09:00:00Z'),
-    checkOutDate: new Date('2024-12-25T09:00:00Z'),
-    status: ReservationStatus.COMPLETED,
-    createdAt: new Date('2024-11-25T09:00:00Z'),
-    updatedAt: new Date('2025-02-03T11:00:00Z'),
+    user: { id: '123e4567-e89b-12d3-a456-426614174002' } as User,
+    cats: [{ id: '123e4567-e89b-12d3-a456-426614174002' } as Cat],
+    room: { id: '123e4567-e89b-12d3-a456-426614174003' } as Room,
+    checkInDate: new Date('2025-01-27T09:00:00Z'),
+    checkOutDate: new Date('2025-01-29T09:00:00Z'),
+    status: ReservationStatus.CONFIRMED,
+    createdAt: new Date('2025-01-02T09:00:00Z'),
+    updatedAt: new Date('2025-01-06T11:00:00Z'),
     totalAmount: 150.0,
     payments: null,
     caretakers: [],
     messages: []
   },
   {
-    id: '123e4567-e89b-12d3-a456-426614174003',
-    user: { id: '123e4567-e89b-12d3-a456-426614174002' } as User,
-    cats: [{ id: '123e4567-e89b-12d3-a456-426614174002' } as Cat],
-    room: { id: '123e4567-e89b-12d3-a456-426614174003' } as Room,
-    checkInDate: new Date('2025-01-27T09:00:00Z'),
-    checkOutDate: new Date('2025-01-29T09:00:00Z'),
-    status: ReservationStatus.CANCELLED,
-    createdAt: new Date('2025-01-02T09:00:00Z'),
-    updatedAt: new Date('2025-01-06T11:00:00Z'),
-    totalAmount: 150.0,
-    payments: null,
-    caretakers: [{ id: '123e4567-e89b-12d3-a456-426614174010' } as Caretaker],
-    messages: []
-  },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174004',
+    id: '123e4567-e89b-12d3-a456-426614174005',
     user: { id: '123e4567-e89b-12d3-a456-426614174004' } as User,
     cats: [{ id: '123e4567-e89b-12d3-a456-426614174003' } as Cat],
     room: { id: '123e4567-e89b-12d3-a456-426614174002' } as Room,
@@ -78,22 +62,7 @@ export const reservationsMock: Reservation[] = [
     updatedAt: new Date('2025-02-06T11:00:00Z'),
     totalAmount: 150.0,
     payments: null,
-    caretakers: [{ id: '123e4567-e89b-12d3-a456-426614174011' } as Caretaker],
-    messages: []
-  },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174004',
-    user: { id: '123e4567-e89b-12d3-a456-426614174004' } as User,
-    cats: [{ id: '123e4567-e89b-12d3-a456-426614174003' } as Cat],
-    room: { id: '123e4567-e89b-12d3-a456-426614174002' } as Room,
-    checkInDate: new Date('2025-03-02T09:00:00Z'),
-    checkOutDate: new Date('2025-03-11T09:00:00Z'),
-    status: ReservationStatus.PENDING,
-    createdAt: new Date('2025-02-01T09:00:00Z'),
-    updatedAt: new Date('2025-02-01T11:00:00Z'),
-    totalAmount: 150.0,
-    payments: null,
-    caretakers: [{ id: '123e4567-e89b-12d3-a456-426614174011' } as Caretaker],
+    caretakers: [],
     messages: []
   },
 ];

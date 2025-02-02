@@ -20,34 +20,26 @@ export class CaretakersService {
 
   async create(createCaretakerDto: CreateCaretakerDto): Promise<Caretaker> {
     const user = await this.usersService.findOne(createCaretakerDto.userId);
-    // Se omite la búsqueda de location si no se pasa un locationId
-    const location = createCaretakerDto.locationId
-      ? await this.locationsService.findOne(createCaretakerDto.locationId)
-      : undefined;
-
+    const location = await this.locationsService.findOne(createCaretakerDto.locationId);
     const reservations = [];
-
-    // Verificar si el usuario existe
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    if (createCaretakerDto.reservationsId && createCaretakerDto.reservationsId.length > 0) {
-      for (const reservationId of createCaretakerDto.reservationsId) {
-        const reservation = await this.reservationsService.findOne(reservationId);
-        if (reservation) {
-          reservations.push(reservation);  
-        } else {
-          console.error(`Reservation with id ${reservationId} not found`);
-        }
+    for (const reservationId of createCaretakerDto.reservationsId) {
+      const reservation = await this.reservationsService.findOne(reservationId);  // Suponiendo que existe un método findOne
+      if (reservation) {
+        reservations.push(reservation);
+      } else {
+        console.error(`Reservation with id ${reservationId} not found`);
       }
+    };
+
+    if (!user || !location) {
+      throw new Error('User or Location not found');
     }
 
     const newCaretaker = this.caretakerRepository.create({
-      ...createCaretakerDto,  
-      user,                   
-      location,               
-      reservations,           
+      ...createCaretakerDto,
+      user,
+      location,
+      reservations,
     });
 
     return await this.caretakerRepository.save(newCaretaker);
@@ -61,7 +53,7 @@ export class CaretakersService {
 
   async findUsersFromCaretakers(caretakerIds: string[]) {
     const caretakers = await this.caretakerRepository.find({
-      where: { id: In(caretakerIds) },
+      where: { id: In(caretakerIds) },  // 'In' permite buscar varios cuidadores al mismo tiempo
       relations: ['user'],
     });
 
@@ -72,7 +64,7 @@ export class CaretakersService {
     return caretakers.map(caretaker => caretaker.user);
   };
 
-
+  
   async findOne(id: string): Promise<Caretaker> {
     return await this.caretakerRepository.findOne({
       where: { id },
@@ -81,47 +73,14 @@ export class CaretakersService {
   };
 
   async update(id: string, updateCaretakerDto: UpdateCaretakerDto) {
-    const existingCaretaker = await this.caretakerRepository.findOne({
-      where: { id },
-      relations: ['user', 'location', 'reservations'], // Cargar relaciones existentes
-    });
-
+    const existingCaretaker = await this.caretakerRepository.findOne({ where: { id } });
     if (!existingCaretaker) {
-      throw new HttpException(`Caretaker with ID ${id} not found`, HttpStatus.NOT_FOUND);
+      throw new HttpException(`User with ID ${id} not found`, HttpStatus.NOT_FOUND);
     }
 
-    if (updateCaretakerDto.userId) {
-      const user = await this.usersService.findOne(updateCaretakerDto.userId);
-      if (!user) {
-        throw new Error(`User with ID ${updateCaretakerDto.userId} not found`);
-      }
-      existingCaretaker.user = user;
-    }
+    await this.caretakerRepository.update(id, updateCaretakerDto);
 
-    if (updateCaretakerDto.locationId) {
-      const location = await this.locationsService.findOne(updateCaretakerDto.locationId);
-      if (!location) {
-        throw new Error(`Location with ID ${updateCaretakerDto.locationId} not found`);
-      }
-      existingCaretaker.location = location;
-    }
-
-    if (updateCaretakerDto.reservationsId) {
-      const reservations = [];
-      for (const reservationId of updateCaretakerDto.reservationsId) {
-        const reservation = await this.reservationsService.findOne(reservationId);
-        if (reservation) {
-          reservations.push(reservation);
-        } else {
-          console.error(`Reservation with ID ${reservationId} not found`);
-        }
-      }
-      existingCaretaker.reservations = reservations;
-    }
-
-    Object.assign(existingCaretaker, updateCaretakerDto);
-
-    return await this.caretakerRepository.save(existingCaretaker);
+    return this.findOne(id);
   };
 
   async remove(id: string) {
@@ -133,27 +92,6 @@ export class CaretakersService {
     }
     caretaker.deleted_at = new Date();
     return this.caretakerRepository.save(caretaker);
-  };
-
-  async findUsersFromReservations(caretakerIds: string[]) {
-  
-    const caretakers = await this.caretakerRepository.find({
-      where: { id: In(caretakerIds) },
-      relations: ['reservations', 'reservations.user'],
-    });
-
-    if (caretakers.length === 0) {
-      throw new HttpException('Caretakers not found', HttpStatus.NOT_FOUND);
-    }
-
-    const users = caretakers.flatMap(caretaker =>
-      caretaker.reservations.map(reservation => ({
-        reservation: reservation, 
-        user: reservation.user,  
-      }))
-    );
-
-    return users;
   };
 }
 

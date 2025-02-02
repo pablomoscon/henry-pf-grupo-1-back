@@ -102,12 +102,12 @@ export class Reservation {
   @OneToMany(() => Payment, (payment) => payment.reservation)
   payments?: Payment[];
 
-  @ManyToMany(() => Caretaker, (caretaker) => caretaker.reservations)
   @ApiProperty({
     description: 'Caretakers associated with the reservation',
     type: () => [Caretaker],
     isArray: true
   })
+  @ManyToMany(() => Caretaker, (caretaker) => caretaker.reservations)
   caretakers: Caretaker[];
 
   @ApiProperty({

@@ -21,7 +21,7 @@ export class CreateCaretakerDto {
         example: 'New York',
     })
     @IsUUID()
-    locationId?: string;
+    locationId: string;
 
     @ApiProperty({
         description: 'Reservations associated with the caretaker',
@@ -29,7 +29,7 @@ export class CreateCaretakerDto {
     })
     @IsOptional()
     @IsArray()
-    reservationsId?: string[];
+    reservationsId: string[];
 
     @ApiProperty({
         description: 'Timestamp when the caretaker was deleted',
