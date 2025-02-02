@@ -7,6 +7,7 @@ import { LocationsSeed } from './locations/locations.seed';
 import { ReservationsSeed } from './reservations/reservations.seed';
 import { CatsSeed } from './cats/cats-seed';
 import { ReviewsSeed } from './review/reviews-seed';
+import { CaretakersSeed } from './caretakers/caretakers-seed';
 
 
 @Injectable()
@@ -19,7 +20,8 @@ export class SeedManager {
     private readonly locationsSeed: LocationsSeed,
     private readonly reservationsSeed: ReservationsSeed,
     private readonly catsSeed: CatsSeed,
-    private readonly reviewsSeed: ReviewsSeed
+    private readonly reviewsSeed: ReviewsSeed,
+    private readonly caretakersSeed: CaretakersSeed
   ) {}
 
   async runSeeders() {
@@ -44,9 +46,11 @@ export class SeedManager {
       await this.catsSeed.seed();
       console.log('Cats seeded');
 
+      await this.caretakersSeed.seed();
+      console.log('Caretakers seeded');
+
       await this.reservationsSeed.seed();
       console.log('Reservations seeded');
-
 
     } catch (error) {
       console.error('Error during seeding:', error);
