@@ -7,6 +7,7 @@ import { Response } from 'express';
 import { oauth2Client } from 'src/config/google-auth.config';
 import { AuthResponseDto } from './dto/response-auth.dto';
 import { ResponseUserDto } from '../users/dto/response-user.dto';
+import { CaretakerSignupAuthDto } from './dto/caretaker-signup-auth.dto';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -28,6 +29,13 @@ export class AuthController {
       success: 'Login successful',
       response
     };
+  };
+
+  @Post('caretaker-signup')
+  @HttpCode(HttpStatus.CREATED)
+  async caretakerSignUp(@Body() caretakerSignUpAuthDto: CaretakerSignupAuthDto) {
+    const caretakerUser = await this.authService.caretakerSignUp(caretakerSignUpAuthDto);
+    return caretakerUser; 
   };
 
   @Get('google')

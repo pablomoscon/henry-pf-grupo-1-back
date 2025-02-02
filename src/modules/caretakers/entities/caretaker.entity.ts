@@ -19,7 +19,8 @@ export class Caretaker {
   @JoinColumn()
   @ApiProperty({
     description: 'User who is the caretaker',
-    example: 'Cesar Millan'
+    example: 'Cesar Millan',
+    type: () => [User],
   })
   user: User;
 
@@ -41,7 +42,10 @@ export class Caretaker {
   deleted_at?: Date;
 
   @ManyToOne(() => Location, (location) => location.caretakers)
-  @ApiProperty({ description: 'Location where the caretaker works' })
+  @ApiProperty({
+    description: 'Location where the caretaker works',
+    type: () => [Location],
+  })
   location: Location;
 
   @ManyToMany(() => Reservation, (reservation) => reservation.caretakers)
@@ -50,6 +54,7 @@ export class Caretaker {
     description: 'Reservations associated with the caretaker',
     type: () => [Reservation],
   })
-  reservations: Reservation[];
+  @IsOptional()
+  reservations?: Reservation[];
 }
 
