@@ -196,32 +196,4 @@ export const usersMock: User[] = [
     createdAt: new Date(),
     reviews: []
   },
-  {
-    id: '123e4567-e89b-12d3-a456-426614174005',
-    name: 'Sophia Wilson',
-    email: 'sophia.wilson@mail.com',
-    phone: '+5412345684',
-    address: '753 Cedar St, Smallville',
-    customerId: '47981345',
-    deleted_at: null,
-    role: Role.CARETAKER,
-    status: Status.ACTIVE,
-    credential: {
-      id: '123e4567-e89b-12d3-a456-426614174006',
-      password: 'Pass1234!',
-      deleted_at: null,
-      user: null,
-    },
-    cats: [],
-    caretakerProfile: null,
-    reservations: [],
-    sentMessages: [],
-    receivedMessages: [],
-    payments: null,
-    sentChats: [],
-    receivedChats: [],
-    notifications: [],
-    createdAt: new Date(),
-    reviews: []
-  }
 ];

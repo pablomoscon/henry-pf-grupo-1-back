@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Param, Patch, Delete, UseGuards, HttpStatus, HttpCode, Query, BadRequestException } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Patch, Delete, UseGuards, HttpStatus, HttpCode } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { CaretakersService } from './caretakers.service';
 import { CreateCaretakerDto } from './dto/create-caretaker.dto';
@@ -30,17 +30,6 @@ export class CaretakersController {
   @HttpCode(HttpStatus.OK)
   async findAll(): Promise<Caretaker[]> {
     return await this.caretakersService.findAll();
-  };
-
-  @Get('from-reservations')
-  async findUsersFromReservations(@Query('caretakerIds') caretakerIds: string) {
-    if (!caretakerIds) {
-      throw new BadRequestException('caretakerIds query parameter is required');
-    }
-
-    const idsArray = caretakerIds.split(',').map(id => id.trim());
-
-    return this.caretakersService.findUsersFromReservations(idsArray);
   };
 
   @Get(':id')

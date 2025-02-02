@@ -17,12 +17,10 @@ import { ReviewsSeed } from './review/reviews-seed';
 import { UsersModule } from 'src/modules/users/users.module';
 import { Location } from 'src/modules/locations/entities/location.entity';
 import { LocationsModule } from 'src/modules/locations/locations.module';
-import { Caretaker } from 'src/modules/caretakers/entities/caretaker.entity';
-import { CaretakersSeed } from './caretakers/caretakers-seed';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Room, Reservation, Credential, Cat, Review, Location, Caretaker]),
+    TypeOrmModule.forFeature([User, Room, Reservation, Credential, Cat, Review, Location]),
     LocationsModule, UsersModule
   ],
   providers: [
@@ -33,8 +31,7 @@ import { CaretakersSeed } from './caretakers/caretakers-seed';
     ReservationsSeed,
     CredentialsSeed,
     CatsSeed,
-    ReviewsSeed,
-    CaretakersSeed
+    ReviewsSeed
   ],
   exports: [SeedManager],
 })
