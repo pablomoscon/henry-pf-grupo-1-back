@@ -19,6 +19,7 @@ import { Roles } from 'src/decorators/role.decorator';
 import { Role } from 'src/enums/roles.enum';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { RolesGuard } from 'src/guards/roles/roles.guard';
+import { ResponseUsersReservationsDto } from './dto/response-users-reservations.dto';
 
 @Controller('users')
 @ApiTags('users')
@@ -73,6 +74,19 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   async usersCats(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.usersService.usersCats(id);
+  };
+
+  @Get(':id/caretaker-reservations')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async findUsersAndReservationsFromCaretaker(@Param('id') id: string) {
+    const userAndReservations = await this.usersService.findUsersAndReservationsFromCaretaker(id);
+    if (userAndReservations && userAndReservations.length > 0) {
+      return userAndReservations.map(reservation => ResponseUsersReservationsDto.fromReservationData(reservation));
+    } else {
+      throw new Error("No reservations found for this user");
+    }
   };
 
   @Get(':id')

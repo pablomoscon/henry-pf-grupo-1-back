@@ -7,7 +7,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RoomsModule } from './modules/rooms/rooms.module';
 import { CaretakersModule } from './modules/caretakers/caretakers.module';
 import { CatsModule } from './modules/cats/cats.module';
-import { ChatHistoryModule } from './modules/chat-history/chat-history.module';
 import { CredentialsModule } from './modules/credentials/credentials.module';
 import { MediaModule } from './modules/media/media.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
@@ -15,7 +14,6 @@ import { UsersModule } from './modules/users/users.module';
 import { SeedModule } from './seeds/seeds.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import { LocationsModule } from './modules/locations/locations.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { MessagesModule } from './modules/messages/messages.module';
 import { MailsModule } from './modules/mail/mail.module';
@@ -45,14 +43,13 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
     RoomsModule,
     CaretakersModule,
     CatsModule,
-    ChatHistoryModule,
     CredentialsModule,
     CronsModule,
     MediaModule,
     ReservationsModule,
     UsersModule,
     SeedModule,
-    LocationsModule,
+
     PaymentsModule,
     MessagesModule,
     MailsModule,

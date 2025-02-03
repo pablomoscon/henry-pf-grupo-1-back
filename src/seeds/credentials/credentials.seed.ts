@@ -11,14 +11,13 @@ export class CredentialsSeed {
   constructor(
     @InjectRepository(Credential)
     private readonly credentialRepository: Repository<Credential>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
   ) {}
 
   async seed() {
     for (const credentialData of credentialsMock) {
       const credential = new Credential();
       credential.id = credentialData.id;
+      credential.user = credentialData.user;
       credential.password = await hash(credentialData.password, 10);
       credential.deleted_at = credentialData.deleted_at;
       await this.credentialRepository.save(credential);

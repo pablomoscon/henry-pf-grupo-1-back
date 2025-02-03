@@ -13,7 +13,6 @@ import {
 } from 'class-validator';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 import { RoomFeatures } from '../../../enums/rooms-features.enum';
-import { Location } from '../../../modules/locations/entities/location.entity';
 
 @Entity('rooms')
 export class Room {
@@ -120,11 +119,4 @@ export class Room {
     type: () => [Reservation],
   })
   reservations: Reservation[];
-
-  @OneToMany(() => Location, (location) => location.rooms)
-  @ApiProperty({
-    description: 'Location associated with the room',
-    type: () => Location,
-  })
-  location: Location;
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, forwardRef, HttpException, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { SignInAuthDto } from "./dto/signin-auth.dto";
 import { SignupAuthDto } from "./dto/signup-auth.dto";
 import { UsersService } from '../users/users.service';
@@ -13,6 +13,7 @@ import * as jwt from 'jsonwebtoken';
 import { MailService } from '../mail/mail.service';
 import { CaretakerSignupAuthDto } from "./dto/caretaker-signup-auth.dto";
 import { CaretakersService } from "../caretakers/caretakers.service";
+import { Caretaker } from "../caretakers/entities/caretaker.entity";
 
 @Injectable()
 export class AuthService {
@@ -33,12 +34,9 @@ export class AuthService {
     if (user) {
       throw new BadRequestException('User already exists');
     }
-
+    
     const { email, name, phone, address, customerId, role, password } = signUpUser;
-
-    const createCredentialsDto: CreateCredentialDto = { password };
-    const credential: Credential = await this.credentialsService.create(createCredentialsDto);
-
+    
     const createUserDto: CreateUserDto = {
       email,
       name,
@@ -49,29 +47,37 @@ export class AuthService {
       ...(role && { role }),
     };
 
-    const userWithCredentials = await this.usersService.create(createUserDto, credential);
+    const newUser: User = await this.usersService.create(createUserDto);
 
-    await this.credentialsService.assignUserToCredentials(credential.id, { user: userWithCredentials });
+    const createCredentialsDto: CreateCredentialDto = { password };
 
-    this.mailService.sendSuccessfulregistration(userWithCredentials)
+    await this.credentialsService.create(createCredentialsDto, newUser);
 
-    return userWithCredentials;
+    this.mailService.sendSuccessfulregistration(newUser)
+
+    return newUser;
   };
 
   async signIn(signInAuthDto: SignInAuthDto) {
+    
     const { email, password } = signInAuthDto;
 
-    const user = await this.usersService.findByEmail(email);
+    const credential = await this.usersService.findCredentialByEmail(email);
 
-    if (!user) {
+    console.log('credential', credential);
+    
+    if (!credential) {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const isPasswordValid = await this.credentialsService.validatePassword(user.credential.id, password);
+    const isPasswordValid = await this.credentialsService.validatePassword(credential.id, password);
 
     if (!isPasswordValid) {
       throw new BadRequestException('Invalid credentials');
     }
+
+    const user = credential.user;
+
     const token = await this.createToken(user);
 
     return {
@@ -130,8 +136,7 @@ export class AuthService {
       const createCredentialsDto: CreateCredentialDto = {
         googleId: userInfo.sub,
       };
-      const credential: Credential = await this.credentialsService.createGoogleCredential(createCredentialsDto);
-
+    
       const createUserDto: CreateUserDto = {
         email: userInfo.email,
         name: userInfo.name,
@@ -139,11 +144,12 @@ export class AuthService {
         address: userInfo.addresses?.[0]?.value,
         customerId: userInfo.customerId,
       };
-      user = await this.usersService.create(createUserDto, credential);
-
-      await this.credentialsService.assignUserToCredentials(credential.id, { user });
       
-      this.mailService.sendPasswordChangeAlert(user);
+      user = await this.usersService.create(createUserDto);
+
+      const credential = await this.credentialsService.createGoogleCredential(createCredentialsDto, user);
+      
+      this.mailService.sendPasswordChangeAlert(user, credential);
     }
 
     const token = await this.createToken(user);
@@ -163,10 +169,10 @@ export class AuthService {
     }
   };
 
-  async caretakerSignUp(caretakerSignupAuthDto: CaretakerSignupAuthDto) {
+  async caretakerSignUp(caretakerSignupAuthDto: CaretakerSignupAuthDto): Promise<Caretaker> {
     const { email, password, confirmPassword, name, phone, address, customerId, role, profileData } = caretakerSignupAuthDto;
 
-    const userWithCredentials = await this.signUp({
+    const user = await this.signUp({
       email,
       password,
       confirmPassword,
@@ -178,27 +184,10 @@ export class AuthService {
     });
 
     const caretaker = await this.caretakersService.create({
-      userId: userWithCredentials.id,
+      userId: user.id,
       profileData,
     });
 
-    const token = await this.createToken(userWithCredentials);
-
-    return {
-      token,
-      user: {
-        id: userWithCredentials.id,
-        email: userWithCredentials.email,
-        name: userWithCredentials.name,
-        role: userWithCredentials.role,
-        phone: userWithCredentials.phone,
-        address: userWithCredentials.address,
-        customerId: userWithCredentials.customerId,
-      },
-      caretaker: {
-        id: caretaker.id,
-        profileData,
-      },
-    };
+    return caretaker
   };
 }

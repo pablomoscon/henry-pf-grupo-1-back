@@ -34,6 +34,7 @@ export class ReservationsSeed {
         reservation.status = reservationData.status;
         reservation.createdAt = reservationData.createdAt;
         reservation.updatedAt = reservationData.updatedAt;
+        reservation.caretakers = reservationData.caretakers;
 
         reservation.user = await this.userRepository.findOne({
           where: { id: reservationData.user.id },

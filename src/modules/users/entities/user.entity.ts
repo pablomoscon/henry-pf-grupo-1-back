@@ -4,7 +4,6 @@ import {
   Column,
   OneToMany,
   OneToOne,
-  JoinColumn,
   CreateDateColumn,
   ManyToMany,
   JoinTable,
@@ -15,7 +14,7 @@ import { Credential } from '../../credentials/entities/credential.entity';
 import { Cat } from '../../cats/entities/cat.entity';
 import { Caretaker } from '../../caretakers/entities/caretaker.entity';
 import { Reservation } from '../../reservations/entities/reservation.entity';
-import { ChatHistory } from '../../chat-history/entities/chat-history.entity';
+
 import { Role } from 'src/enums/roles.enum';
 import { Status } from 'src/enums/status.enum';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
@@ -100,7 +99,6 @@ export class User {
     description: 'Credential associated with the user',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  @JoinColumn()
   credential: Credential;
 
   @ApiProperty({
@@ -111,12 +109,10 @@ export class User {
   cats: Cat[];
 
   @OneToOne(() => Caretaker, { nullable: true })
-  @JoinColumn()
   @ApiProperty({
     description: 'Caretaker profile associated with the user',
     type: () => Caretaker,
   })
-  @JoinColumn()
   caretakerProfile: Caretaker;
 
   @ApiProperty({
@@ -125,20 +121,6 @@ export class User {
   })
   @OneToMany(() => Reservation, (reservation) => reservation.user)
   reservations: Reservation[];
-
-  @ApiProperty({
-    description: 'List of chat messages sent by the user',
-    type: () => [ChatHistory],
-  })
-  @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.sender)
-  sentChats: ChatHistory[];
-
-  @ApiProperty({
-    description: 'List of chat messages received by the user',
-    type: () => [ChatHistory],
-  })
-  @OneToMany(() => ChatHistory, (chatHistory) => chatHistory.receiver)
-  receivedChats: ChatHistory[];
 
   @OneToMany(() => Message, (message) => message.sender)
   @ApiProperty({

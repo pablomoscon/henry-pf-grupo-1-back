@@ -6,6 +6,7 @@ import { Credential } from './entities/credential.entity';
 import * as bcrypt from 'bcrypt';
 import { UpdateCredentialDto } from './dto/update-credential.dto';
 import * as crypto from 'crypto';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class CredentialsService {
@@ -14,20 +15,37 @@ export class CredentialsService {
     private readonly credentialsRepository: Repository<Credential>,
   ) { }
 
-  async create(createCredentialsDto: CreateCredentialDto): Promise<Credential> {
-    const { password } = await this.handlePasswordAndExpiration(createCredentialsDto);
+  async create(createCredentialsDto: CreateCredentialDto, user: User): Promise<Credential> {
+    const { password } = createCredentialsDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const credential = this.credentialsRepository.create({
       ...createCredentialsDto,
       password: hashedPassword,
+      user
     });
 
     return this.credentialsRepository.save(credential);
   };
 
-  private async handlePasswordAndExpiration(createCredentialsDto: CreateCredentialDto): Promise<{ password: string}> {
+  async createGoogleCredential(createCredentialsDto: CreateCredentialDto, user: User): Promise<Credential> {
+    const { googleId } = createCredentialsDto;
+
+    const hashedCredential = await bcrypt.hash(googleId, 10);
+    const { password: generatedPassword } = await this.handlePassword(createCredentialsDto);
+
+    const googleCredential = this.credentialsRepository.create({
+      ...createCredentialsDto,
+      googleId: hashedCredential,
+      password: await bcrypt.hash(generatedPassword, 10),
+      user
+    });
+
+    return await this.credentialsRepository.save(googleCredential);
+  };
+
+  private async handlePassword(createCredentialsDto: CreateCredentialDto): Promise<{ password: string }> {
     let { password } = createCredentialsDto;
 
     if (!password) {
@@ -36,23 +54,7 @@ export class CredentialsService {
 
     return { password };
   };
-
-  async createGoogleCredential(createCredentialsDto: CreateCredentialDto): Promise<Credential> {
-    const { googleId } = createCredentialsDto;
-
-    const hashedCredential = await bcrypt.hash(googleId, 10);
-    const { password: generatedPassword } = await this.handlePasswordAndExpiration(createCredentialsDto);
-
-    const googleCredential = this.credentialsRepository.create({
-      ...createCredentialsDto,
-      googleId: hashedCredential,
-      password: await bcrypt.hash(generatedPassword, 10),
-
-    });
-
-    return await this.credentialsRepository.save(googleCredential);
-  };
-
+  
   async validatePassword(credentialId: string, password: string): Promise<boolean> {
     const credential = await this.credentialsRepository.findOne({ where: { id: credentialId } });
 
@@ -70,22 +72,17 @@ export class CredentialsService {
     });
   };
 
-  async findOne(userId: string): Promise<Credential | null> {
+  async findOne(id: string): Promise<Credential | null> {
     return await this.credentialsRepository.findOne({
-      where: { user: { id: userId } },
+      where: { user: { id } },
     });
   };
 
-  async assignUserToCredentials(id: string, updateCredentialsDto: UpdateCredentialDto) {
-    const credential = await this.credentialsRepository.findOne({ where: { id } });
-
-    if (!credential) {
-      throw new NotFoundException(`Credentials with ID ${id} not found`);
-    }
-    if (updateCredentialsDto.user) {
-      credential.user = updateCredentialsDto.user;
-    }
-    return await this.credentialsRepository.save(credential);
+  async findCredentialByUser(id: string): Promise<Credential | null> {
+    return await this.credentialsRepository.findOne({
+      where: { user: { id: id } },
+      relations: ['user'],
+    });
   };
 
   async updatePassword(

@@ -9,10 +9,11 @@ import { UsersModule } from '../users/users.module';
 import { CatsModule } from '../cats/cats.module';
 import { RoomsModule } from '../rooms/rooms.module';
 import { PaymentsModule } from '../payments/payments.module';
+import { CaretakersModule } from '../caretakers/caretakers.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Reservation]),
-    UsersModule,
+    forwardRef(() => UsersModule),
     RoomsModule,
     CatsModule,
     FileUploadModule,

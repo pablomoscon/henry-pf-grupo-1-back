@@ -7,15 +7,18 @@ import { Credential } from '../credentials/entities/credential.entity';
 import { UsersModule } from '../users/users.module';
 import { CredentialsModule } from '../credentials/credentials.module';
 import { MailsModule } from '../mail/mail.module';
-import { CredentialsService } from '../credentials/credentials.service';
 import { CaretakersModule } from '../caretakers/caretakers.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Credential]), UsersModule, MailsModule, CaretakersModule, forwardRef(() => CredentialsModule) 
+    TypeOrmModule.forFeature([User, Credential]),
+    forwardRef(() => UsersModule),
+    MailsModule,
+    forwardRef(() => CaretakersModule),
+    forwardRef(() => CredentialsModule),
   ],
   controllers: [AuthController],
   providers: [AuthService],
-  exports:[AuthService]
+  exports: [AuthService]
 })
 export class AuthModule { }

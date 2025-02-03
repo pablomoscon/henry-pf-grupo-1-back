@@ -45,8 +45,7 @@ export const usersMock: User[] = [
     reservations: [],
     sentMessages: [],
     receivedMessages: [],
-    sentChats: [],
-    receivedChats: [],
+
     payments: null,
     notifications: [],
     createdAt: new Date('2024-01-26T09:00:00Z'),
@@ -90,8 +89,6 @@ export const usersMock: User[] = [
     sentMessages: [],
     receivedMessages: [],
     payments: null,
-    sentChats: [],
-    receivedChats: [],
     notifications: [],
     createdAt: new Date(),
     reviews: []
@@ -134,8 +131,6 @@ export const usersMock: User[] = [
     sentMessages: [],
     receivedMessages: [],
     payments: null,
-    sentChats: [],
-    receivedChats: [],
     notifications: [],
     createdAt: new Date(),
     reviews: []
@@ -162,8 +157,6 @@ export const usersMock: User[] = [
     sentMessages: [],
     receivedMessages: [],
     payments: null,
-    sentChats: [],
-    receivedChats: [],
     notifications: [],
     createdAt: new Date(),
     reviews: []
@@ -190,8 +183,6 @@ export const usersMock: User[] = [
     sentMessages: [],
     receivedMessages: [],
     payments: null,
-    sentChats: [],
-    receivedChats: [],
     notifications: [],
     createdAt: new Date(),
     reviews: []
@@ -218,8 +209,6 @@ export const usersMock: User[] = [
     sentMessages: [],
     receivedMessages: [],
     payments: null,
-    sentChats: [],
-    receivedChats: [],
     notifications: [],
     createdAt: new Date(),
     reviews: []

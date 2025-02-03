@@ -33,12 +33,16 @@ export const reservationsMock: Reservation[] = [
     updatedAt: new Date('2025-02-03T11:00:00Z'),
     totalAmount: 150.0,
     payments: null,
-    caretakers: [],
+    caretakers: [{
+      id: '123e4567-e89b-12d3-a456-426614174010',
+      profileData: 'Experienced cat caretaker with over 5 years in the field.',
+      deleted_at: null,
+    } as Caretaker],
     messages: []
   },
   {
     id: '123e4567-e89b-12d3-a456-426614174002',
-    user: { id: '123e4567-e89b-12d3-a456-426614174001' } as User,
+    user: { id: '123e4567-e89b-12d3-a456-426614174002' } as User,
     cats: [{ id: '123e4567-e89b-12d3-a456-426614174001' } as Cat],
     room: { id: '123e4567-e89b-12d3-a456-426614174005' } as Room,
     checkInDate: new Date('2024-12-15T09:00:00Z'),
@@ -63,7 +67,11 @@ export const reservationsMock: Reservation[] = [
     updatedAt: new Date('2025-01-06T11:00:00Z'),
     totalAmount: 150.0,
     payments: null,
-    caretakers: [{ id: '123e4567-e89b-12d3-a456-426614174010' } as Caretaker],
+    caretakers: [{
+      id: '123e4567-e89b-12d3-a456-426614174010',
+      profileData: 'Experienced cat caretaker with over 5 years in the field.',
+      deleted_at: null,
+} as Caretaker],
     messages: []
   },
   {
@@ -78,7 +86,11 @@ export const reservationsMock: Reservation[] = [
     updatedAt: new Date('2025-02-06T11:00:00Z'),
     totalAmount: 150.0,
     payments: null,
-    caretakers: [{ id: '123e4567-e89b-12d3-a456-426614174011' } as Caretaker],
+    caretakers: [{
+      id: '123e4567-e89b-12d3-a456-426614174011',
+      profileData: 'Lifelong animal lover, specializing in shy and rescued cats.',
+      deleted_at: null,
+} as Caretaker],
     messages: []
   },
   {
@@ -93,7 +105,11 @@ export const reservationsMock: Reservation[] = [
     updatedAt: new Date('2025-02-01T11:00:00Z'),
     totalAmount: 150.0,
     payments: null,
-    caretakers: [{ id: '123e4567-e89b-12d3-a456-426614174011' } as Caretaker],
+    caretakers: [{
+      id: '123e4567-e89b-12d3-a456-426614174011',
+      profileData: 'Lifelong animal lover, specializing in shy and rescued cats.',
+      deleted_at: null,
+} as Caretaker],
     messages: []
   },
 ];

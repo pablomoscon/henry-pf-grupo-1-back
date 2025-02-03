@@ -103,6 +103,7 @@ export class Reservation {
   payments?: Payment[];
 
   @ManyToMany(() => Caretaker, (caretaker) => caretaker.reservations)
+  @JoinTable()
   @ApiProperty({
     description: 'Caretakers associated with the reservation',
     type: () => [Caretaker],

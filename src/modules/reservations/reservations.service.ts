@@ -84,7 +84,7 @@ export class ReservationsService {
   async findAll(): Promise<Reservation[]> {
     return await this.reservationRepository.find({
       where: { deleted_at: IsNull() },
-      relations: ['user', 'room', 'cats', 'payments'],
+      relations: ['user', 'room', 'cats', 'payments', 'caretakers'],
     });
   };
 
@@ -161,7 +161,14 @@ export class ReservationsService {
       reservation.status = ReservationStatus.COMPLETED;
       await this.reservationRepository.save(reservation);
     }
-
     console.log(`${expiredReservations.length} reservations have been completed.`);
+  };
+
+  async findReservationsByCaretaker(id: string) {
+    
+    return await this.reservationRepository.find({
+      where: { caretakers: { id } },
+      relations: ['user', 'cats', 'room'], 
+    });
   };
 }

@@ -52,7 +52,7 @@ export class CatsService {
   async findAll() {
     return await this.catRepository.find({
       where: { deleted_at: IsNull() },
-      relations: ['user', 'reservations'],
+      relations: ['user'],
     });
   };
 
