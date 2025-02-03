@@ -3,6 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional } from 'class-validator';
@@ -43,6 +44,7 @@ export class Credential {
   deleted_at?: Date;
 
   @OneToOne(() => User, (user) => user.credential)
+  @JoinColumn()
   @ApiProperty({
     description: 'User associated with the user',
     example: '123e4567-e89b-12d3-a456-426614174000',

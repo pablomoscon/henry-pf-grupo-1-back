@@ -1,8 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, JoinTable, ManyToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToOne, ManyToMany, JoinColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional, IsDate } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
-import { Location } from '../../../modules/locations/entities/location.entity';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 
 @Entity('caretakers')
@@ -41,15 +40,7 @@ export class Caretaker {
   @IsOptional()
   deleted_at?: Date;
 
-  @ManyToOne(() => Location, (location) => location.caretakers)
-  @ApiProperty({
-    description: 'Location where the caretaker works',
-    type: () => [Location],
-  })
-  location: Location;
-
   @ManyToMany(() => Reservation, (reservation) => reservation.caretakers)
-  @JoinTable()
   @ApiProperty({
     description: 'Reservations associated with the caretaker',
     type: () => [Reservation],

@@ -1,33 +1,47 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { IsNull, Repository } from 'typeorm';
 import { Credential } from '../credentials/entities/credential.entity';
-import { Cat } from '../cats/entities/cat.entity';
 import { Role } from 'src/enums/roles.enum';
+import { CaretakersService } from '../caretakers/caretakers.service';
+import { CredentialsService } from '../credentials/credentials.service';
 
 @Injectable()
 export class UsersService {
 
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @Inject(forwardRef(() => CaretakersService)) 
+    private readonly caretakersService: CaretakersService,
+    private readonly credentialsService: CredentialsService,
   ) { }
 
-  async create(createUserDto: CreateUserDto, credential: Credential): Promise<User> {
-    const newUser = this.userRepository.create({
-      ...createUserDto,
-      credential,
-    });
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const newUser = this.userRepository.create(createUserDto
+    );
     return await this.userRepository.save(newUser);
   };
 
-  async findByEmailWithCredentials(email: string): Promise<User | null> {
-    return this.userRepository.findOne({
+  async findCredentialByEmail(email: string) {
+    
+    const user = await this.userRepository.findOne({
       where: { email },
-      relations: ['credential'],
     });
+
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
+
+    const credential = await this.credentialsService.findCredentialByUser(user.id);
+
+    if (!credential) {
+      throw new BadRequestException('Credential not found');
+    }
+
+    return credential;
   };
 
   async findAll(pageNumber: number, limitNumber: number) {
@@ -35,7 +49,7 @@ export class UsersService {
       where: { deleted_at: IsNull() },
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
-      relations: ['reservations', 'cats', 'caretakerProfile'],
+      relations: ['reservations', 'cats'],
     });
   };
 
@@ -43,15 +57,14 @@ export class UsersService {
     return await this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.reservations', 'reservation')
-      .where('reservation.id IS NOT NULL') 
+      .where('reservation.id IS NOT NULL')
       .andWhere('user.deleted_at IS NULL')
       .getMany();
   };
 
   async findByEmail(email: string) {
     const user = await this.userRepository.findOne({
-      where: { email },
-      relations: ['credential'],
+      where: { email }
     });
     return user;
   };
@@ -61,6 +74,11 @@ export class UsersService {
       where: { id },
       relations: ['reservations', 'cats'],
     });
+  };
+
+  async findUsersAndReservationsFromCaretaker(id: string) {
+    
+    return await this.caretakersService.findUsersFromReservations(id)
   };
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -97,7 +115,7 @@ export class UsersService {
       where: { role: Role.CARETAKER, deleted_at: IsNull() },
       skip: (pageNumber - 1) * limitNumber,
       take: limitNumber,
-      relations: ['caretakerProfile', 'reservations', 'cats'],
+      relations: [ 'reservations', 'cats'],
     });
   };
 

@@ -30,16 +30,10 @@ export class UsersSeed {
         user.deleted_at = userData.deleted_at;
         user.role = userData.role;
         user.status = userData.status;
-        user.credential = await this.credentialRepository.findOne({
-          where: { id: userData.credential.id },
-        });
         user.cats = userData.cats;
-        user.caretakerProfile = userData.caretakerProfile;
         user.reservations = userData.reservations;
         user.sentMessages = userData.sentMessages;
-        user.receivedMessages = userData.receivedMessages;
-        user.sentChats = userData.sentChats;
-        user.receivedChats = userData.receivedChats;
+        user.receivedMessages = userData.receivedMessages
 
         await this.userRepository.save(user);
       }

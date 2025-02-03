@@ -6,7 +6,6 @@ import { SignupAuthDto } from './dto/signup-auth.dto';
 import { Response } from 'express';
 import { oauth2Client } from 'src/config/google-auth.config';
 import { AuthResponseDto } from './dto/response-auth.dto';
-import { ResponseUserDto } from '../users/dto/response-user.dto';
 import { CaretakerSignupAuthDto } from './dto/caretaker-signup-auth.dto';
 
 @Controller('auth')
@@ -59,7 +58,7 @@ export class AuthController {
 
     res.cookie(
       'auth',
-      JSON.stringify({ token, user: new ResponseUserDto(user) }),
+      JSON.stringify({ token, user}),
       {
         httpOnly: false,
         secure: false,

@@ -8,6 +8,7 @@ import * as Handlebars from 'handlebars';
 import { PaymentsService } from '../payments/payments.service';
 import { User } from '../users/entities/user.entity';
 import * as jwt from 'jsonwebtoken';
+import { Credential } from '../credentials/entities/credential.entity';
 
 @Injectable()
 export class MailService {
@@ -61,14 +62,15 @@ export class MailService {
     await this.transporter.sendMail(mailOptions);
   };
 
-  async sendPasswordChangeAlert(user: User): Promise<void> {
+  async sendPasswordChangeAlert(user: User, credential: Credential): Promise<void> {
 
     const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'send-password-change-alert.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
     const { name, email, id } = user;
-    const password = user.credential.password;
+    const { password } = credential;
+  
 
 
     const token = jwt.sign(
@@ -105,12 +107,12 @@ export class MailService {
     await this.transporter.sendMail(mailOptions);
   };
 
-  async sendSuccessfulregistration(userWithCredentials: User): Promise<void> {
+  async sendSuccessfulregistration(userData: User): Promise<void> {
     const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'successful-registration.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
-    const { name, email } = userWithCredentials;
+    const { name, email } = userData;
 
     const data = {
       name,
