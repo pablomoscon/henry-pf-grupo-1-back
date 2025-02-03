@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 import { Caretaker } from './entities/caretaker.entity';
 import { CreateCaretakerDto } from './dto/create-caretaker.dto';
 import { UpdateCaretakerDto } from './dto/update-caretaker.dto';
@@ -23,7 +23,7 @@ export class CaretakersService {
     if (!user) {
       throw new Error('User not found');
     }
-    
+
     const reservations = [];
 
     if (createCaretakerDto.reservationsId && createCaretakerDto.reservationsId.length > 0) {
@@ -48,8 +48,8 @@ export class CaretakersService {
 
     if (savedCaretaker.reservations && savedCaretaker.reservations.length > 0) {
       for (const reservation of savedCaretaker.reservations) {
-        reservation.caretakers = [...reservation.caretakers, savedCaretaker]; 
-        await this.reservationsService.update(reservation.id, reservation); 
+        reservation.caretakers = [...reservation.caretakers, savedCaretaker];
+        await this.reservationsService.update(reservation.id, reservation);
       }
     }
 
@@ -59,12 +59,13 @@ export class CaretakersService {
   async findAll(): Promise<Caretaker[]> {
     return await this.caretakerRepository.find({
       relations: ['user'],
+      where: { deleted_at: IsNull() }
     });
   };
 
   async findUsersFromCaretakers(caretakerIds: string[]) {
     const caretakers = await this.caretakerRepository.find({
-      where: { id: In(caretakerIds) },
+      where: { id: In(caretakerIds), deleted_at: IsNull() },
       relations: ['user'],
     });
 
@@ -85,7 +86,7 @@ export class CaretakersService {
   async update(id: string, updateCaretakerDto: UpdateCaretakerDto) {
     const existingCaretaker = await this.caretakerRepository.findOne({
       where: { id },
-      relations: ['user'], // Cargar relaciones existentes
+      relations: ['user'],
     });
 
     if (!existingCaretaker) {
@@ -132,7 +133,10 @@ export class CaretakersService {
   async findUsersFromReservations(id: string) {
 
     const caretaker = await this.caretakerRepository.findOne({
-      where: { user: { id } },
+      where: {
+        user: { id },
+        deleted_at: IsNull()
+      },
     });
 
     const reservations = await this.reservationsService.findReservationsByCaretaker(caretaker.id);

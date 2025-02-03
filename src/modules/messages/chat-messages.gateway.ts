@@ -6,6 +6,8 @@ import { MessageType } from 'src/enums/message-type';
 import { CaretakersService } from '../caretakers/caretakers.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { MessagesService } from './messages.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from 'src/enums/notification-type.enum';
 
 @WebSocketGateway({ cors: { origin: '*' }, namespace: 'messages/chat' })
 export class MessagesGateway {
@@ -17,6 +19,7 @@ export class MessagesGateway {
         private readonly reservationsService: ReservationsService,
         private readonly caretakersService: CaretakersService,
         private readonly messagesService: MessagesService,
+        private readonly notificationsService: NotificationsService,
     ) { }
 
     handleConnection(socket: Socket) {
@@ -62,12 +65,13 @@ export class MessagesGateway {
         @ConnectedSocket() socket: Socket
     ) {
         try {
-
             console.log('createChatDto.currentUser:', createChatDto.currentUser);
 
             const sender = await this.usersService.findOne(createChatDto.currentUser);
             if (!sender) {
                 console.error('Sender not found');
+                socket.emit('message_error', { message: 'You currently don’t have any reservations, so chatting isn’t available right now.' });
+                console.log('Error sent to frontend');
                 return;
             };
 
@@ -77,17 +81,28 @@ export class MessagesGateway {
                 return;
             };
 
-            const reservation = await this.reservationsService.findOne(clientChatRoom.id);
-            if (!reservation) {
+            let reservation;
+            try {
+                reservation = await this.reservationsService.findOne(clientChatRoom.id);
+            } catch (error) {
+                socket.emit('message_error', { message: 'You currently don’t have any reservations, so chatting isn’t available right now.' });
                 console.error('Reservation not found for the client');
                 return;
-            };
+            }
 
             const caretakers = reservation.caretakers.map(caretaker => caretaker.id);
             const userCaretakers = await this.caretakersService.findUsersFromCaretakers(caretakers);
 
-            let receiversIds = [clientChatRoom.id, ...userCaretakers.map(userCaretaker => userCaretaker.id)];
+            const isCaretaker = userCaretakers.some(user => user.id === sender.id);
+            const isSenderInChatRoom = sender.id === clientChatRoom.id;
 
+            if (!(isCaretaker || isSenderInChatRoom)) {
+                console.error('User does not meet the criteria to send messages');
+                socket.emit('message_error', { message: 'You do not have permission to send messages in this chat.' });
+                return;
+            }
+
+            let receiversIds = [clientChatRoom.id, ...userCaretakers.map(userCaretaker => userCaretaker.id)];
             receiversIds = receiversIds.filter(receiverId => receiverId !== sender.id);
 
             if (receiversIds.length === 0) {
@@ -121,11 +136,19 @@ export class MessagesGateway {
                         senderName: sender.name,
                         timestamp: newChatMessage.timestamp,
                     });
+
+                    this.notificationsService.create({
+                        userId: receiverId,
+                        message: `Nuevo mensaje de ${sender.name}`,
+                        type: NotificationType.CHAT,
+                        isRead: false
+                    });
                 }
             });
 
         } catch (error) {
             console.error('Error sending message:', error);
+            socket.emit('message_error', { message: 'An error occurred while sending your message. Please try again later.' });
         }
     };
 

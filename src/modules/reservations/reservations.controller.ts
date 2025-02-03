@@ -56,8 +56,8 @@ export class ReservationsController {
   };
 
   @Get('users-reservations')
-/*   @ApiBearerAuth()
-  @UseGuards(AuthGuard) */
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async usersReservations(@Query('userId') userId: string) {
     return await this.reservationsService.findUserReservations(userId);
@@ -85,6 +85,7 @@ export class ReservationsController {
 
   @Delete(':id')
   @ApiBearerAuth()
+  @Roles(Role.ADMIN)
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id') id: string) {

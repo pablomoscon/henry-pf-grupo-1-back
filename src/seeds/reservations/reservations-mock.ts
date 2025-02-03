@@ -71,6 +71,7 @@ export const reservationsMock: Reservation[] = [
       id: '123e4567-e89b-12d3-a456-426614174010',
       profileData: 'Experienced cat caretaker with over 5 years in the field.',
       deleted_at: null,
+      
 } as Caretaker],
     messages: []
   },

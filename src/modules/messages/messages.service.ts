@@ -60,7 +60,7 @@ export class MessagesService {
         throw new Error('Reservation not found');
       }
     }
-    
+
     const newPost = this.messageRepository.create({
       ...createPostDto,
       reservation,
@@ -85,7 +85,7 @@ export class MessagesService {
       where: {
         receivers: { id: userId },
         type: MessageType.POST,
-        deleted_at: IsNull() 
+        deleted_at: IsNull()
       },
       relations: ['sender', 'receivers', 'reservation'],
       order: { timestamp: 'ASC' },
@@ -165,7 +165,7 @@ export class MessagesService {
       .leftJoinAndSelect('message.sender', 'sender')
       .leftJoinAndSelect('message.receivers', 'receivers')
       .leftJoinAndSelect('message.reservation', 'reservation')
-      .where('message.reservation.id IN (:...reservationIds)', { reservationIds })
+      .where('message.reservation.id IN (:...reservationIds)', { reservationIds, deleted_at: IsNull() })
       .andWhere(
         '(message.sender.id = :userId OR receivers.id = :userId)',
         { userId }

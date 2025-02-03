@@ -10,9 +10,10 @@ import { ReservationsModule } from '../reservations/reservations.module';
 import { MessagesGateway } from './chat-messages.gateway';
 import { CaretakersModule } from '../caretakers/caretakers.module';
 import { User } from '../users/entities/user.entity';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Message, User]), FileUploadModule, UsersModule, ReservationsModule, CaretakersModule
+  imports: [TypeOrmModule.forFeature([Message, User]), FileUploadModule, UsersModule, ReservationsModule, CaretakersModule, NotificationsModule
   ],
     controllers: [MessagesController],
   providers: [MessagesService, MessagesGateway, CloudinaryService],
