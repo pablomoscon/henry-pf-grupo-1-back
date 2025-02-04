@@ -179,35 +179,6 @@ export class MessagesService {
     return messages;
   };
 
-  async updateChat(id: string, updateMessageDto: UpdateChatDto, file?: Express.Multer.File): Promise<Message> {
-    const existingMessage = await this.messageRepository.findOne({ where: { id } });
-
-    if (!existingMessage) {
-      throw new Error('Message not found');
-    }
-
-    let mediaUrl: string | undefined = existingMessage.media_url;
-
-    if (file) {
-      const uploadedFile = await this.fileUploadService.uploadFile({
-        fieldName: file.fieldname,
-        buffer: file.buffer,
-        originalName: file.originalname,
-        mimeType: file.mimetype,
-        size: file.size,
-      });
-
-      mediaUrl = uploadedFile;
-    }
-
-    const updatedMessage = Object.assign(existingMessage, {
-      ...updateMessageDto,
-      media_url: mediaUrl,
-    });
-
-    return this.messageRepository.save(updatedMessage);
-  };
-
   async remove(id: string): Promise<Message> {
     const user = await this.messageRepository.findOne({ where: { id } });
 

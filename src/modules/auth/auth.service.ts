@@ -53,6 +53,15 @@ export class AuthService {
 
     await this.credentialsService.create(createCredentialsDto, newUser);
 
+
+
+    return newUser;
+  };
+
+  async clientSignUp(signupAuthDto: SignupAuthDto) {
+
+    const newUser = await this.signUp(signupAuthDto);
+
     this.mailService.sendSuccessfulregistration(newUser)
 
     return newUser;

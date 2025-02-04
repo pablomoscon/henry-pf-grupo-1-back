@@ -7,6 +7,7 @@ import { GreetUserTask } from './tasks/greetUser.task';
 import { RoomsService } from 'src/modules/rooms/rooms.service';
 import { ReservationsService } from 'src/modules/reservations/reservations.service';
 import * as moment from 'moment-timezone';
+import { MailService } from '../modules/mail/mail.service';
 
 @Injectable()
 export class CronService {
@@ -17,6 +18,7 @@ export class CronService {
     private readonly roomsService: RoomsService,
     private readonly reservationsService: ReservationsService,
     private readonly greetUserTask: GreetUserTask,
+    private readonly mailService: MailService,
   ) {
     console.log('CronService inicializado');
   }
@@ -25,24 +27,24 @@ export class CronService {
   async handleDailyReminders() {
     await this.sendStartingReminderTask.execute();
     await this.sendEndingReminderTask.execute();
-  }
+  };
 
   @Cron(CronExpression.EVERY_DAY_AT_10AM)
   async handleAnualTasks() {
     await this.joinedAnniversaryTask.execute();
-  }
+  };
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async updateRoomAvailability() {
     console.log('Running room availability update...');
     await this.roomsService.updateAvailability();
-  }
+  };
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async handleCompletedReservations() {
     console.log('Checking for expired reservations...');
     await this.reservationsService.completeExpiredReservations();
-  }
+  };
 
   ////////// Ejecución cada X minutos para probar en la demo/////////
 
@@ -58,7 +60,19 @@ export class CronService {
       await this.sendStartingReminderTask.execute();
       await this.sendEndingReminderTask.execute();
     }
-  }
+  };
+
+  @Cron(CronExpression.EVERY_DAY_AT_9AM) 
+  async handleCompletedReservationsReview() {
+    const now = moment().startOf('day'); 
+    const reservations = await this.reservationsService.findByCheckOutDate(now);
+
+    for (const reservation of reservations) {
+      if (moment(reservation.checkOutDate).isSame(now, 'day')) {
+     await this.mailService.sendCompleteReservationsReview(reservation);
+      }
+    }
+  };
 
   ////////// Ejecución cada X minutos para probar en la demo/////////
 
@@ -74,7 +88,7 @@ export class CronService {
       await this.sendStartingReminderTask.execute();
       await this.sendEndingReminderTask.execute();
     }
-  }
+  };
 
   ////////// Ejecución cada 30 seg para probar nuevas notificaciones/////////
 

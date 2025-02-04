@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsNotEmpty, IsInstance } from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, IsInstance, IsIn } from 'class-validator';
 import { Buffer } from 'buffer';
 
 export class UploadFileDto {
@@ -9,6 +9,7 @@ export class UploadFileDto {
   originalName: string;
 
   @IsString()
+  @IsIn(['image/jpeg', 'image/png', 'video/mp4', 'video/webm'], { message: 'Invalid file type.' })
   mimeType: string;
 
   @IsNumber()

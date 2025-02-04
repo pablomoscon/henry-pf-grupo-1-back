@@ -22,8 +22,6 @@ import { ImageUploadValidationPipe } from 'src/pipes/image-upload-validation.pip
 import { Message } from './entities/message.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { CreateChatDto } from './dto/create-chat.dto';
-import { UpdateChatDto } from './dto/update-chat.dto';
 
 @Controller('messages')
 export class MessagesController {
@@ -94,9 +92,9 @@ export class MessagesController {
   @HttpCode(HttpStatus.OK)
   updateChat(
     @Param('id') id: string,
-    @Body() updateChatDto: UpdateChatDto,
+    @Body() updatePostDto: UpdatePostDto,
   ): Promise<Message> {
-    return this.messagesService.updateChat(id, updateChatDto);
+    return this.messagesService.updatePost(id, updatePostDto);
   };
 
   @Delete(':id')

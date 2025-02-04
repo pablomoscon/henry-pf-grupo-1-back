@@ -70,7 +70,7 @@ export class MailService {
 
     const { name, email, id } = user;
     const { password } = credential;
-  
+
 
 
     const token = jwt.sign(
@@ -136,6 +136,40 @@ export class MailService {
       ],
     };
 
+    await this.transporter.sendMail(mailOptions);
+  };
+
+  async sendCompleteReservationsReview(reservation: Reservation): Promise<void> {
+    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'reservation-completed-review.hbs');
+    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    const template = Handlebars.compile(templateSource);
+
+    const { user, checkOutDate } = reservation;
+
+    const checkOut = new Date(checkOutDate);
+
+    const data = {
+      user: user?.name || 'No Name', // Manejar caso de nombre de usuario nulo o no definido
+      checkOut: checkOut.toISOString().split('T')[0], // Formatear la fecha correctamente
+    };
+
+    const htmlContent = template(data);
+
+    const mailOptions = {
+      from: `"The Fancy Box" <${process.env.SMTP_FROM}>`,
+      to: user.email,
+      subject: 'We Hope You Enjoyed Your Stay! Share Your Experience 📝',
+      html: htmlContent,
+      attachments: [
+        {
+          filename: 'LogoApp.png',
+          path: 'https://res.cloudinary.com/dofznnphj/image/upload/v1738092721/LogoApp_bjtclb.png',
+          cid: 'logoApp',
+        },
+      ],
+    };
+
+    // Enviar el correo
     await this.transporter.sendMail(mailOptions);
   };
 }

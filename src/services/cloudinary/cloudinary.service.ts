@@ -8,11 +8,11 @@ export class CloudinaryService {
     cloudinary.config(cloudinaryConfig);
   }
 
-  async uploadFile(buffer: Buffer, originalName?: string): Promise<string> {
+  async uploadFile(buffer: Buffer, originalName?: string, mimeType?: string): Promise<string> {
     const options: UploadApiOptions = {
       folder: 'uploads',
       public_id: originalName,
-      resource_type: 'auto',
+      resource_type: mimeType?.startsWith('video') ? 'video' : 'auto', // Cambiar a 'video' si el mimeType es video
     };
 
     return new Promise((resolve, reject) => {
