@@ -130,14 +130,16 @@ export class CaretakersService {
     return this.caretakerRepository.save(caretaker);
   };
 
+  async findOneByUserId(userId: string): Promise<Caretaker | undefined> {
+    return await this.caretakerRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['user'],
+    });
+  };
+
   async findUsersFromReservations(id: string) {
 
-    const caretaker = await this.caretakerRepository.findOne({
-      where: {
-        user: { id },
-        deleted_at: IsNull()
-      },
-    });
+    const caretaker = await this.findOneByUserId(id);
 
     const reservations = await this.reservationsService.findReservationsByCaretaker(caretaker.id);
     return reservations.map(reservation => reservation);

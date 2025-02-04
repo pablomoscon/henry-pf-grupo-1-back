@@ -17,6 +17,7 @@ import { CaretakersModule } from '../caretakers/caretakers.module';
     RoomsModule,
     CatsModule,
     FileUploadModule,
+    forwardRef(() => CaretakersModule),
     forwardRef(() => PaymentsModule)
   ],
   controllers: [ReservationsController],

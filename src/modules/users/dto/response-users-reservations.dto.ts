@@ -45,13 +45,21 @@ export class ResponseUsersReservationsDto {
     @IsString()
     checkOutDate: string;
 
+    @ApiProperty({
+        description: 'Room name',
+        example: 'Room A',
+    })
+    @IsString()
+    reservationId: string;
+
     constructor(
         userId: string,
         userName: string,
         catsNames: string[],
         roomName: string,
         checkInDate: string,
-        checkOutDate: string
+        checkOutDate: string,
+        reservationId: string
     ) {
         this.userId = userId;
         this.userName = userName;
@@ -59,6 +67,7 @@ export class ResponseUsersReservationsDto {
         this.roomName = roomName;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
+        this.reservationId = reservationId;
     }
 
     static fromReservationData(reservation: any): ResponseUsersReservationsDto {
@@ -68,7 +77,8 @@ export class ResponseUsersReservationsDto {
         const roomName = reservation.room.name || ''; 
         const checkInDate = reservation.checkInDate;
         const checkOutDate = reservation.checkOutDate;
+        const reservationId = reservation.id;
 
-        return new ResponseUsersReservationsDto(userId, userName, catsNames, roomName, checkInDate, checkOutDate);
+        return new ResponseUsersReservationsDto(userId, userName, catsNames, roomName, checkInDate, checkOutDate, reservationId);
     }
 }

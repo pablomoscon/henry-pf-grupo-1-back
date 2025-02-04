@@ -24,7 +24,7 @@ import { RolesGuard } from 'src/guards/roles/roles.guard';
 @Controller('reservations')
 @ApiTags('Reservations')
 export class ReservationsController {
-  constructor(private readonly reservationsService: ReservationsService) {}
+  constructor(private readonly reservationsService: ReservationsService) { }
 
   @Post()
   @ApiBearerAuth()
@@ -37,6 +37,18 @@ export class ReservationsController {
       await this.reservationsService.create(createReservationDto);
 
     return new ReservationResponseDto(reservation);
+  };
+
+  @Post(':reservationId/add-caretaker/:userId')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @Roles(Role.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  async addCaretakerToReservation(
+    @Param('reservationId') reservationId: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.reservationsService.addCaretakerToReservation(reservationId, userId);
   };
 
   @Get()
