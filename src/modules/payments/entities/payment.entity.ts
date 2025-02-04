@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 import { IsOptional } from 'class-validator';
+import { PaymentStatus } from 'src/enums/payment-status.enum';
 
 @Entity()
 export class Payment {
@@ -36,13 +37,13 @@ export class Payment {
     })
     sessionId: string;
 
-    @Column({ default: 'pending' })
+    @Column({ default: PaymentStatus.PENDING })
     @ApiProperty({
         description: 'Status of the payment',
-        example: 'succeeded',
-        default: 'pending',
+        example: PaymentStatus.SUCCEEDED,
+        default: PaymentStatus.PENDING,
     })
-    status: string;
+    status: PaymentStatus;
 
     @CreateDateColumn()
     @ApiProperty({

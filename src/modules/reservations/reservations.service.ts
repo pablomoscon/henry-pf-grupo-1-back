@@ -172,11 +172,11 @@ export class ReservationsService {
 
     return await this.reservationRepository.find({
       where: { caretakers: { id }, deleted_at: IsNull() },
-      relations: ['user', 'cats', 'room'], 
+      relations: ['user', 'cats', 'room'],
     });
   };
 
-  async addCaretakerToReservation(reservationId: string, userId: string): Promise<Reservation> {
+  async addCaretakerToReservation(reservationId: string, caretakerId: string): Promise<Reservation> {
 
     const reservation = await this.reservationRepository.findOne({
       where: { id: reservationId },
@@ -184,23 +184,31 @@ export class ReservationsService {
     });
 
     if (!reservation) {
-      throw new NotFoundException('Reservation not found');
+      throw new Error(`Reservation with ID ${reservationId} not found`);
     }
 
-    const caretaker = await this.caretakersService.findOneByUserId(userId);
+    const caretaker = await this.caretakersService.findOne(caretakerId);
+
     if (!caretaker) {
-      throw new NotFoundException('Caretaker not found for the given userId');
+      throw new Error(`Caretaker with ID ${caretakerId} not found`);
     }
 
-    const isCaretakerAlreadyAdded = reservation.caretakers.some(c => c.id === caretaker.id);
-
-    if (isCaretakerAlreadyAdded) {
-      throw new HttpException('Caretaker is already assigned to this reservation', HttpStatus.BAD_REQUEST);
+    if (reservation.caretakers.some(c => c.id === caretaker.id)) {
+      throw new Error('This caretaker is already assigned to the reservation');
     }
+
     reservation.caretakers.push(caretaker);
 
-    await this.reservationRepository.save(reservation);
+    return await this.reservationRepository.save(reservation);
+  };
 
-    return reservation;
+  async findByCheckOutDate(date: moment.Moment): Promise<Reservation[]> {
+    const startOfDay = date.startOf('day').toDate();
+    return this.reservationRepository.find({
+      where: {
+        checkOutDate: startOfDay,
+      },
+      relations: ['user']
+    });
   };
 }

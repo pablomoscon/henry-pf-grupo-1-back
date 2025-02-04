@@ -11,11 +11,12 @@ import { Notification } from 'src/modules/notifications/entities/notification.en
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 import { RoomsModule } from 'src/modules/rooms/rooms.module';
 import { ReservationsModule } from 'src/modules/reservations/reservations.module';
+import { MailsModule } from 'src/modules/mail/mail.module';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(), // Activar el módulo de Schedule aquí
-    TypeOrmModule.forFeature([User, Notification, Reservation]), RoomsModule, ReservationsModule
+    TypeOrmModule.forFeature([User, Notification, Reservation]), RoomsModule, ReservationsModule, MailsModule
   ],
   providers: [
     CronService,

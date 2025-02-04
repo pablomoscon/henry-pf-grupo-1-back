@@ -1,12 +1,11 @@
 import { Caretaker } from '../../modules/caretakers/entities/caretaker.entity';
 import { User } from '../../modules/users/entities/user.entity';
-import { Reservation } from '../../modules/reservations/entities/reservation.entity';
 import { Role } from 'src/enums/roles.enum';
 import { Status } from 'src/enums/status.enum';
 
 export const caretakersMock: Caretaker[] = [
     {
-        id: '123e4567-e89b-12d3-a456-426614174010',
+        id: '334e4567-e89b-12d3-a456-426614174010',
         profileData: 'Experienced cat caretaker with over 5 years in the field.',
         deleted_at: null,
         user: {

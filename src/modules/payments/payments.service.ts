@@ -7,6 +7,7 @@ import { ReservationsService } from '../reservations/reservations.service';
 import { ReservationStatus } from 'src/enums/reservation-status.enum';
 import { MailService } from '../mail/mail.service';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { PaymentStatus } from 'src/enums/payment-status.enum';
 
 @Injectable()
 export class PaymentsService {
@@ -58,7 +59,7 @@ export class PaymentsService {
       payment.user = reservation.user;
       payment.reservation = reservation;
       payment.totalAmount = reservation.totalAmount;
-      payment.status = 'pending';
+      payment.status = PaymentStatus.PENDING;
       payment.currency = 'usd';
       payment.sessionId = session.id;
       await this.paymentRepository.save(payment);
@@ -81,10 +82,10 @@ export class PaymentsService {
       }
 
       const newPaymentStatus = status === 'succeeded'
-        ? 'succeeded'
+        ? PaymentStatus.SUCCEEDED
         : status === 'canceled'
-          ? 'canceled'
-          : payment.status;
+          ? PaymentStatus.CANCELLED
+          : PaymentStatus.PENDING; 
 
       payment.status = newPaymentStatus;
       await this.paymentRepository.save(payment);

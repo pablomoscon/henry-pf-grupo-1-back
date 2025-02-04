@@ -4,9 +4,9 @@ import { UploadFileDto } from './dto/upload-file.dto';
 
 @Injectable()
 export class FileUploadService {
-  constructor(private readonly cloudinaryService: CloudinaryService) {}
+  constructor(private readonly cloudinaryService: CloudinaryService) { }
 
   async uploadFile(file: UploadFileDto) {
-    return this.cloudinaryService.uploadFile(file.buffer, file.originalName);
+    return this.cloudinaryService.uploadFile(file.buffer, file.originalName, file.mimeType);
   }
 }

@@ -6,7 +6,7 @@ export class ReservationListDTO {
     status: string;
     roomName: string | null;
     cats: string[];
-    caretakers: string[];
+    caretakers: { id: string; name: string }[];
     payments: string[];
     userName: string;
 
@@ -18,7 +18,10 @@ export class ReservationListDTO {
         this.status = reservation.status;
         this.roomName = reservation.room ? reservation.room.name : null;
         this.cats = reservation.cats?.map((cat: any) => cat.name) || [];
-        this.caretakers = reservation.caretakers?.map((caretaker: any) => caretaker.user.name) || [];
+        this.caretakers = reservation.caretakers?.map((caretaker: any) => ({
+            id: caretaker.id,
+            name: caretaker.user.name
+        })) || [];
         this.payments = reservation.payments?.map((payment: any) => payment.status) || [];
         this.userName = reservation.user?.name || "Unknown";
     }
