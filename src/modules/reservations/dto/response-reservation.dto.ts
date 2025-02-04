@@ -50,6 +50,7 @@ export class ReservationResponseDto {
     })
     catIds: string[];
 
+    
     constructor(reservation: Reservation) {
         this.id = reservation.id;
         this.checkInDate = reservation.checkInDate;
