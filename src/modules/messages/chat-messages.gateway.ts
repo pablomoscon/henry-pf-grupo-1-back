@@ -6,8 +6,7 @@ import { MessageType } from 'src/enums/message-type';
 import { CaretakersService } from '../caretakers/caretakers.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { MessagesService } from './messages.service';
-import { NotificationsService } from '../notifications/notifications.service';
-import { NotificationType } from 'src/enums/notification-type.enum';
+
 
 @WebSocketGateway({ cors: { origin: '*' }, namespace: 'messages/chat' })
 export class MessagesGateway {
@@ -18,8 +17,7 @@ export class MessagesGateway {
         private readonly usersService: UsersService,
         private readonly reservationsService: ReservationsService,
         private readonly caretakersService: CaretakersService,
-        private readonly messagesService: MessagesService,
-        private readonly notificationsService: NotificationsService,
+        private readonly messagesService: MessagesService
     ) { }
 
     handleConnection(socket: Socket) {
@@ -135,13 +133,6 @@ export class MessagesGateway {
                         body: newChatMessage.body,
                         senderName: sender.name,
                         timestamp: newChatMessage.timestamp,
-                    });
-
-                    this.notificationsService.create({
-                        userId: receiverId,
-                        message: `Nuevo mensaje de ${sender.name}`,
-                        type: NotificationType.CHAT,
-                        isRead: false
                     });
                 }
             });
