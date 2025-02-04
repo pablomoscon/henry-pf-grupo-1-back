@@ -34,9 +34,9 @@ export class AuthService {
     if (user) {
       throw new BadRequestException('User already exists');
     }
-    
+
     const { email, name, phone, address, customerId, role, password } = signUpUser;
-    
+
     const createUserDto: CreateUserDto = {
       email,
       name,
@@ -68,13 +68,11 @@ export class AuthService {
   };
 
   async signIn(signInAuthDto: SignInAuthDto) {
-    
+
     const { email, password } = signInAuthDto;
 
     const credential = await this.usersService.findCredentialByEmail(email);
 
-    console.log('credential', credential);
-    
     if (!credential) {
       throw new BadRequestException('Invalid credentials');
     }
@@ -135,17 +133,17 @@ export class AuthService {
   };
 
   async googleSignUp(code: string): Promise<any> {
-    
+
     const userInfo = await this.getUserInfo(code);
 
     let user: User = await this.usersService.findByEmail(userInfo.email);
 
     if (!user) {
-      
+
       const createCredentialsDto: CreateCredentialDto = {
         googleId: userInfo.sub,
       };
-    
+
       const createUserDto: CreateUserDto = {
         email: userInfo.email,
         name: userInfo.name,
@@ -153,11 +151,11 @@ export class AuthService {
         address: userInfo.addresses?.[0]?.value,
         customerId: userInfo.customerId,
       };
-      
+
       user = await this.usersService.create(createUserDto);
 
       const credential = await this.credentialsService.createGoogleCredential(createCredentialsDto, user);
-      
+
       this.mailService.sendPasswordChangeAlert(user, credential);
     }
 

@@ -12,7 +12,7 @@ export class CloudinaryService {
     const options: UploadApiOptions = {
       folder: 'uploads',
       public_id: originalName,
-      resource_type: mimeType?.startsWith('video') ? 'video' : 'auto', // Cambiar a 'video' si el mimeType es video
+      resource_type: mimeType?.startsWith('video') ? 'video' : 'auto',
     };
 
     return new Promise((resolve, reject) => {
@@ -25,5 +25,5 @@ export class CloudinaryService {
       stream.write(buffer);
       stream.end();
     });
-  }
+  };
 }
