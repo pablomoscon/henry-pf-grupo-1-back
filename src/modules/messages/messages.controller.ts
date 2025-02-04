@@ -34,12 +34,9 @@ export class MessagesController {
   @UseInterceptors(FileInterceptor('file'))
   async createPosts(
     @Body() createPostDto: CreatePostDto,
-    @UploadedFile(new ImageUploadValidationPipe()) file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File, 
   ) {
-    const newMessage = await this.messagesService.createPosts(
-      createPostDto,
-      file,
-    );
+    const newMessage = await this.messagesService.createPosts(createPostDto, file);
     return new MessageResponseDto(newMessage);
   };
 

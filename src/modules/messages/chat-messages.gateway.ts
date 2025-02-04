@@ -7,7 +7,6 @@ import { CaretakersService } from '../caretakers/caretakers.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { MessagesService } from './messages.service';
 
-
 @WebSocketGateway({ cors: { origin: '*' }, namespace: 'messages/chat' })
 export class MessagesGateway {
     @WebSocketServer()

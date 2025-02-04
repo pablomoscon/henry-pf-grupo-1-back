@@ -8,7 +8,6 @@ import { MessageType } from 'src/enums/message-type';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ReservationsService } from '../reservations/reservations.service';
-import { UpdateChatDto } from './dto/update-chat.dto';
 import { CreateChatDto } from './dto/create-chat.dto';
 
 @Injectable()
@@ -29,15 +28,22 @@ export class MessagesService {
     let mediaUrl: string | undefined;
 
     if (file) {
-      const uploadedFile = await this.fileUploadService.uploadFile({
+      const fileDetails = {
         fieldName: file.fieldname,
         buffer: file.buffer,
         originalName: file.originalname,
         mimeType: file.mimetype,
         size: file.size,
-      });
+      };
 
-      mediaUrl = uploadedFile;
+      const supportedMimeTypes = ['image/jpeg', 'image/png', 'video/mp4', 'video/webm'];
+      if (!supportedMimeTypes.includes(fileDetails.mimeType)) {
+        throw new Error('Unsupported file type. Only images and videos are allowed.');
+      }
+
+      const uploadedFile = await this.fileUploadService.uploadFile(fileDetails);
+
+      mediaUrl = uploadedFile; 
     }
 
     const sender = await this.usersService.findOne(createPostDto.sender);
@@ -53,6 +59,7 @@ export class MessagesService {
       throw new Error('One or more receivers not found');
     }
 
+    // Handling reservation if provided
     let reservation = null;
     if (createPostDto.reservationId) {
       reservation = await this.reservationsService.findOne(createPostDto.reservationId);
