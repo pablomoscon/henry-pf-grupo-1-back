@@ -20,6 +20,7 @@ import { Roles } from 'src/decorators/role.decorator';
 import { Role } from 'src/enums/roles.enum';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { RolesGuard } from 'src/guards/roles/roles.guard';
+import { ReservationListDTO } from './dto/response-reservation-list.dto';
 
 @Controller('reservations')
 @ApiTags('Reservations')
@@ -56,7 +57,8 @@ export class ReservationsController {
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async findAll() {
-    return await this.reservationsService.findAll();
+    const reservations = await this.reservationsService.findAll();
+    return reservations ? ReservationListDTO.fromArray(reservations) : [];
   };
 
   @Get('unavailable-rooms')
