@@ -13,9 +13,11 @@ import { RolesGuard } from 'src/guards/roles/roles.guard';
 @Controller('reviews')
 @ApiTags('reviews')
 export class ReviewsController {
-  constructor(private readonly reviewsService: ReviewsService) {}
+  constructor(private readonly reviewsService: ReviewsService) { }
 
   @Post()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.CREATED)
   create(@Body() createReviewDto: CreateReviewDto) {
     return this.reviewsService.create(createReviewDto);
@@ -46,6 +48,8 @@ export class ReviewsController {
   };
 
   @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
@@ -54,7 +58,6 @@ export class ReviewsController {
     return await this.reviewsService.update(id, updateUserDto);
   };
 
-  
   @Delete(':id')
   @ApiBearerAuth()
   @Roles(Role.ADMIN)

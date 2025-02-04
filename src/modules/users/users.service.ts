@@ -28,7 +28,7 @@ export class UsersService {
   async findCredentialByEmail(email: string) {
     
     const user = await this.userRepository.findOne({
-      where: { email },
+      where: { email,  deleted_at: IsNull()},
     });
 
     if (!user) {
@@ -64,7 +64,7 @@ export class UsersService {
 
   async findByEmail(email: string) {
     const user = await this.userRepository.findOne({
-      where: { email }
+      where: { email, deleted_at: IsNull()}
     });
     return user;
   };
@@ -104,7 +104,7 @@ export class UsersService {
 
   async usersCats(id: string): Promise<{ id: string; name: string }[]> {
     const user = await this.userRepository.findOne({
-      where: { id },
+      where: { id, deleted_at: IsNull() },
       relations: ['cats'],
     });
     return user?.cats.map(cat => ({ id: cat.id, name: cat.name })) || [];

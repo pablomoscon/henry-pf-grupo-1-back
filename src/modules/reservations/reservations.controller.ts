@@ -99,6 +99,7 @@ export class ReservationsController {
 
   @Delete(':id')
   @ApiBearerAuth()
+  @Roles(Role.ADMIN)
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async remove(@Param('id') id: string) {

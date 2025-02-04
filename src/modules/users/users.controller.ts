@@ -63,6 +63,9 @@ export class UsersController {
   };
 
   @Get('clients-reservations')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
   @HttpCode(HttpStatus.OK)
   async findUsersWithReservations() {
     return await this.usersService.findUsersWithReservations()
@@ -78,6 +81,7 @@ export class UsersController {
 
   @Get(':id/caretaker-reservations')
   @ApiBearerAuth()
+  @Roles(Role.ADMIN, Role.CARETAKER)
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   async findUsersAndReservationsFromCaretaker(@Param('id') id: string) {

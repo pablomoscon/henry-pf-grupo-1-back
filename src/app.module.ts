@@ -8,7 +8,6 @@ import { RoomsModule } from './modules/rooms/rooms.module';
 import { CaretakersModule } from './modules/caretakers/caretakers.module';
 import { CatsModule } from './modules/cats/cats.module';
 import { CredentialsModule } from './modules/credentials/credentials.module';
-import { MediaModule } from './modules/media/media.module';
 import { ReservationsModule } from './modules/reservations/reservations.module';
 import { UsersModule } from './modules/users/users.module';
 import { SeedModule } from './seeds/seeds.module';
@@ -45,7 +44,6 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
     CatsModule,
     CredentialsModule,
     CronsModule,
-    MediaModule,
     ReservationsModule,
     UsersModule,
     SeedModule,

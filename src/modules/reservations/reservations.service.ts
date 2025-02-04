@@ -116,7 +116,7 @@ export class ReservationsService {
       throw new NotFoundException(`Reservation with ID ${id} not found`);
     }
     return reservation;
-  }
+  };
 
   async update(id: string, updateReservationDto: UpdateReservationDto) {
     await this.reservationRepository.update(id, updateReservationDto);
@@ -145,10 +145,11 @@ export class ReservationsService {
 
   async findUserReservations(userId: string): Promise<Reservation[]> {
     return await this.reservationRepository.find({
-      where: { user: { id: userId } },
+      where: { user: { id: userId }, deleted_at: IsNull() },
       relations: ['room', 'cats', 'payments', 'messages'],
     });
   };
+
   async completeExpiredReservations(): Promise<void> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -170,8 +171,8 @@ export class ReservationsService {
   async findReservationsByCaretaker(id: string) {
 
     return await this.reservationRepository.find({
-      where: { caretakers: { id } },
-      relations: ['user', 'cats', 'room'],
+      where: { caretakers: { id }, deleted_at: IsNull() },
+      relations: ['user', 'cats', 'room'], 
     });
   };
 

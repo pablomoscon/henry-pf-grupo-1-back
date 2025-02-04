@@ -1,11 +1,12 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Stripe } from 'stripe';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
 import { ReservationsService } from '../reservations/reservations.service';
 import { ReservationStatus } from 'src/enums/reservation-status.enum';
 import { MailService } from '../mail/mail.service';
+import { UpdatePaymentDto } from './dto/update-payment.dto';
 
 @Injectable()
 export class PaymentsService {
@@ -106,5 +107,38 @@ export class PaymentsService {
       console.error('Error updating payment and reservation status:', error);
       throw new Error('Error updating payment and reservation status');
     }
+  };
+
+  async findAll(): Promise<Payment[]> {
+    return await this.paymentRepository.find({
+      where: { deleted_at: IsNull() }
+    });
+  };
+
+  async findOne(id: string): Promise<Payment> {
+    const payment = await this.paymentRepository.findOne({
+      where: { id },
+      relations: ['user', 'reservation'],
+    });
+
+    if (!payment) {
+      throw new NotFoundException(`Reservation with ID ${id} not found`);
+    }
+    return payment;
+  };
+
+  async update(id: string, updatePaymentDto: UpdatePaymentDto) {
+    await this.paymentRepository.update(id, updatePaymentDto);
+    return this.findOne(id);
+  };
+
+  async remove(id: string): Promise<Payment> {
+    const payment = await this.paymentRepository.findOne({ where: { id } });
+
+    if (!payment) {
+      throw new NotFoundException(`Payment with ID ${id} not found`);
+    }
+    payment.deleted_at = new Date();
+    return this.paymentRepository.save(payment);
   };
 }

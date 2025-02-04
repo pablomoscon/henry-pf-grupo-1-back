@@ -5,8 +5,7 @@ import {
   OneToMany,
   OneToOne,
   CreateDateColumn,
-  ManyToMany,
-  JoinTable,
+  ManyToMany
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID, IsOptional, IsDate } from 'class-validator';
@@ -14,7 +13,6 @@ import { Credential } from '../../credentials/entities/credential.entity';
 import { Cat } from '../../cats/entities/cat.entity';
 import { Caretaker } from '../../caretakers/entities/caretaker.entity';
 import { Reservation } from '../../reservations/entities/reservation.entity';
-
 import { Role } from 'src/enums/roles.enum';
 import { Status } from 'src/enums/status.enum';
 import { Payment } from 'src/modules/payments/entities/payment.entity';
@@ -161,7 +159,6 @@ export class User {
     example: '2023-01-01T00:00:00.000Z',
   })
   createdAt: Date;
-
 }
 
 
