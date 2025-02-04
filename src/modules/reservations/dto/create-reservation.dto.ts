@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID, IsDate, IsArray, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsUUID, IsArray, IsNumber, IsString, IsDate } from 'class-validator';
 
 export class CreateReservationDto {
     @ApiProperty({
@@ -8,6 +8,7 @@ export class CreateReservationDto {
     })
     @IsUUID()
     @IsNotEmpty()
+    @IsString()
     userId: string;
 
     @ApiProperty({
@@ -24,6 +25,7 @@ export class CreateReservationDto {
         required: false,
     })
     @IsUUID()
+    @IsString()
     roomId: string;
 
     @ApiProperty({
@@ -31,6 +33,7 @@ export class CreateReservationDto {
         example: '2025-01-17',
     })
     @IsNotEmpty()
+    @IsDate()
     checkInDate: Date;
 
     @ApiProperty({
@@ -38,6 +41,7 @@ export class CreateReservationDto {
         example: '2025-01-20',
     })
     @IsNotEmpty()
+    @IsDate()
     checkOutDate: Date;
 
     @ApiProperty({
@@ -47,4 +51,11 @@ export class CreateReservationDto {
     @IsNumber()
     @IsNotEmpty()
     totalAmount: number;
+
+    @ApiProperty({
+        description: 'Caretaker associated with the reservation',
+    })
+    @IsString()
+    @IsUUID()
+    caretakerId: string;
 }

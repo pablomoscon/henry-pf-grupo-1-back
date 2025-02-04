@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, HttpException, HttpStatus, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
@@ -9,6 +9,7 @@ import { CatsService } from '../cats/cats.service';
 import { ReservationStatus } from 'src/enums/reservation-status.enum';
 import { Cat } from '../cats/entities/cat.entity';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
+import { CaretakersService } from '../caretakers/caretakers.service';
 
 @Injectable()
 export class ReservationsService {
@@ -18,6 +19,8 @@ export class ReservationsService {
     private readonly usersService: UsersService,
     private readonly roomsService: RoomsService,
     private readonly catsService: CatsService,
+    @Inject(forwardRef(() => CaretakersService))
+    private readonly caretakersService: CaretakersService,
 
   ) { }
 
@@ -115,8 +118,8 @@ export class ReservationsService {
     return reservation;
   }
 
-  async update(id: string, updateUserDto: UpdateReservationDto) {
-    await this.reservationRepository.update(id, updateUserDto);
+  async update(id: string, updateReservationDto: UpdateReservationDto) {
+    await this.reservationRepository.update(id, updateReservationDto);
     return this.findOne(id);
   };
 
@@ -165,10 +168,38 @@ export class ReservationsService {
   };
 
   async findReservationsByCaretaker(id: string) {
-    
+
     return await this.reservationRepository.find({
       where: { caretakers: { id } },
-      relations: ['user', 'cats', 'room'], 
+      relations: ['user', 'cats', 'room'],
     });
+  };
+
+  async addCaretakerToReservation(reservationId: string, userId: string): Promise<Reservation> {
+
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservationId },
+      relations: ['caretakers'],
+    });
+
+    if (!reservation) {
+      throw new NotFoundException('Reservation not found');
+    }
+
+    const caretaker = await this.caretakersService.findOneByUserId(userId);
+    if (!caretaker) {
+      throw new NotFoundException('Caretaker not found for the given userId');
+    }
+
+    const isCaretakerAlreadyAdded = reservation.caretakers.some(c => c.id === caretaker.id);
+
+    if (isCaretakerAlreadyAdded) {
+      throw new HttpException('Caretaker is already assigned to this reservation', HttpStatus.BAD_REQUEST);
+    }
+    reservation.caretakers.push(caretaker);
+
+    await this.reservationRepository.save(reservation);
+
+    return reservation;
   };
 }
