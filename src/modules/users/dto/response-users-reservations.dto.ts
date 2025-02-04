@@ -46,7 +46,7 @@ export class ResponseUsersReservationsDto {
     checkOutDate: string;
 
     @ApiProperty({
-        description: 'Room name',
+        description: 'The id of the reservation',
         example: 'Room A',
     })
     @IsString()
@@ -74,7 +74,7 @@ export class ResponseUsersReservationsDto {
         const userId = reservation.user.id;
         const userName = reservation.user.name;
         const catsNames = reservation.cats.map((cat: any) => cat.name);
-        const roomName = reservation.room.name || ''; 
+        const roomName = reservation.room.name || '';
         const checkInDate = reservation.checkInDate;
         const checkOutDate = reservation.checkOutDate;
         const reservationId = reservation.id;
