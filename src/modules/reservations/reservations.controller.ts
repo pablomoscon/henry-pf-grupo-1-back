@@ -102,7 +102,7 @@ export class ReservationsController {
     return await this.reservationsService.update(id, updateReservationDto);
   };
 
-  @Delete(':reservationId/caretakers/:userId')
+  @Delete(':reservationId/remove-caretaker/:userId')
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @UseGuards(AuthGuard)
