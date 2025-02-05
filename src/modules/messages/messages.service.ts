@@ -59,7 +59,7 @@ export class MessagesService {
       throw new Error('One or more receivers not found');
     }
 
-    // Handling reservation if provided
+    
     let reservation = null;
     if (createPostDto.reservationId) {
       reservation = await this.reservationsService.findOne(createPostDto.reservationId);
@@ -158,7 +158,7 @@ export class MessagesService {
 
   async findMessagesByReservationUser(userId: string, userClientId: string): Promise<Message[]> {
 
-    const reservations = await this.reservationsService.findUserReservations(userClientId);
+    const reservations = await this.reservationsService.findUserReservationsById(userClientId);
 
     if (!reservations || reservations.length === 0) {
       console.warn(`No reservations found for client with ID: ${userClientId}`);
