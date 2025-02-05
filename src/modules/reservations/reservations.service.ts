@@ -223,6 +223,8 @@ async isRoomAvailable(roomId: string, checkInDate: Date, checkOutDate: Date): Pr
     return reservations;
   };
 
+  async 
+
   async findReservationsByRoomAndDate(roomId: string, checkInDate: Date, checkOutDate: Date): Promise<Reservation[]> {
     const reservations = await this.reservationRepository.find({
       where: {
@@ -234,5 +236,24 @@ async isRoomAvailable(roomId: string, checkInDate: Date, checkOutDate: Date): Pr
     });
 
     return reservations;
+  };
+
+  async removeCaretakerFromReservation(reservationId: string, userId: string): Promise<Reservation> {
+    const reservation = await this.reservationRepository.findOne({
+      where: { id: reservationId },
+      relations: ['caretakers'],
+    });
+
+    if (!reservation) {
+      throw new NotFoundException('Reservation not found');
+    }
+
+    const caretaker = await this.caretakersService.findOneByUserId(userId);
+    if (!caretaker || !reservation.caretakers.some(c => c.id === caretaker.id)) {
+      throw new HttpException('Caretaker not assigned to this reservation', HttpStatus.BAD_REQUEST);
+    }
+    reservation.caretakers = reservation.caretakers.filter(c => c.id !== caretaker.id);
+
+    return this.reservationRepository.save(reservation);
   };
 }

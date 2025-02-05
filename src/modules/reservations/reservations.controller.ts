@@ -82,24 +82,6 @@ export class ReservationsController {
     return await this.reservationsService.findUserReservationsById(userId);
   };
 
-  @Get('user/:userId')
-  async getUserReservations(@Param('userId') userId: string): Promise<Reservation[]> {
-    try {
-     
-      const reservations = await this.reservationsService.findUserReservationsById(userId);
-
-      if (reservations.length === 0) {
-        throw new NotFoundException(`No reservations found for user with ID ${userId}`);
-      }
-
-      return reservations;  // Retorna las reservas encontradas
-    } catch (error) {
-      // Maneja cualquier error y lanza una excepción si es necesario
-      console.error(error);
-      throw new NotFoundException(error.message);
-    }
-  }
-
   @Get(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
@@ -118,6 +100,20 @@ export class ReservationsController {
     @Body() updateReservationDto: UpdateReservationDto,
   ): Promise<Reservation>  {
     return await this.reservationsService.update(id, updateReservationDto);
+  };
+
+  @Delete(':reservationId/caretakers/:userId')
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.OK)
+  async removeCaretaker(
+    @Param('reservationId') reservationId: string,
+    @Param('userId') userId: string,
+  ) {
+    const updatedReservation = await this.reservationsService.removeCaretakerFromReservation(reservationId, userId);
+    return updatedReservation;
   };
 
   @Delete(':id')
