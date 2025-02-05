@@ -40,14 +40,14 @@ export class ReservationsController {
     return new ReservationResponseDto(reservation);
   };
 
-  @Post(':reservationId/add-caretaker/:caretakerId')
+  @Post(':reservationId/add-caretaker/:userId')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.OK)
   async addCaretakerToReservation(
     @Param('reservationId') reservationId: string,
-    @Param('Id') userId: string,
+    @Param('userId') userId: string,
   ) {
     return this.reservationsService.addCaretakerToReservation(reservationId, userId);
   };

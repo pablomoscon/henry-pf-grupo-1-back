@@ -176,7 +176,7 @@ export class ReservationsService {
     });
   };
 
-  async addCaretakerToReservation(reservationId: string, caretakerId: string): Promise<Reservation> {
+  async addCaretakerToReservation(reservationId: string, userId: string): Promise<Reservation> {
 
     const reservation = await this.reservationRepository.findOne({
       where: { id: reservationId },
@@ -184,22 +184,29 @@ export class ReservationsService {
     });
 
     if (!reservation) {
-      throw new Error(`Reservation with ID ${reservationId} not found`);
+      throw new NotFoundException('Reservation not found');
     }
 
-    const caretaker = await this.caretakersService.findOne(caretakerId);
-
+    console.log('userId,' + userId);
+    
+    const caretaker = await this.caretakersService.findOneByUserId(userId);
     if (!caretaker) {
-      throw new Error(`Caretaker with ID ${caretakerId} not found`);
+      throw new NotFoundException('Caretaker not found for the given userId');
     }
 
-    if (reservation.caretakers.some(c => c.id === caretaker.id)) {
-      throw new Error('This caretaker is already assigned to the reservation');
-    }
+    console.log('caretaker:', caretaker.id);
+    
 
+    const isCaretakerAlreadyAdded = reservation.caretakers.some(c => c.id === caretaker.id);
+
+    if (isCaretakerAlreadyAdded) {
+      throw new HttpException('Caretaker is already assigned to this reservation', HttpStatus.BAD_REQUEST);
+    }
     reservation.caretakers.push(caretaker);
 
-    return await this.reservationRepository.save(reservation);
+    await this.reservationRepository.save(reservation);
+
+    return reservation;
   };
 
   async findByCheckOutDate(date: moment.Moment): Promise<Reservation[]> {

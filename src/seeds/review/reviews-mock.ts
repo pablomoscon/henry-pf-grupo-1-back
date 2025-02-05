@@ -28,7 +28,7 @@ export const reviewsMock: Review[] = [
         id: '004e4567-e89b-12d3-a456-426614174003',
         textBody: 'I’m beyond satisfied with the attention to detail and the quality of the service provided. It was such a smooth process from start to finish!',
         rating: 5,
-        user: { id: '123e4567-e89b-12d3-a456-426614174003' } as User, 
+        user: { id: '342e4567-e89b-12d3-a456-426614174003' } as User, 
         deleted_at: null,
     },
     {
