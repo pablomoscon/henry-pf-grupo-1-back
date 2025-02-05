@@ -66,81 +66,92 @@ export class MessagesGateway {
 
             const sender = await this.usersService.findOne(createChatDto.currentUser);
             if (!sender) {
-                console.error('Sender not found');
-                socket.emit('message_error', { message: 'You currently don’t have any reservations, so chatting isn’t available right now.' });
-                console.log('Error sent to frontend');
-                return;
-            };
+                return this.sendError(socket, 'You are not registered in the system. Please create an account to access the chat feature.');
+            }
 
             const clientChatRoom = await this.usersService.findOne(createChatDto.clientChatRoom);
             if (!clientChatRoom) {
-                console.error('Client not found');
-                return;
-            };
+                return this.sendError(socket, 'Client not found.');
+            }
 
-            let reservation;
+            let reservations;
             try {
-                reservation = await this.reservationsService.findOne(clientChatRoom.id);
+                reservations = await this.reservationsService.findUserReservationsById(clientChatRoom.id);
             } catch (error) {
-                socket.emit('message_error', { message: 'You currently don’t have any reservations, so chatting isn’t available right now.' });
-                console.error('Reservation not found for the client');
-                return;
+                return this.sendError(socket, 'You currently don’t have any reservations, so chatting isn’t available right now.');
             }
 
-            const caretakers = reservation.caretakers.map(caretaker => caretaker.id);
-            const userCaretakers = await this.caretakersService.findUsersFromCaretakers(caretakers);
-
-            const isCaretaker = userCaretakers.some(user => user.id === sender.id);
-            const isSenderInChatRoom = sender.id === clientChatRoom.id;
-
-            if (!(isCaretaker || isSenderInChatRoom)) {
-                console.error('User does not meet the criteria to send messages');
-                socket.emit('message_error', { message: 'You do not have permission to send messages in this chat.' });
-                return;
+            if (!reservations || reservations.length === 0) {
+                return this.sendError(socket, 'No reservations found for this client.');
             }
 
-            let receiversIds = [clientChatRoom.id, ...userCaretakers.map(userCaretaker => userCaretaker.id)];
-            receiversIds = receiversIds.filter(receiverId => receiverId !== sender.id);
-
-            if (receiversIds.length === 0) {
-                console.error('No valid receivers.');
-                return;
-            };
-
-            const newChatMessage = await this.messagesService.createChatMessage({
-                body: createChatDto.body,
-                sender,
-                receivers: await Promise.all(
-                    receiversIds.map(receiverId => this.usersService.findOne(receiverId))
-                ),
-                timestamp: new Date(),
-                type: MessageType.CHAT,
-                reservation
-            });
-
-            console.log(`Message sent by ${sender.name}(ID: ${sender.id})`);
-
-            socket.to(clientChatRoom.id).emit('receive_message', {
-                body: newChatMessage.body,
-                senderName: sender.name,
-                timestamp: newChatMessage.timestamp,
-            });
-
-            receiversIds.forEach(receiverId => {
-                if (receiverId !== clientChatRoom.id) {
-                    socket.to(receiverId).emit('receive_message', {
-                        body: newChatMessage.body,
-                        senderName: sender.name,
-                        timestamp: newChatMessage.timestamp,
-                    });
+            await Promise.all(reservations.map(async (reservationData) => {
+                const caretakers = reservationData.caretakers.map(caretaker => caretaker.id);
+                let userCaretakers;
+                try {
+                    userCaretakers = await this.caretakersService.findUsersFromCaretakers(caretakers);
+                } catch (error) {
+                    return this.sendError(socket, 'Chat is not available right now because you don’t have a caretaker assigned. You will be able to send messages soon.');
                 }
-            });
 
+                const isCaretaker = userCaretakers.some(user => user.id === sender.id);
+                const isSenderInChatRoom = sender.id === clientChatRoom.id;
+
+                if (!(isCaretaker || isSenderInChatRoom)) {
+                    return this.sendError(socket, 'You do not have permission to send messages in this chat.');
+                }
+
+                const receiversIds = this.getReceiversIds(clientChatRoom.id, userCaretakers, sender.id);
+                if (receiversIds.length === 0) {
+                    return this.sendError(socket, 'No valid receivers.');
+                }
+
+                const newChatMessage = await this.messagesService.createChatMessage({
+                    body: createChatDto.body,
+                    sender,
+                    receivers: await this.getUsersFromIds(receiversIds),
+                    timestamp: new Date(),
+                    type: MessageType.CHAT,
+                    reservation: reservationData
+                });
+
+                this.sendChatMessage(socket, clientChatRoom.id, newChatMessage, receiversIds);
+            }));
         } catch (error) {
             console.error('Error sending message:', error);
-            socket.emit('message_error', { message: 'An error occurred while sending your message. Please try again later.' });
+            this.sendError(socket, 'An error occurred while sending your message. Please try again later.');
         }
-    };
+    }
+
+    private sendError(socket: Socket, message: string) {
+        socket.emit('message_error', { message });
+    }
+
+    private getReceiversIds(clientChatRoomId: string, userCaretakers: any[], senderId: string) {
+        return [clientChatRoomId, ...userCaretakers.map(user => user.id)].filter(receiverId => receiverId !== senderId);
+    }
+
+    private async getUsersFromIds(userIds: string[]) {
+        return Promise.all(userIds.map(receiverId => this.usersService.findOne(receiverId)));
+    }
+
+    private sendChatMessage(socket: Socket, chatRoomId: string, message: any, receiversIds: string[]) {
+        socket.to(chatRoomId).emit('receive_message', {
+            body: message.body,
+            senderName: message.sender.name,
+            timestamp: message.timestamp,
+        });
+
+        receiversIds.forEach(receiverId => {
+            if (receiverId !== chatRoomId) {
+                socket.to(receiverId).emit('receive_message', {
+                    body: message.body,
+                    senderName: message.sender.name,
+                    timestamp: message.timestamp,
+                });
+            }
+        });
+    }
 
     handleDisconnect(socket: Socket) {
         console.log('Client disconnected:', socket.id);
