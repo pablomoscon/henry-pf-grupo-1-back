@@ -66,7 +66,7 @@ export class AuthController {
       sameSite: 'none',
       domain: 'undefined'
     });
-    
+
     res.redirect(`${process.env.FRONTEND_URL}/loading`);
 
   };

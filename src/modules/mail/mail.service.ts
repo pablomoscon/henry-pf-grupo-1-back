@@ -23,7 +23,7 @@ export class MailService {
 
   async sendConfirmatedReservation(reservation: Reservation): Promise<void> {
 
-    const templatePath = path.join(__dirname, 'src', 'modules', 'mail', 'templates', 'reservation-confirmated.hbs');
+    const templatePath = path.join(__dirname, '..', '..', '..', 'modules', 'mail', 'templates', 'reservation-confirmated.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
@@ -66,7 +66,7 @@ export class MailService {
 
   async sendPasswordChangeAlert(user: User, credential: Credential): Promise<void> {
 
-    const templatePath = path.join(__dirname, 'src', 'modules', 'mail', 'templates', 'send-password-change-alert.hbs');
+    const templatePath = path.join(__dirname, '..', '..', '..', 'modules', 'mail', 'templates', 'send-password-change-alert.hbs'); 
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
@@ -115,7 +115,7 @@ export class MailService {
   };
 
   async sendSuccessfulregistration(userData: User): Promise<void> {
-    const templatePath = path.join(__dirname, 'src', 'modules', 'mail', 'templates', 'successful-registration.hbs');
+    const templatePath = path.join(__dirname, '..', '..', '..', 'modules', 'mail', 'templates', 'successful-registration.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
@@ -147,7 +147,7 @@ export class MailService {
   };
 
   async sendCompleteReservationsReview(reservation: Reservation): Promise<void> {
-    const templatePath = path.join(__dirname, 'src', 'modules', 'mail', 'templates', 'reservation-completed-review.hbs');
+    const templatePath = path.join(__dirname, '..', '..', '..', 'modules', 'mail', 'templates', 'send-password-change-alert.hbs'); 
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
@@ -156,8 +156,8 @@ export class MailService {
     const checkOut = new Date(checkOutDate);
 
     const data = {
-      user: user?.name || 'No Name', // Manejar caso de nombre de usuario nulo o no definido
-      checkOut: checkOut.toISOString().split('T')[0], // Formatear la fecha correctamente
+      user: user?.name || 'No Name', 
+      checkOut: checkOut.toISOString().split('T')[0], 
     };
 
     const htmlContent = template(data);
