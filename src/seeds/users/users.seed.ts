@@ -3,15 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { usersMock } from './users-mock';
-import { Credential } from 'src/modules/credentials/entities/credential.entity';
 
 @Injectable()
 export class UsersSeed {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    @InjectRepository(Credential)
-    private readonly credentialRepository: Repository<Credential>,
   ) {}
 
   async seed() {
