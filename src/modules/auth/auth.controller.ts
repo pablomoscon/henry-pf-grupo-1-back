@@ -37,7 +37,7 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   async caretakerSignUp(@Body() caretakerSignUpAuthDto: CaretakerSignupAuthDto) {
     const caretakerUser = await this.authService.caretakerSignUp(caretakerSignUpAuthDto);
-    return caretakerUser; 
+    return caretakerUser;
   };
 
   @Get('google')
@@ -59,16 +59,13 @@ export class AuthController {
   async handleGoogleCallback(@Query('code') code: string, @Res() res: Response) {
     const { token, user } = await this.authService.googleSignUp(code);
 
-    res.cookie(
-      'auth',
-      JSON.stringify({ token, user}),
-      {
-        httpOnly: true,
-        secure: true,
-        maxAge: 60 * 60 * 1000
-      }
-    );
-
+    res.cookie('auth', JSON.stringify({ token, user }), {
+      httpOnly: true, 
+      secure: process.env.POSTGRES_CONNECTION === 'online', 
+      maxAge: 60 * 60 * 1000, 
+      sameSite: 'none',
+      domain: '.render.com', 
+    });
     res.redirect(`${process.env.FRONTEND_URL}/loading`);
 
   };
