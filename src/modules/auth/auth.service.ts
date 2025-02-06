@@ -156,7 +156,7 @@ export class AuthService {
 
       const credential = await this.credentialsService.createGoogleCredential(createCredentialsDto, user);
 
-      this.mailService.sendPasswordChangeAlert(user, credential);
+      
     }
 
     const token = await this.createToken(user);
