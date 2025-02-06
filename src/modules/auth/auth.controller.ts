@@ -66,6 +66,7 @@ export class AuthController {
       sameSite: 'none',
       domain: '.vercel.app', 
     });
+    
     res.redirect(`${process.env.FRONTEND_URL}/loading`);
 
   };
