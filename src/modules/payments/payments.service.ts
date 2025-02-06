@@ -8,7 +8,9 @@ import { ReservationStatus } from 'src/enums/reservation-status.enum';
 import { MailService } from '../mail/mail.service';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { PaymentStatus } from 'src/enums/payment-status.enum';
+import * as dotenv from 'dotenv';
 
+dotenv.config();
 @Injectable()
 export class PaymentsService {
   constructor(
@@ -29,16 +31,13 @@ export class PaymentsService {
         throw new Error('Reservation not found');
       }
 
-      const frontendUrl = process.env.POSTGRES_CONNECTION === 'local'
-        ? process.env.FRONTEND_FALLBACK_URL
-        : process.env.FRONTEND_URL;
 
       const session = await this.stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         customer_email: reservation.user.email,
         mode: 'payment',
-        success_url: `${frontendUrl}/payment?&status=succeeded&sessionId={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${frontendUrl}/payment?&status=canceled&sessionId={CHECKOUT_SESSION_ID}`,
+        success_url: `${process.env.FRONTEND_URL}/payment?&status=succeeded&sessionId={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.FRONTEND_URL}/payment?&status=canceled&sessionId={CHECKOUT_SESSION_ID}`,
         line_items: [
           {
             price_data: {

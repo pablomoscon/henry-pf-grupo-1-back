@@ -69,11 +69,8 @@ export class AuthController {
       }
     );
 
-    const redirectUrl = process.env.POSTGRES_CONNECTION === 'local'
-      ? process.env.FRONTEND_FALLBACK_URL
-      : process.env.FRONTEND_URL;
+    res.redirect(`${process.env.FRONTEND_URL}/loading`);
 
-    res.redirect(`${redirectUrl}/loading`);
   };
 }
 

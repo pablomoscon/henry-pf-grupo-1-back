@@ -1,11 +1,10 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { nodemailerTransport } from 'src/config/nodemailer.config';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as Handlebars from 'handlebars';
-import { PaymentsService } from '../payments/payments.service';
 import { User } from '../users/entities/user.entity';
 import * as jwt from 'jsonwebtoken';
 import { Credential } from '../credentials/entities/credential.entity';
@@ -17,8 +16,6 @@ export class MailService {
   private transporter: nodemailer.Transporter;
 
   constructor(
-    @Inject(forwardRef(() => PaymentsService))
-    private paymentsService: PaymentsService,
   ) {
     this.transporter = nodemailerTransport();
   }
@@ -34,12 +31,8 @@ export class MailService {
 
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
-
-    const frontendUrl = process.env.POSTGRES_CONNECTION === 'local'
-      ? process.env.FRONTEND_FALLBACK_URL
-      : process.env.FRONTEND_URL;
     
-    const loginLink = `${frontendUrl}/login`;
+    const loginLink = `${process.env.FRONTEND_URL}/login`;
 
     const data = {
       user: user.name,
@@ -87,11 +80,8 @@ export class MailService {
       { expiresIn: '4h' }
     );
 
-    const frontendUrl = process.env.POSTGRES_CONNECTION === 'local'
-      ? process.env.FRONTEND_FALLBACK_URL
-      : process.env.FRONTEND_URL;
     
-    const resetLink = `${frontendUrl}/change-password/${id}?token=${token}`;
+    const resetLink = `${process.env.FRONTEND_URL}/change-password/${id}?token=${token}`;
 
     const data = {
       name,
@@ -186,7 +176,6 @@ export class MailService {
       ],
     };
 
-    // Enviar el correo
     await this.transporter.sendMail(mailOptions);
   };
 }
