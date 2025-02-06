@@ -20,10 +20,9 @@ export class MailService {
     this.transporter = nodemailerTransport();
   }
 
-
   async sendConfirmatedReservation(reservation: Reservation): Promise<void> {
 
-    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'reservation-confirmated.hbs');
+    const templatePath = path.join(__dirname, 'templates', 'reservation-confirmated.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
@@ -66,7 +65,7 @@ export class MailService {
 
   async sendPasswordChangeAlert(user: User, credential: Credential): Promise<void> {
 
-    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'send-password-change-alert.hbs');
+    const templatePath = path.join(__dirname, 'templates', 'send-password-change-alert.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
@@ -115,7 +114,7 @@ export class MailService {
   };
 
   async sendSuccessfulregistration(userData: User): Promise<void> {
-    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'successful-registration.hbs');
+    const templatePath = path.join(__dirname, 'templates', 'successful-registration.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
@@ -147,7 +146,7 @@ export class MailService {
   };
 
   async sendCompleteReservationsReview(reservation: Reservation): Promise<void> {
-    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'reservation-completed-review.hbs');
+    const templatePath = path.join(__dirname, 'templates', 'reservation-completed-review.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
