@@ -8,10 +8,13 @@ import { GlobalExceptionFilter } from './filters/global-exception.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors({
-    origin: ['https://henry-pf-grupo-1-front-git-main-courregesdos-projects.vercel.app', 'http://localhost:3001'],
-  });
-
+app.enableCors({
+  origin: [
+    'https://henry-pf-grupo-1-front-git-main-courregesdos-projects.vercel.app', 
+    'http://localhost:3001'
+  ],
+});
+  
   app.use(loggerGlobal);
   app.useGlobalFilters(new GlobalExceptionFilter());
 
