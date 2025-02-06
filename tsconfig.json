@@ -18,5 +18,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["src/**/*.ts", "src/modules/mail/templates/**/*"]
+  "include": ["src/**/*.ts", "src/**/*.hbs"],
+  "exclude": ["node_modules"]
 }
