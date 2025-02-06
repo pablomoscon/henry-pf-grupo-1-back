@@ -66,6 +66,7 @@ export class AuthController {
       sameSite: 'none',
       domain: '.render.com', 
     });
+    
     res.redirect(`${process.env.FRONTEND_URL}/loading`);
 
   };
