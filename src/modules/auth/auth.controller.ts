@@ -64,7 +64,7 @@ export class AuthController {
       secure: process.env.POSTGRES_CONNECTION === 'online', 
       maxAge: 60 * 60 * 1000, 
       sameSite: 'none',
-      domain: '.render.com', 
+      domain: '.vercel.app', 
     });
     res.redirect(`${process.env.FRONTEND_URL}/loading`);
 
