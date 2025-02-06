@@ -9,7 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: '*',
+    origin: ['https://henry-pf-grupo-1-front-git-main-courregesdos-projects.vercel.app', 'http://localhost:3001'],
   });
 
   app.use(loggerGlobal);

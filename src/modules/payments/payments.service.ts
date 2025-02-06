@@ -29,12 +29,16 @@ export class PaymentsService {
         throw new Error('Reservation not found');
       }
 
+      const frontendUrl = process.env.POSTGRES_CONNECTION === 'local'
+        ? process.env.FRONTEND_FALLBACK_URL
+        : process.env.FRONTEND_URL;
+
       const session = await this.stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         customer_email: reservation.user.email,
         mode: 'payment',
-        success_url: `http://localhost:3001/payment?&status=succeeded&sessionId={CHECKOUT_SESSION_ID}`,
-        cancel_url: `http://localhost:3001/payment?&status=canceled&sessionId={CHECKOUT_SESSION_ID}`,
+        success_url: `${frontendUrl}/payment?&status=succeeded&sessionId={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${frontendUrl}/payment?&status=canceled&sessionId={CHECKOUT_SESSION_ID}`,
         line_items: [
           {
             price_data: {

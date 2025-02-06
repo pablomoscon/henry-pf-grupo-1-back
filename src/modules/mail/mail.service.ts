@@ -9,7 +9,9 @@ import { PaymentsService } from '../payments/payments.service';
 import { User } from '../users/entities/user.entity';
 import * as jwt from 'jsonwebtoken';
 import { Credential } from '../credentials/entities/credential.entity';
+import * as dotenv from 'dotenv';
 
+dotenv.config();
 @Injectable()
 export class MailService {
   private transporter: nodemailer.Transporter;
@@ -33,6 +35,12 @@ export class MailService {
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
 
+    const frontendUrl = process.env.POSTGRES_CONNECTION === 'local'
+      ? process.env.FRONTEND_FALLBACK_URL
+      : process.env.FRONTEND_URL;
+    
+    const loginLink = `${frontendUrl}/login`;
+
     const data = {
       user: user.name,
       checkIn: checkIn.toISOString().split('T')[0],
@@ -41,6 +49,7 @@ export class MailService {
       room: room?.name || 'Not Assigned',
       cats: cats.map(cat => cat.name).join(', ') || 'None',
       status,
+      loginLink 
     };
 
     const htmlContent = template(data);
@@ -72,14 +81,17 @@ export class MailService {
     const { password } = credential;
 
 
-
     const token = jwt.sign(
       { userId: id },
       process.env.JWT_SECRET,
       { expiresIn: '4h' }
     );
 
-    const resetLink = `http://localhost:3001/change-password/${id}?token=${token}`;
+    const frontendUrl = process.env.POSTGRES_CONNECTION === 'local'
+      ? process.env.FRONTEND_FALLBACK_URL
+      : process.env.FRONTEND_URL;
+    
+    const resetLink = `${frontendUrl}/change-password/${id}?token=${token}`;
 
     const data = {
       name,
@@ -102,8 +114,13 @@ export class MailService {
           cid: 'logoApp',
         },
       ],
+      headers: {
+        'List-Unsubscribe': '<http://example.com/unsubscribe>',
+        'X-Priority': '1', 
+        'Importance': 'High',
+        'X-Mailer': 'The Fancy Box Mailer',
+      },
     };
-
     await this.transporter.sendMail(mailOptions);
   };
 

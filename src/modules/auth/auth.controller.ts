@@ -7,6 +7,9 @@ import { Response } from 'express';
 import { oauth2Client } from 'src/config/google-auth.config';
 import { AuthResponseDto } from './dto/response-auth.dto';
 import { CaretakerSignupAuthDto } from './dto/caretaker-signup-auth.dto';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Controller('auth')
 @ApiTags('auth')
@@ -66,7 +69,11 @@ export class AuthController {
       }
     );
 
-    res.redirect('http://localhost:3001/loading');
+    const redirectUrl = process.env.POSTGRES_CONNECTION === 'local'
+      ? process.env.FRONTEND_FALLBACK_URL
+      : process.env.FRONTEND_URL;
+
+    res.redirect(`${redirectUrl}/loading`);
   };
 }
 
