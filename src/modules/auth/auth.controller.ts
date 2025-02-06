@@ -60,13 +60,13 @@ export class AuthController {
     const { token, user } = await this.authService.googleSignUp(code);
 
     res.cookie('auth', JSON.stringify({ token, user }), {
-      httpOnly: true, 
-      secure: process.env.POSTGRES_CONNECTION === 'online', 
-      maxAge: 60 * 60 * 1000, 
-      sameSite: 'none',
-      domain: '.vercel.app', 
+        httpOnly: false,
+        secure: true,
+        maxAge: 60 * 60 * 1000,
+        sameSite: 'none',
+        domain: 'undefined'
     });
-    
+
     res.redirect(`${process.env.FRONTEND_URL}/loading`);
 
   };
