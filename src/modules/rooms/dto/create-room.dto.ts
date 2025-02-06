@@ -19,14 +19,6 @@ export class CreateRoomDto {
   name: string;
 
   @ApiProperty({
-    description: 'Image URL for the room',
-    example: 'https://example.com/room-image.jpg',
-  })
-  @IsArray()
-  @IsString()
-  img: string;
-
-  @ApiProperty({
     description: 'Description of the room',
     example:
       'A comfortable suite designed for cats with cozy spaces and a peaceful environment.',

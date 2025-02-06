@@ -30,7 +30,7 @@ export class MailService {
 
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
-    
+
     const loginLink = `${process.env.FRONTEND_URL}/login`;
 
     const data = {
@@ -41,7 +41,7 @@ export class MailService {
       room: room?.name || 'Not Assigned',
       cats: cats.map(cat => cat.name).join(', ') || 'None',
       status,
-      loginLink 
+      loginLink
     };
 
     const htmlContent = template(data);
@@ -79,7 +79,7 @@ export class MailService {
       { expiresIn: '4h' }
     );
 
-    
+
     const resetLink = `${process.env.FRONTEND_URL}/change-password/${id}?token=${token}`;
 
     const data = {
@@ -105,7 +105,7 @@ export class MailService {
       ],
       headers: {
         'List-Unsubscribe': '<http://example.com/unsubscribe>',
-        'X-Priority': '1', 
+        'X-Priority': '1',
         'Importance': 'High',
         'X-Mailer': 'The Fancy Box Mailer',
       },
@@ -155,8 +155,8 @@ export class MailService {
     const checkOut = new Date(checkOutDate);
 
     const data = {
-      user: user?.name || 'No Name', // Manejar caso de nombre de usuario nulo o no definido
-      checkOut: checkOut.toISOString().split('T')[0], // Formatear la fecha correctamente
+      user: user?.name || 'No Name',
+      checkOut: checkOut.toISOString().split('T')[0],
     };
 
     const htmlContent = template(data);
