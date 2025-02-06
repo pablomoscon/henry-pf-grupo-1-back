@@ -29,6 +29,7 @@ FROM node:20-alpine AS production
 
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
+COPY src/modules/mail/templates /dist/modules/mail/templates
 
 EXPOSE 3000
 
