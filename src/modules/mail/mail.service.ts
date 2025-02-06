@@ -23,7 +23,7 @@ export class MailService {
 
   async sendConfirmatedReservation(reservation: Reservation): Promise<void> {
 
-    const templatePath = path.resolve(__dirname, '..', '..', 'modules', 'mail', 'templates', 'reservation-confirmated.hbs');
+    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'reservation-confirmated.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
@@ -66,7 +66,7 @@ export class MailService {
 
   async sendPasswordChangeAlert(user: User, credential: Credential): Promise<void> {
 
-    const templatePath = path.resolve(__dirname, '..', '..', 'modules', 'mail', 'templates', 'send-password-change-alert.hbs'); 
+    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'send-password-change-alert.hbs'); 
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
@@ -115,7 +115,7 @@ export class MailService {
   };
 
   async sendSuccessfulregistration(userData: User): Promise<void> {
-    const templatePath = path.resolve(__dirname, '..', '..', '..', 'modules', 'mail', 'templates', 'successful-registration.hbs');
+    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'successful-registration.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
@@ -147,7 +147,7 @@ export class MailService {
   };
 
   async sendCompleteReservationsReview(reservation: Reservation): Promise<void> {
-    const templatePath = path.resolve(__dirname, '..', '..', 'modules', 'mail', 'templates', 'send-password-change-alert.hbs'); 
+    const templatePath = path.join(process.cwd(), 'src', 'modules', 'mail', 'templates', 'send-password-change-alert.hbs'); 
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
