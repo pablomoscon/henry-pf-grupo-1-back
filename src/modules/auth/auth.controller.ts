@@ -1,6 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Res, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Res,
+  Query,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignInAuthDto, } from './dto/signin-auth.dto';
+import { SignInAuthDto } from './dto/signin-auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { SignupAuthDto } from './dto/signup-auth.dto';
 import { Response } from 'express';
@@ -20,8 +32,8 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   async clientSignUp(@Body() signUpAuthDto: SignupAuthDto) {
     const user = await this.authService.clientSignUp(signUpAuthDto);
-    return new AuthResponseDto(user)
-  };
+    return new AuthResponseDto(user);
+  }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -29,16 +41,20 @@ export class AuthController {
     const response = await this.authService.signIn(signInAuthDto);
     return {
       success: 'Login successful',
-      response
+      response,
     };
-  };
+  }
 
   @Post('caretaker-signup')
   @HttpCode(HttpStatus.CREATED)
-  async caretakerSignUp(@Body() caretakerSignUpAuthDto: CaretakerSignupAuthDto) {
-    const caretakerUser = await this.authService.caretakerSignUp(caretakerSignUpAuthDto);
+  async caretakerSignUp(
+    @Body() caretakerSignUpAuthDto: CaretakerSignupAuthDto,
+  ) {
+    const caretakerUser = await this.authService.caretakerSignUp(
+      caretakerSignUpAuthDto,
+    );
     return caretakerUser;
-  };
+  }
 
   @Get('google')
   async redirectToGoogle(@Res() res: Response) {
@@ -48,27 +64,54 @@ export class AuthController {
         'https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/userinfo.email',
         'https://www.googleapis.com/auth/user.phonenumbers.read',
-        'https://www.googleapis.com/auth/user.addresses.read'
+        'https://www.googleapis.com/auth/user.addresses.read',
       ],
     });
 
     return res.redirect(authUrl);
-  };
+  }
 
   @Get('google/callback')
-  async handleGoogleCallback(@Query('code') code: string, @Res() res: Response) {
-    const { token, user } = await this.authService.googleSignUp(code);
+  async handleGoogleCallback(
+    @Query('code') code: string,
+    @Res() res: Response,
+  ) {
+    console.log('Received Google callback with code:', code);
 
-    res.cookie('auth', JSON.stringify({ token, user }), {
-      httpOnly: false, 
-      secure: true, 
-      maxAge: 60 * 60 * 1000, 
-      sameSite: 'none',
-      domain: 'undefined'
-    });
+    try {
+      const { token, user } = await this.authService.googleSignUp(code);
+      console.log('Generated token and user:', { token, user });
 
-    res.redirect(`${process.env.FRONTEND_URL}/loading`);
+      console.log('Cookie settings:', {
+        httpOnly: false,
+        secure: true,
+        maxAge: 60 * 60 * 1000,
+        sameSite: 'none',
+        domain: 'undefined',
+      });
 
-  };
+      res.cookie('auth', JSON.stringify({ token, user }), {
+        httpOnly: false,
+        secure: true,
+        maxAge: 60 * 60 * 1000,
+        sameSite: 'none',
+        domain: 'undefined',
+      });
+
+      console.log(
+        'Cookie set, redirecting to:',
+        `${process.env.FRONTEND_URL}/loading`,
+      );
+
+      // Log response headers before sending
+      res.on('finish', () => {
+        console.log('Response headers:', res.getHeaders());
+      });
+
+      res.redirect(`${process.env.FRONTEND_URL}/loading`);
+    } catch (error) {
+      console.error('Error in Google callback:', error);
+      throw error;
+    }
+  }
 }
-
