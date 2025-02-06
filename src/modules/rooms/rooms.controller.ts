@@ -53,7 +53,6 @@ export class RoomsController {
 
     createRoomDto.features = featuresEnumArray;
 
-    console.log('Datos recibidos:', createRoomDto);
     return await this.roomsService.create(createRoomDto, file);
   };
 
@@ -138,10 +137,10 @@ export class RoomsController {
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FileInterceptor('img'))
   async update(@Param('id', new ParseUUIDPipe()) id: string,
-    @Body() updateCatDto: UpdateRoomDto,
+    @Body() updateRoomDto: UpdateRoomDto,
     @UploadedFile(new ImageUploadValidationPipe()) file?: Express.Multer.File,
   ) {
-    return await this.roomsService.update(id, updateCatDto, file);
+    return await this.roomsService.update(id, updateRoomDto, file);
   };
 
   @Delete(':id')

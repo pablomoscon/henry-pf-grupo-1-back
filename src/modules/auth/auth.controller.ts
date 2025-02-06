@@ -63,8 +63,8 @@ export class AuthController {
       'auth',
       JSON.stringify({ token, user}),
       {
-        httpOnly: false,
-        secure: false,
+        httpOnly: true,
+        secure: true,
         maxAge: 60 * 60 * 1000
       }
     );

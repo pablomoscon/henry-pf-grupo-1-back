@@ -13,6 +13,7 @@ app.enableCors({
     'https://henry-pf-grupo-1-front-git-main-courregesdos-projects.vercel.app', 
     'http://localhost:3001'
   ],
+  credentials: true
 });
   
   app.use(loggerGlobal);
