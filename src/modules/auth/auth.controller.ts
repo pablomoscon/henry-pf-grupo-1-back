@@ -60,8 +60,8 @@ export class AuthController {
     const { token, user } = await this.authService.googleSignUp(code);
 
     res.cookie('auth', JSON.stringify({ token, user }), {
-      httpOnly: true, 
-      secure: process.env.POSTGRES_CONNECTION === 'online', 
+      httpOnly: false, 
+      secure: false, 
       maxAge: 60 * 60 * 1000, 
       sameSite: 'none',
       domain: '.render.com', 
