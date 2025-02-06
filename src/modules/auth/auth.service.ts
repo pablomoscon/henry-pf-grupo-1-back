@@ -30,7 +30,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly caretakersService: CaretakersService,
     private readonly mailService: MailService,
-  ) {}
+  ) { }
 
   async signUp(signUpUser: SignupAuthDto) {
     if (signUpUser.password !== signUpUser.confirmPassword) {
@@ -239,3 +239,4 @@ export class AuthService {
     return caretaker;
   }
 }
+
