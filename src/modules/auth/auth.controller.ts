@@ -18,6 +18,8 @@ import { oauth2Client } from 'src/config/google-auth.config';
 import { AuthResponseDto } from './dto/response-auth.dto';
 import { CaretakerSignupAuthDto } from './dto/caretaker-signup-auth.dto';
 import * as dotenv from 'dotenv';
+import * as cookieParser from 'cookie-parser';
+import { Request } from 'express';
 
 dotenv.config();
 
@@ -107,8 +109,22 @@ export class AuthController {
   };
   
   @Get('me')
-  async getAuthUser(@Req() req) {
-    console.log('User from cookie:', req.user);
-    return req.user || { message: 'No user found' };
-  };
+  async getAuthUser(@Req() req: Request) {
+    
+    cookieParser()(req, req.res, () => { });
+
+    const authCookie = req.cookies['auth'];
+
+    if (authCookie) {
+      try {
+        const { token, user } = JSON.parse(authCookie);
+        return { token, user };
+      } catch (error) {
+        console.error('Error parsing cookie:', error);
+        return { message: 'Error parsing cookie data' };
+      }
+    } else {
+      return { message: 'No auth cookie found' };
+    }
+  }
 }
