@@ -81,8 +81,8 @@ export class CronService {
     const now = moment().tz('America/Argentina/Buenos_Aires');
 
     if (
-      now.format('YYYY-MM-DD HH:mm') >= '2025-01-31 22:00' && //aca va la fecha y hora de la demo arg
-      now.format('YYYY-MM-DD HH:mm') <= '2025-01-31 23:59' // de esta manera no importa donde corra es hora arg
+      now.format('YYYY-MM-DD HH:mm') >= '2025-02-07 18:30' && //aca va la fecha y hora de la demo arg
+      now.format('YYYY-MM-DD HH:mm') <= '2025-02-07 19:30' // de esta manera no importa donde corra es hora arg
     ) {
       console.log('Ejecutando en horario correcto (Argentina)');
       await this.sendStartingReminderTask.execute();
