@@ -106,5 +106,5 @@ export class AuthController {
       console.error('Error in Google callback:', error);
       throw error;
     }
-  }
+  };
 }
