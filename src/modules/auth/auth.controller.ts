@@ -94,8 +94,7 @@ export class AuthController {
         httpOnly: false,
         secure: true,
         maxAge: 60 * 60 * 1000,
-        sameSite: 'none',
-        domain: 'undefined',
+        sameSite: 'none'
       });
 
       console.log(
