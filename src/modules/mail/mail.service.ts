@@ -22,7 +22,7 @@ export class MailService {
 
   async sendConfirmatedReservation(reservation: Reservation): Promise<void> {
 
-    const templatePath = path.join(__dirname, 'templates', 'reservation-confirmated.hbs');
+    const templatePath = path.join(__dirname, 'templates', 'reservation-confirmed.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');
     const template = Handlebars.compile(templateSource);
 
