@@ -3,13 +3,11 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Delete,
   HttpCode,
   HttpStatus,
   Res,
   Query,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInAuthDto } from './dto/signin-auth.dto';
@@ -106,5 +104,11 @@ export class AuthController {
       console.error('Error in Google callback:', error);
       throw error;
     }
+  };
+  
+  @Get('me')
+  async getAuthUser(@Req() req) {
+    console.log('User from cookie:', req.user);
+    return req.user || { message: 'No user found' };
   };
 }
