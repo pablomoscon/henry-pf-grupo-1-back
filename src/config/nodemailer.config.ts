@@ -19,7 +19,7 @@ export const nodemailerTransport = () => {
     });
 
     transport.use('compile', new HandlebarsAdapter({
-        viewPath: join(__dirname, '..', 'mail', 'templates'),
+        viewPath: join(__dirname, '..', 'modules', 'mail', 'templates'),
         options: {
             strict: true
         }
