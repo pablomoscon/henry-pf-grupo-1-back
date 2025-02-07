@@ -25,12 +25,12 @@ export class SendStartingReminderTask {
 
     for (const reservation of reservations) {
       const notification = this.notificationRepository.create({
-        message: `Tu reserva para ${reservation.room.name} comienza en menos de 24 horas.`,
+        message: `Your reservation for ${ reservation.room.name } starts in less than 24 hours.`,
         type: NotificationType.REMINDER,
         user: reservation.user,
       });
       await this.notificationRepository.save(notification);
-      console.log(`Notificación creada: Faltan menos de 24 hs para la reserva`);
+      console.log(`Notification created: Less than 24 hours left for the reservation`);
     }
   }
 }

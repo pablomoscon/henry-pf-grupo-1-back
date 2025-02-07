@@ -25,13 +25,13 @@ export class SendEndingReminderTask {
 
     for (const reservation of reservations) {
       const notification = this.notificationRepository.create({
-        message: `Tu reserva para ${reservation.room.name} termina en menos de 24 horas.`,
+        message: `Your reservation for ${reservation.room.name} ends in less than 24 hours.`,
         type: NotificationType.REMINDER,
         user: reservation.user,
       });
       await this.notificationRepository.save(notification);
       console.log(
-        `Notificación creada: Faltan menos de 24 hs para finalizar la reserva`,
+        `Notification created: Less than 24 hours remaining to complete the reservation.`,
       );
     }
   }
