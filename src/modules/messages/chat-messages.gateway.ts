@@ -85,7 +85,6 @@ export class MessagesGateway {
                 return this.sendError(socket, 'No reservations found for this client.');
             }
 
-            // Extraemos todos los cuidadores de todas las reservas
             const allCaretakers = reservations.flatMap(reservation => reservation.caretakers.map(caretaker => caretaker.id));
 
             if (allCaretakers.length === 0) {
