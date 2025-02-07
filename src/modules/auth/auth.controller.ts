@@ -82,14 +82,6 @@ export class AuthController {
       const { token, user } = await this.authService.googleSignUp(code);
       console.log('Generated token and user:', { token, user });
 
-      console.log('Cookie settings:', {
-        httpOnly: false,
-        secure: true,
-        maxAge: 60 * 60 * 1000,
-        sameSite: 'none',
-        domain: 'undefined',
-      });
-
       res.cookie('auth', JSON.stringify({ token, user }), {
         httpOnly: false,
         secure: true,
@@ -97,12 +89,14 @@ export class AuthController {
         sameSite: 'none'
       });
 
+      console.log('res.cookie:', res.cookie);
+      
+
       console.log(
         'Cookie set, redirecting to:',
         `${process.env.FRONTEND_URL}/loading`,
       );
 
-      // Log response headers before sending
       res.on('finish', () => {
         console.log('Response headers:', res.getHeaders());
       });
