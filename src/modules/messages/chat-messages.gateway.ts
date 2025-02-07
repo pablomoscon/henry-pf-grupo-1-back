@@ -40,7 +40,7 @@ export class MessagesGateway {
             socket.join(clientChatRoomId);
             socket.data.currentUser = currentUser;
 
-            const messages = await this.messagesService.findMessagesByReservationUser(currentUser.id, clientChatRoomId)
+            const messages = await this.messagesService.findChatMessagesByReservationUser(currentUser.id, clientChatRoomId)
 
             const messagesWithUsernames = messages.map(message => ({
                 ...message,
