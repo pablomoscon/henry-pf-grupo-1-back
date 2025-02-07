@@ -85,15 +85,22 @@ export class MessagesGateway {
                 return this.sendError(socket, 'No reservations found for this client.');
             }
 
+            // Extraemos todos los cuidadores de todas las reservas
+            const allCaretakers = reservations.flatMap(reservation => reservation.caretakers.map(caretaker => caretaker.id));
+
+            if (allCaretakers.length === 0) {
+                return this.sendError(socket, 'Chat is not available right now because you don’t have a caretaker assigned. You will be able to send messages soon.');
+            }
+
+            let userCaretakers;
+            try {
+                userCaretakers = await this.caretakersService.findUsersFromCaretakers(allCaretakers);
+            } catch (error) {
+                return this.sendError(socket, 'Chat is not available right now because you don’t have a caretaker assigned. You will be able to send messages soon.');
+            }
+
             await Promise.all(reservations.map(async (reservationData) => {
                 const caretakers = reservationData.caretakers.map(caretaker => caretaker.id);
-                let userCaretakers;
-                try {
-                    userCaretakers = await this.caretakersService.findUsersFromCaretakers(caretakers);
-                } catch (error) {
-                    return this.sendError(socket, 'Chat is not available right now because you don’t have a caretaker assigned. You will be able to send messages soon.');
-                }
-
                 const isCaretaker = userCaretakers.some(user => user.id === sender.id);
                 const isSenderInChatRoom = sender.id === clientChatRoom.id;
 
@@ -121,19 +128,19 @@ export class MessagesGateway {
             console.error('Error sending message:', error);
             this.sendError(socket, 'An error occurred while sending your message. Please try again later.');
         }
-    }
+    };
 
     private sendError(socket: Socket, message: string) {
         socket.emit('message_error', { message });
-    }
+    };
 
     private getReceiversIds(clientChatRoomId: string, userCaretakers: any[], senderId: string) {
         return [clientChatRoomId, ...userCaretakers.map(user => user.id)].filter(receiverId => receiverId !== senderId);
-    }
+    };
 
     private async getUsersFromIds(userIds: string[]) {
         return Promise.all(userIds.map(receiverId => this.usersService.findOne(receiverId)));
-    }
+    };
 
     private sendChatMessage(socket: Socket, chatRoomId: string, message: any, receiversIds: string[]) {
         socket.to(chatRoomId).emit('receive_message', {
@@ -151,7 +158,7 @@ export class MessagesGateway {
                 });
             }
         });
-    }
+    };
 
     handleDisconnect(socket: Socket) {
         console.log('Client disconnected:', socket.id);
