@@ -35,7 +35,7 @@ export class Reservation {
   @Column({ type: "enum", enum: ReservationStatus, default: ReservationStatus.PENDING })
   @ApiProperty({
     description: "Reservation status",
-    enum: ["PENDING", "CONFIRMED", "CANCELLED", "COMPLETED"],
+    enum: ["PENDING", "CONFIRMED", "CANCELED", "COMPLETED"],
     example: "PENDING",
   })
   status: ReservationStatus;

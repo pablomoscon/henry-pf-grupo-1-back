@@ -16,7 +16,7 @@ import {
 import { MessagesService } from './messages.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MessageResponseDto } from './dto/response-post.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { ImageUploadValidationPipe } from 'src/pipes/image-upload-validation.pipe';
 import { Message } from './entities/message.entity';
@@ -24,6 +24,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 
 @Controller('messages')
+@ApiTags('messages')
 export class MessagesController {
   constructor(private readonly messagesService: MessagesService) { }
 
@@ -49,6 +50,9 @@ export class MessagesController {
   };
 
   @Get('user/:userId')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.OK)
   async findMessagesByReservationUser(@Param('userId') userId: string, userClientId: string): Promise<Message[]> {
       const messages = await this.messagesService.findMessagesByReservationUser(userId, userClientId);
       if (messages.length === 0) {
