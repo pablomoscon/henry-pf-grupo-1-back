@@ -87,7 +87,7 @@ export class PaymentsService {
       const newPaymentStatus = status === 'succeeded'
         ? PaymentStatus.SUCCEEDED
         : status === 'canceled'
-          ? PaymentStatus.CANCELLED
+          ? PaymentStatus.CANCELED
           : PaymentStatus.PENDING; 
 
       payment.status = newPaymentStatus;
@@ -101,11 +101,11 @@ export class PaymentsService {
       const newReservationStatus = status === 'succeeded'
         ? ReservationStatus.CONFIRMED
         : status === 'canceled'
-          ? ReservationStatus.CANCELLED
+          ? ReservationStatus.CANCELED
           : reservation.status;
 
       await this.reservationsService.updateReservationStatus(reservation.id, newReservationStatus);
-      this.mailsService.sendConfirmatedReservation(reservation);
+      this.mailsService.sendConfirmedReservation(reservation);
 
     } catch (error) {
       console.error('Error updating payment and reservation status:', error);

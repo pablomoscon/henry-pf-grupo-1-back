@@ -10,8 +10,7 @@ import {
   HttpCode,
   Query,
   UseGuards,
-  UsePipes,
-  NotFoundException,
+  UsePipes
 } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';

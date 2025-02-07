@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { Response } from 'express';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { Roles } from 'src/decorators/role.decorator';
 import { Role } from 'src/enums/roles.enum';
@@ -23,6 +23,7 @@ import { RolesGuard } from 'src/guards/roles/roles.guard';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 
 @Controller('payments')
+@ApiTags('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 

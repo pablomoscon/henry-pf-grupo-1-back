@@ -75,7 +75,7 @@ export const reservationsMock: Reservation[] = [
     room: { id: '123e4567-e89b-12d3-a456-426614174003' } as Room,
     checkInDate: new Date('2025-01-27T09:00:00Z'),
     checkOutDate: new Date('2025-01-29T09:00:00Z'),
-    status: ReservationStatus.CANCELLED,
+    status: ReservationStatus.CANCELED,
     createdAt: new Date('2025-01-02T09:00:00Z'),
     updatedAt: new Date('2025-01-06T11:00:00Z'),
     totalAmount: 150.0,

@@ -20,7 +20,7 @@ export class MailService {
     this.transporter = nodemailerTransport();
   }
 
-  async sendConfirmatedReservation(reservation: Reservation): Promise<void> {
+  async sendConfirmedReservation(reservation: Reservation): Promise<void> {
 
     const templatePath = path.join(__dirname, 'templates', 'reservation-confirmed.hbs');
     const templateSource = fs.readFileSync(templatePath, 'utf8');

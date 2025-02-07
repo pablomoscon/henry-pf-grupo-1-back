@@ -9,8 +9,9 @@ import { Role } from 'src/enums/roles.enum';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
 import { RolesGuard } from 'src/guards/roles/roles.guard';
 
-@ApiTags('caretakers')
+
 @Controller('caretakers')
+@ApiTags('caretakers')
 export class CaretakersController {
   constructor(private readonly caretakersService: CaretakersService) { }
 
