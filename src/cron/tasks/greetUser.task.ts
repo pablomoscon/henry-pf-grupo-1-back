@@ -21,14 +21,14 @@ export class GreetUserTask {
 
     if (user) {
       const notification = this.notificationRepository.create({
-        message: `Hola, ${user.name}!`,
+        message: `Hello, ${user.name}!`,
         type: NotificationType.POST, // Puedes usar el tipo que prefieras
         user: user,
       });
       await this.notificationRepository.save(notification);
 
       // Log para verificar que la notificación se ha creado
-      console.log(`Notificación creada: Hola, ${user.name}!`);
+      console.log(`Notificación creada: Hello, ${user.name}!`);
     } else {
       // Log si no se encuentra el usuario
       console.log('Usuario "John Williams" no encontrado.');

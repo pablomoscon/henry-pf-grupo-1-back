@@ -26,12 +26,12 @@ export class JoinedAnniversaryTask {
         today.getFullYear() > createdAt.getFullYear()
       ) {
         const notification = this.notificationRepository.create({
-          message: `Hoy celebramos un año juntos, ${user.name}!`,
+          message: `Today we celebrate one year together, ${user.name}!`,
           type: NotificationType.ANNIVERSARY,
           user: user,
         });
         await this.notificationRepository.save(notification);
-        console.log('notificacion de aniversario enviada');
+        console.log('Anniversary notification sent');
       }
     }
   }

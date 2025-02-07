@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
 import { CreateNotificationDto } from './dto/create-notification.dto';
-import { User } from '../users/entities/user.entity';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
 
 @Injectable()

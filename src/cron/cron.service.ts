@@ -34,13 +34,13 @@ export class CronService {
     await this.joinedAnniversaryTask.execute();
   };
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async updateRoomAvailability() {
     console.log('Running room availability update...');
     await this.roomsService.updateAvailability();
   };
 
-  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async handleCompletedReservations() {
     console.log('Checking for expired reservations...');
     await this.reservationsService.completeExpiredReservations();
