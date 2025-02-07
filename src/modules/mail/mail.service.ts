@@ -79,7 +79,6 @@ export class MailService {
       { expiresIn: '4h' }
     );
 
-
     const resetLink = `${process.env.FRONTEND_URL}/change-password/${id}?token=${token}`;
 
     const data = {
@@ -140,8 +139,13 @@ export class MailService {
           cid: 'logoApp',
         },
       ],
+      headers: {
+        'List-Unsubscribe': '<http://example.com/unsubscribe>',
+        'X-Priority': '1',
+        'Importance': 'High',
+        'X-Mailer': 'The Fancy Box Mailer',
+      },
     };
-
     await this.transporter.sendMail(mailOptions);
   };
 
@@ -173,8 +177,13 @@ export class MailService {
           cid: 'logoApp',
         },
       ],
+      headers: {
+        'List-Unsubscribe': '<http://example.com/unsubscribe>',
+        'X-Priority': '1',
+        'Importance': 'High',
+        'X-Mailer': 'The Fancy Box Mailer',
+      },
     };
-
     await this.transporter.sendMail(mailOptions);
   };
 }
