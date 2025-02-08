@@ -53,7 +53,7 @@ export class CronService {
     const now = moment().tz('America/Argentina/Buenos_Aires');
 
     if (
-      now.format('YYYY-MM-DD HH:mm') >= '2025-02-07 22:00' && //aca va la fecha y hora de la demo arg
+      now.format('YYYY-MM-DD HH:mm') >= '2025-02-07 21:30' && //aca va la fecha y hora de la demo arg
       now.format('YYYY-MM-DD HH:mm') <= '2025-02-07 23:59' // de esta manera no importa donde corra es hora arg
     ) {
       console.log('Ejecutando en horario correcto (Argentina)');
