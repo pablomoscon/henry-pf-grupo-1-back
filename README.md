@@ -27,43 +27,6 @@ El objetivo de esta App es modernizar y optimizar el acceso a servicios exclusiv
 - Crons.
 - WebSockets.
 
-### Pasos para ejecutar el proyecto localmente
-
-1. Clonar Repositorio: git clone <https://github.com/pablomoscon/henry-pf-grupo-1-back>
-2. Dentro de la carpeta del proyecto ejecutar: npm install
-3. Posteriormente ejecutar: npm run start
-
-> ### Configuración de Variables de Entorno
-
-Para ejecutar este proyecto, es necesario crear un archivo .env en el directorio raíz con el nombre .env.development.local y agregar lo siguiente
-
-#### JWT
-
-JWT_SECRET=your_jwt_secret
-
-#### Cloudinary
-
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-#### Google OAuth
-
-CLIENT_ID=your_client_id
-CLIENT_SECRET=your_client_secret
-REDIRECT_URI=your_redirect_uri
-
-#### Base de Datos en Render
-
-POSTGRES_DB=your_database_name
-POSTGRES_USER=your_database_user
-POSTGRES_PASSWORD=your_database_password
-POSTGRES_HOST=your_database_host
-POSTGRES_PORT=your_database_port
-DB_TYPE=postgres
-POSTGRES_CONNECTION=your_connection_string
-
-#### Stripe
 
 STRIPE_SECRET_KEY=your_stripe_secret_key
 
