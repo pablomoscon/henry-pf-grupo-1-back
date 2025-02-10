@@ -1,4 +1,4 @@
-![logo The Fancy Box](./public/logoReadme.png)
+![logo The Fancy Box](./public/logoReadme.jpeg)
 
 > ### Descripción del Proyecto:
 
