@@ -8,28 +8,34 @@ dotenv.config({
 
 const isLocal = process.env.POSTGRES_CONNECTION === 'local';
 
-const PostgresDatabaseOptions: DataSourceOptions = {
-  type: 'postgres',
-  host: isLocal ? process.env.POSTGRES_HOST : process.env.POSTGRES_DEPLOY_HOST,
-  port: parseInt(
-    isLocal ? process.env.POSTGRES_PORT : process.env.POSTGRES_DEPLOY_PORT,
-    10,
-  ),
-  username: isLocal
-    ? process.env.POSTGRES_USER
-    : process.env.POSTGRES_DEPLOY_USER,
-  password: isLocal
-    ? process.env.POSTGRES_PASSWORD
-    : process.env.POSTGRES_DEPLOY_PASSWORD,
-  database: isLocal ? process.env.POSTGRES_DB : process.env.POSTGRES_DEPLOY_DB,
-  synchronize: true,
-  dropSchema: true,
-  logging: false,
-  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  migrations: [__dirname + '/../**/migrations/*{.ts,.js}'],
-  subscribers: [],
-  ssl: isLocal ? false : { rejectUnauthorized: false },
-};
+const PostgresDatabaseOptions: DataSourceOptions = isLocal
+  ? {
+    type: 'postgres',
+    host: process.env.POSTGRES_HOST,
+    port: parseInt(process.env.POSTGRES_PORT, 10),
+    username: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DB,
+    synchronize: true,
+    dropSchema: true,
+    logging: false,
+    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+    migrations: [__dirname + '/../**/migrations/*{.ts,.js}'],
+    subscribers: [],
+    ssl: false,
+  }
+  : {
+    type: 'postgres',
+    url: process.env.DATABASE_URL,
+    synchronize: true,
+    dropSchema: false,
+    logging: false,
+    entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+    migrations: [__dirname + '/../**/migrations/*{.ts,.js}'],
+    subscribers: [],
+    ssl: { rejectUnauthorized: false },
+  };
+
 
 export const databaseConfig = registerAs(
   'databaseConfig',
