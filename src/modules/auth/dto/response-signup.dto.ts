@@ -1,7 +1,7 @@
 import { Role } from 'src/enums/roles.enum';
 import { Cat } from 'src/modules/cats/entities/cat.entity';
 
-export class AuthResponseDto {
+export class SignupResponseDto {
     id: string;
     name: string;
     email: string;
@@ -13,7 +13,7 @@ export class AuthResponseDto {
     deleted_at: Date;
 
     constructor(
-        partial: Partial<AuthResponseDto>,
+        partial: Partial<SignupResponseDto>,
         includeAdmin: boolean = false,
     ) {
         const {

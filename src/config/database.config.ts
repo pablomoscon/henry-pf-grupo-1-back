@@ -28,14 +28,13 @@ const PostgresDatabaseOptions: DataSourceOptions = isLocal
     type: 'postgres',
     url: process.env.DATABASE_URL,
     synchronize: true,
-    dropSchema: false,
+    dropSchema: true,
     logging: false,
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/../**/migrations/*{.ts,.js}'],
     subscribers: [],
     ssl: { rejectUnauthorized: false },
   };
-
 
 export const databaseConfig = registerAs(
   'databaseConfig',

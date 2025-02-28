@@ -1,4 +1,3 @@
-import { Credential } from '../../modules/credentials/entities/credential.entity';
 import { Role } from '../../enums/roles.enum';
 import { Status } from '../../enums/status.enum';
 import { User } from 'src/modules/users/entities/user.entity';

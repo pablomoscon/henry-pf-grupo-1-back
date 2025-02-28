@@ -4,7 +4,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { IsNull, Repository } from 'typeorm';
-import { Credential } from '../credentials/entities/credential.entity';
 import { Role } from 'src/enums/roles.enum';
 import { CaretakersService } from '../caretakers/caretakers.service';
 import { CredentialsService } from '../credentials/credentials.service';
@@ -28,7 +27,7 @@ export class UsersService {
   async findCredentialByEmail(email: string) {
     
     const user = await this.userRepository.findOne({
-      where: { email,  deleted_at: IsNull()},
+      where: { email, deleted_at: IsNull() },
     });
 
     if (!user) {
@@ -64,7 +63,7 @@ export class UsersService {
 
   async findByEmail(email: string) {
     const user = await this.userRepository.findOne({
-      where: { email, deleted_at: IsNull()}
+      where: { email, deleted_at: IsNull() }
     });
     return user;
   };
