@@ -101,6 +101,9 @@ export class MessagesGateway {
                 type: MessageType.CHAT,
                 reservation
             });
+
+            this.sendChatMessage(socket, createChatDto.chatRoom, newChatMessage, receiversIds);
+
         } catch (error) {
             console.error('Error sending message:', error);
             this.sendError(socket, 'An error occurred while sending your message.');
