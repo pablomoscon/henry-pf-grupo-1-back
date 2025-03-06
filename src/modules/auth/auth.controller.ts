@@ -15,7 +15,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { SignupAuthDto } from './dto/signup-auth.dto';
 import { Response } from 'express';
 import { oauth2Client } from 'src/config/google-auth.config';
-import { AuthResponseDto } from './dto/response-auth.dto';
+import { SignupResponseDto } from './dto/response-signup.dto';
 import { CaretakerSignupAuthDto } from './dto/caretaker-signup-auth.dto';
 import * as dotenv from 'dotenv';
 import * as cookieParser from 'cookie-parser';
@@ -32,7 +32,7 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   async clientSignUp(@Body() signUpAuthDto: SignupAuthDto) {
     const user = await this.authService.clientSignUp(signUpAuthDto);
-    return new AuthResponseDto(user);
+    return new SignupResponseDto(user);
   }
 
   @Post('login')
@@ -90,7 +90,7 @@ export class AuthController {
       });
 
       console.log('res.cookie:', res.cookie);
-      
+
 
       console.log(
         'Cookie set, redirecting to:',
@@ -107,10 +107,10 @@ export class AuthController {
       throw error;
     }
   };
-  
+
   @Get('me')
   async getAuthUser(@Req() req: Request) {
-    
+
     cookieParser()(req, req.res, () => { });
 
     const authCookie = req.cookies['auth'];

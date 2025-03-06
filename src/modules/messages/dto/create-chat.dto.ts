@@ -39,7 +39,7 @@ export class CreateChatDto {
     })
     @IsUUID()
     @IsOptional()
-    clientChatRoom?: string;
+    chatRoom?: string;
 
     @ApiProperty({ description: 'Type of the message', example: 'CHAT' })
     @IsEnum(MessageType)

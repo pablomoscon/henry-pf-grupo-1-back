@@ -3,6 +3,7 @@ import { Role } from '../../enums/roles.enum';
 import { Status } from '../../enums/status.enum';
 import { CatCompatibility } from 'src/enums/cat-compatibility.enum';
 import { CatVaccinations } from 'src/enums/cat-vaccinations.enum';
+import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 
 export const usersMock: User[] = [
   {
@@ -83,7 +84,7 @@ export const usersMock: User[] = [
       },
     ],
     caretakerProfile: null,
-    reservations: [],
+    reservations: [{ id: '123e4567-e89b-12d3-a456-426614174001' } as Reservation],
     sentMessages: [],
     receivedMessages: [],
     payments: null,
@@ -124,7 +125,7 @@ export const usersMock: User[] = [
       },
     ],
     caretakerProfile: null,
-    reservations: [],
+    reservations: [{ id: '123e4567-e89b-12d3-a456-426614174002' } as Reservation, { id: '123e4567-e89b-12d3-a456-426614174003' } as Reservation],
     sentMessages: [],
     receivedMessages: [],
     payments: null,
@@ -202,7 +203,7 @@ export const usersMock: User[] = [
     },
     cats: [],
     caretakerProfile: null,
-    reservations: [],
+    reservations: [{ id: '123e4567-e89b-12d3-a456-426614174004' } as Reservation, { id: '123e4567-e89b-12d3-a456-426614174005' } as Reservation],
     sentMessages: [],
     receivedMessages: [],
     payments: null,

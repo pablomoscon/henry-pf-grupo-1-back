@@ -188,33 +188,20 @@ export class MessagesService {
     return messages;
   };
 
-
-  async findChatMessagesByReservationUser(userId: string, userClientId: string): Promise<Message[]> {
-
-    const reservations = await this.reservationsService.findUserReservationsById(userClientId);
-
-    if (!reservations || reservations.length === 0) {
-      console.warn(`No reservations found for client with ID: ${userClientId}`);
-      return [];
-    }
-
-    const reservationIds = reservations.map(reservation => reservation.id);
-
+  async findChatMessagesByReservationId(reservationId: string): Promise<Message[]> {
     const messages = await this.messageRepository
       .createQueryBuilder('message')
       .leftJoinAndSelect('message.sender', 'sender')
       .leftJoinAndSelect('message.receivers', 'receivers')
       .leftJoinAndSelect('message.reservation', 'reservation')
-      .where('message.reservation.id IN (:...reservationIds)', { reservationIds, deleted_at: IsNull() })
-      .andWhere(
-        '(message.sender.id = :userId OR receivers.id = :userId)',
-        { userId }
-      )
+      .where('reservation.id = :reservationId', { reservationId })
+      .andWhere('message.deleted_at IS NULL')
       .andWhere('message.type = :messageType', { messageType: MessageType.CHAT })
-      .getMany();
-
+      .orderBy('message.timestamp', 'ASC')
+      .getMany()
+    
     if (messages.length === 0) {
-      console.warn(`No messages found for user with ID: ${userId}.`);
+      console.warn(`No messages found for reservation ID: ${reservationId}`);
     }
 
     return messages;

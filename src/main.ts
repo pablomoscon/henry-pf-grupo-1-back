@@ -18,7 +18,6 @@ async function bootstrap() {
     credentials: true,
   };
 
-  console.log('Setting up CORS with options:', corsOptions);
   app.enableCors(corsOptions);
 
   app.use(cookieParser());

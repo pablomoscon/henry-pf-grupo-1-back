@@ -21,6 +21,8 @@ import { MailService } from '../mail/mail.service';
 import { CaretakerSignupAuthDto } from './dto/caretaker-signup-auth.dto';
 import { CaretakersService } from '../caretakers/caretakers.service';
 import { Caretaker } from '../caretakers/entities/caretaker.entity';
+import { Sign } from 'crypto';
+import { SigninResponseDto } from './response-singin.dto';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +34,7 @@ export class AuthService {
     private readonly mailService: MailService,
   ) { }
 
-  async signUp(signUpUser: SignupAuthDto) {
+  async signUp(signUpUser: SignupAuthDto): Promise<User> {
     if (signUpUser.password !== signUpUser.confirmPassword) {
       throw new HttpException('Password do not match', 400);
     }
@@ -72,7 +74,7 @@ export class AuthService {
     return newUser;
   }
 
-  async signIn(signInAuthDto: SignInAuthDto) {
+  async signIn(signInAuthDto: SignInAuthDto): Promise<SigninResponseDto> {
     const { email, password } = signInAuthDto;
 
     const credential = await this.usersService.findCredentialByEmail(email);
@@ -106,7 +108,7 @@ export class AuthService {
         customerId: user.customerId,
       },
     };
-  }
+  };
 
   private async createToken(user: User) {
     const payload = {
