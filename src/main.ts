@@ -14,7 +14,7 @@ async function bootstrap() {
     origin: [
       'https://henry-pf-grupo-1-front-git-main-courregesdos-projects.vercel.app',
       'http://localhost:3001',
-      'https://henry-pf-grupo-1-front-seven.vercel.app/'
+      'https://henry-pf-grupo-1-front-seven.vercel.app/',
     ],
     credentials: true,
   };
@@ -29,7 +29,7 @@ async function bootstrap() {
 
   const seedManager = app.get(SeedManager);
   await seedManager.runSeeders();
-
+  
   await app.listen(process.env.PORT ?? 3000);
 }
 

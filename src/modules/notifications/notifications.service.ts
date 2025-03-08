@@ -64,7 +64,7 @@ export class NotificationsService {
   };
  
   async notifyUnreadChat(userId: string, chatId: string): Promise<Notification | null> {
-    const message = `You have an unread message in chat ${chatId}`;
+    const message = `You have an unread message in chat`;
 
     const existingNotification = await this.notificationsRepository.findOne({
       where: { user: { id: userId }, message, isRead: false },
@@ -79,6 +79,7 @@ export class NotificationsService {
       message,
       user: { id: userId },
       type: NotificationType.CHAT,
+      chatId: chatId,
     });
 
     const savedNotification = await this.notificationsRepository.save(notification);
@@ -90,7 +91,7 @@ export class NotificationsService {
   
   async markChatNotificationsAsRead(userId: string, chatId: string) {
     await this.notificationsRepository.update(
-      { user: { id: userId }, message: `You have an unread message in chat ${chatId}`, isRead: false },
+      { user: { id: userId }, message: `You have an unread message in chat`, isRead: false },
       { isRead: true }
     );
   };
