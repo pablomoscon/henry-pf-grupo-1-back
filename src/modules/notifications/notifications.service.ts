@@ -4,12 +4,15 @@ import { IsNull, Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
+import { NotificationsGateway } from './notifications.gateway';
+import { NotificationType } from 'src/enums/notification-type.enum';
 
 @Injectable()
 export class NotificationsService {
   constructor(
     @InjectRepository(Notification)
     private readonly notificationsRepository: Repository<Notification>,
+    private readonly notificationsGateway: NotificationsGateway,
   ) { }
 
   async create(createNotificationDto: CreateNotificationDto) {
@@ -22,6 +25,7 @@ export class NotificationsService {
   async findAll() {
     return await this.notificationsRepository.find({
       where: { deleted_at: IsNull() },
+      relations: ['user'],
     });
   };
 
@@ -58,4 +62,37 @@ export class NotificationsService {
       lastPage: Math.ceil(total / limit),
     };
   };
+ 
+  async notifyUnreadChat(userId: string, chatId: string): Promise<Notification | null> {
+    const message = `You have an unread message in chat ${chatId}`;
+
+    const existingNotification = await this.notificationsRepository.findOne({
+      where: { user: { id: userId }, message, isRead: false },
+    });
+
+    if (existingNotification) {
+      console.log(`User ${userId} already has an unread notification for chat ${chatId}`);
+      return null;
+    }
+
+    const notification = this.notificationsRepository.create({
+      message,
+      user: { id: userId },
+      type: NotificationType.CHAT,
+    });
+
+    const savedNotification = await this.notificationsRepository.save(notification);
+
+    this.notificationsGateway.sendNotificationToUser(userId, savedNotification);
+
+    return savedNotification;
+  };
+  
+  async markChatNotificationsAsRead(userId: string, chatId: string) {
+    await this.notificationsRepository.update(
+      { user: { id: userId }, message: `You have an unread message in chat ${chatId}`, isRead: false },
+      { isRead: true }
+    );
+  };
+  
 }

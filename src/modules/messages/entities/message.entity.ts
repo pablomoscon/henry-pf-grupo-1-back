@@ -66,6 +66,9 @@ export class Message {
   @IsDate()
   timestamp: Date;
 
+  @Column({ default: false })
+  isRead: boolean;
+
   @ManyToOne(() => User, (user) => user.sentMessages)
   @ApiProperty({
     description: 'Sender of the message'
