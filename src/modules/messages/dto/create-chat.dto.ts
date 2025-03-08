@@ -34,7 +34,7 @@ export class CreateChatDto {
     timestamp?: Date;
 
     @ApiProperty({
-        description: 'ID of the user client associated with the reservation (optional)',
+        description: 'ID of the chat room',
         example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
     })
     @IsUUID()
