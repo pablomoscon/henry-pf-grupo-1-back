@@ -54,4 +54,13 @@ export class Notification {
   })
   @IsOptional()
   deleted_at?: Date;
+  
+  @Column({ type: 'varchar', nullable: true })
+  @ApiProperty({
+    description: 'Optional chat ID associated with the notification',
+    example: 'chat123',
+  })
+  @IsOptional()
+  chatId?: string;  // ChatId opcional
+
 }

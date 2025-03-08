@@ -29,7 +29,7 @@ async function bootstrap() {
 
   const seedManager = app.get(SeedManager);
   await seedManager.runSeeders();
-
+  
   await app.listen(process.env.PORT ?? 3000);
 }
 
