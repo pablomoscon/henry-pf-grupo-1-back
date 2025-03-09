@@ -43,11 +43,9 @@ export class UsersService {
     return credential;
   };
 
-  async findAll(pageNumber: number, limitNumber: number) {
+  async findAll() {
     return await this.userRepository.find({
       where: { deleted_at: IsNull() },
-      skip: (pageNumber - 1) * limitNumber,
-      take: limitNumber,
       relations: ['reservations', 'cats'],
     });
   };

@@ -32,12 +32,8 @@ export class UsersController {
   @UseGuards(AuthGuard, RolesGuard)
   @HttpCode(HttpStatus.OK)
   async findAll(
-    @Query('page') page: string = '1',
-    @Query('limit') limit: string = '10',
   ) {
-    const pageNumber = Number(page);
-    const limitNumber = Number(limit);
-    return await this.usersService.findAll(pageNumber, limitNumber);
+    return await this.usersService.findAll();
   };
 
   @Get('caretakers')

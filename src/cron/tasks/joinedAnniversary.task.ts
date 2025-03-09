@@ -1,36 +1,36 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from 'src/modules/users/entities/user.entity';
-import { Notification } from 'src/modules/notifications/entities/notification.entity';
+import { NotificationsService } from 'src/modules/notifications/notifications.service';
 import { NotificationType } from 'src/enums/notification-type.enum';
+import { User } from 'src/modules/users/entities/user.entity';
+import { UsersService } from 'src/modules/users/users.service';
 
 @Injectable()
 export class JoinedAnniversaryTask {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-    @InjectRepository(Notification)
-    private readonly notificationRepository: Repository<Notification>,
-  ) {}
+    private readonly notificationsService: NotificationsService,
+    private readonly usersService: UsersService,
+
+  ) { }
 
   async execute() {
-    const users = await this.userRepository.find();
+    const users = await this.usersService.findAll();  // Obtener todos los usuarios (puedes usar el repositorio directamente si necesitas)
 
     for (const user of users) {
       const createdAt = new Date(user.createdAt);
       const today = new Date();
+
       if (
         createdAt.getDate() === today.getDate() &&
         createdAt.getMonth() === today.getMonth() &&
         today.getFullYear() > createdAt.getFullYear()
       ) {
-        const notification = this.notificationRepository.create({
+        // Creamos la notificación con el servicio
+        const notification = await this.notificationsService.create({
           message: `Today we celebrate one year together, ${user.name}!`,
           type: NotificationType.ANNIVERSARY,
-          user: user,
+          userId: user.id,
         });
-        await this.notificationRepository.save(notification);
+
         console.log('Anniversary notification sent');
       }
     }
