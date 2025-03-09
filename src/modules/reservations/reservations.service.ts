@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, HttpException, HttpStatus, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { Between, IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Reservation } from 'src/modules/reservations/entities/reservation.entity';
 import { CreateReservationDto } from 'src/modules/reservations/dto/create-reservation.dto';
 import { UsersService } from '../users/users.service';
@@ -61,7 +61,7 @@ export class ReservationsService {
     return reservation;
   };
 
-async isRoomAvailable(roomId: string, checkInDate: Date, checkOutDate: Date): Promise<boolean> {
+  async isRoomAvailable(roomId: string, checkInDate: Date, checkOutDate: Date): Promise<boolean> {
     const conflictingReservations = await this.reservationRepository.find({
       where: {
         room: { id: roomId },
@@ -170,14 +170,14 @@ async isRoomAvailable(roomId: string, checkInDate: Date, checkOutDate: Date): Pr
     }
 
     console.log('userId,' + userId);
-    
+
     const caretaker = await this.caretakersService.findOneByUserId(userId);
     if (!caretaker) {
       throw new NotFoundException('Caretaker not found for the given userId');
     }
 
     console.log('caretaker:', caretaker.id);
-    
+
 
     const isCaretakerAlreadyAdded = reservation.caretakers.some(c => c.id === caretaker.id);
 
@@ -223,7 +223,7 @@ async isRoomAvailable(roomId: string, checkInDate: Date, checkOutDate: Date): Pr
     return reservations;
   };
 
-  async 
+  async
 
   async findReservationsByRoomAndDate(roomId: string, checkInDate: Date, checkOutDate: Date): Promise<Reservation[]> {
     const reservations = await this.reservationRepository.find({
@@ -256,4 +256,32 @@ async isRoomAvailable(roomId: string, checkInDate: Date, checkOutDate: Date): Pr
 
     return this.reservationRepository.save(reservation);
   };
+
+  async getReservationsEndingNextDay() {
+    const now = new Date();
+    const threshold = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+    const reservations = await this.reservationRepository.find({
+      where: {
+        checkOutDate: Between(now, threshold),
+      },
+      relations: ['room', 'user'],
+    });
+
+    return reservations;
+  };
+
+  async getReservationsStartingNextDay() {
+
+    const now = new Date();
+    const threshold = new Date(now.getTime() + 24 * 60 * 60 * 1000); 
+
+    const reservations = await this.reservationRepository.find({
+      where: { checkInDate: Between(now, threshold) },
+      relations: ['room', 'user'], 
+    });
+
+    return reservations;
+  };
+
 }

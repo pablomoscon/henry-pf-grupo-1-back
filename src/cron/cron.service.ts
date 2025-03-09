@@ -3,7 +3,6 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { SendStartingReminderTask } from './tasks/sendStartingReminder.task';
 import { SendEndingReminderTask } from './tasks/sendEndingReminder.task';
 import { JoinedAnniversaryTask } from './tasks/joinedAnniversary.task';
-import { GreetUserTask } from './tasks/greetUser.task';
 import { RoomsService } from 'src/modules/rooms/rooms.service';
 import { ReservationsService } from 'src/modules/reservations/reservations.service';
 import * as moment from 'moment-timezone';
@@ -17,13 +16,12 @@ export class CronService {
     private readonly joinedAnniversaryTask: JoinedAnniversaryTask,
     private readonly roomsService: RoomsService,
     private readonly reservationsService: ReservationsService,
-    private readonly greetUserTask: GreetUserTask,
     private readonly mailService: MailService,
   ) {
     console.log('CronService inicializado');
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  @Cron(CronExpression.EVERY_DAY_AT_8AM)
   async handleDailyReminders() {
     await this.sendStartingReminderTask.execute();
     await this.sendEndingReminderTask.execute();
@@ -46,21 +44,6 @@ export class CronService {
     await this.reservationsService.completeExpiredReservations();
   };
 
-  ////////// Ejecución cada X minutos para probar en la demo/////////
-
-  @Cron('*/5 * * * *') // Ejecuta cada 5 minutos
-  async handleDemoTask() {
-    const now = moment().tz('America/Argentina/Buenos_Aires');
-
-    if (
-      now.format('YYYY-MM-DD HH:mm') >= '2025-02-07 21:30' && //aca va la fecha y hora de la demo arg
-      now.format('YYYY-MM-DD HH:mm') <= '2025-02-07 23:59' // de esta manera no importa donde corra es hora arg
-    ) {
-      console.log('Ejecutando en horario correcto (Argentina)');
-      await this.sendStartingReminderTask.execute();
-      await this.sendEndingReminderTask.execute();
-    }
-  };
 
   @Cron(CronExpression.EVERY_DAY_AT_9AM) 
   async handleCompletedReservationsReview() {
@@ -75,21 +58,6 @@ export class CronService {
   };
 
   ////////// Ejecución cada X minutos para probar en la demo/////////
-
-  @Cron('*/3 * * * *') // Ejecuta cada 3 minutos
-  async handlePreDemoTask() {
-    const now = moment().tz('America/Argentina/Buenos_Aires');
-
-    if (
-      now.format('YYYY-MM-DD HH:mm') >= '2025-02-07 18:30' && //aca va la fecha y hora de la demo arg
-      now.format('YYYY-MM-DD HH:mm') <= '2025-02-07 19:30' // de esta manera no importa donde corra es hora arg
-    ) {
-      console.log('Ejecutando en horario correcto (Argentina)');
-      await this.sendStartingReminderTask.execute();
-      await this.sendEndingReminderTask.execute();
-    }
-  };
-
   ////////// Ejecución cada 30 seg para probar nuevas notificaciones/////////
 
   // @Cron(CronExpression.EVERY_10_SECONDS)

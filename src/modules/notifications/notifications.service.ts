@@ -16,10 +16,13 @@ export class NotificationsService {
   ) { }
 
   async create(createNotificationDto: CreateNotificationDto) {
-    const notification = this.notificationsRepository.create(
-      createNotificationDto,
-    );
-    return await this.notificationsRepository.save(notification);
+    const notification = this.notificationsRepository.create(createNotificationDto);
+    const savedNotification = await this.notificationsRepository.save(notification);
+
+    // Sends the notification through WebSocket to the user
+    this.notificationsGateway.sendNotificationToUser(savedNotification.user.id, savedNotification);
+
+    return savedNotification;
   };
 
   async findAll() {
@@ -39,13 +42,23 @@ export class NotificationsService {
 
   async update(id: string, updateNotificationDto: UpdateNotificationDto) {
     await this.notificationsRepository.update(id, updateNotificationDto);
-    return this.findOne(id);
+    const updatedNotification = await this.findOne(id);
+
+    // Sends the updated notification through WebSocket to the user
+    this.notificationsGateway.sendNotificationToUser(updatedNotification.user.id, updatedNotification);
+
+    return updatedNotification;
   };
 
   async remove(id: string) {
     const notification = await this.findOne(id);
     notification.deleted_at = new Date();
-    return await this.notificationsRepository.save(notification);
+    const removedNotification = await this.notificationsRepository.save(notification);
+
+    // Sends the removed notification through WebSocket (if necessary)
+    this.notificationsGateway.sendNotificationToUser(removedNotification.user.id, removedNotification);
+
+    return removedNotification;
   };
 
   async getNotificationsByUser(userId: string, page: number, limit: number) {
@@ -62,19 +75,21 @@ export class NotificationsService {
       lastPage: Math.ceil(total / limit),
     };
   };
- 
-  async notifyUnreadChat(userId: string, chatId: string): Promise<Notification | null> {
-    const message = `You have an unread message in chat`;
 
+  async notifyUnreadChat(userId: string, chatId: string): Promise<Notification | null> {
+    const message = `You have unread messages in chat`;
+
+    // Checks if there is already an unread notification with the same message
     const existingNotification = await this.notificationsRepository.findOne({
       where: { user: { id: userId }, message, isRead: false },
     });
 
     if (existingNotification) {
-      console.log(`User ${userId} already has an unread notification for chat ${chatId}`);
-      return null;
+      console.log(`User ${userId} already has an unread notificationfor chat ${chatId}`);
+      return null;  // If it already exists, no need to create a new one
     }
 
+    // Creates a new notification if none exists
     const notification = this.notificationsRepository.create({
       message,
       user: { id: userId },
@@ -84,16 +99,16 @@ export class NotificationsService {
 
     const savedNotification = await this.notificationsRepository.save(notification);
 
+    // Sends the new notification through WebSocket
     this.notificationsGateway.sendNotificationToUser(userId, savedNotification);
 
     return savedNotification;
   };
-  
+
   async markChatNotificationsAsRead(userId: string, chatId: string) {
     await this.notificationsRepository.update(
-      { user: { id: userId }, message: `You have an unread message in chat`, isRead: false },
+      { user: { id: userId }, message: `You have unread messages in chat`, isRead: false, chatId: chatId },
       { isRead: true }
     );
   };
-  
 }
