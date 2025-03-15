@@ -8,6 +8,7 @@ import { UsersModule } from '../users/users.module';
 import { CredentialsModule } from '../credentials/credentials.module';
 import { MailsModule } from '../mail/mail.module';
 import { CaretakersModule } from '../caretakers/caretakers.module';
+import { GoogleStrategy } from './google.strategy';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { CaretakersModule } from '../caretakers/caretakers.module';
     forwardRef(() => CredentialsModule),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, GoogleStrategy],
   exports: [AuthService]
 })
 export class AuthModule { }

@@ -9,6 +9,12 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ReservationsService } from '../reservations/reservations.service';
 import { CreateChatDto } from './dto/create-chat.dto';
+import { NotificationsService } from '../notifications/notifications.service';
+import { PostGateway } from './post-messages.gateway';
+import { NotificationType } from 'src/enums/notification-type.enum';
+import { CreateNotificationDto } from '../notifications/dto/create-notification.dto';
+import { User } from '../users/entities/user.entity';
+
 
 @Injectable()
 export class MessagesService {
@@ -17,57 +23,44 @@ export class MessagesService {
     private messageRepository: Repository<Message>,
     private readonly fileUploadService: FileUploadService,
     private readonly usersService: UsersService,
+    private readonly notificationsService: NotificationsService,
     private readonly reservationsService: ReservationsService,
+    private postGateway: PostGateway, 
   ) { }
 
-  // Create a new post message with an optional file
-  async createPosts(
-    createPostDto: CreatePostDto,
-    file?: Express.Multer.File,
-  ): Promise<Message> {
+  async createPosts(createPostDto: CreatePostDto, file?: Express.Multer.File): Promise<Message> {
     let mediaUrl: string | undefined;
 
+    // Handle file attachment
     if (file) {
-      const fileDetails = {
+      const supportedMimeTypes = ['image/jpeg', 'image/png', 'video/mp4', 'video/webm'];
+      if (!supportedMimeTypes.includes(file.mimetype)) {
+        throw new BadRequestException('Unsupported file type. Only images and videos are allowed.');
+      }
+      mediaUrl = await this.fileUploadService.uploadFile({
         fieldName: file.fieldname,
         buffer: file.buffer,
         originalName: file.originalname,
         mimeType: file.mimetype,
         size: file.size,
-      };
-
-      const supportedMimeTypes = ['image/jpeg', 'image/png', 'video/mp4', 'video/webm'];
-      if (!supportedMimeTypes.includes(fileDetails.mimeType)) {
-        throw new BadRequestException('Unsupported file type. Only images and videos are allowed.');
-      }
-
-      // Upload file only if it's supported
-      const uploadedFile = await this.fileUploadService.uploadFile(fileDetails);
-      mediaUrl = uploadedFile;
+      });
     }
 
+    // Find sender and receivers
     const sender = await this.usersService.findOne(createPostDto.sender);
-    const receiverIds = Array.isArray(createPostDto.receiver)
-      ? createPostDto.receiver
-      : [createPostDto.receiver];
-
-    // Fetch receivers asynchronously
-    const receivers = await Promise.all(
-      receiverIds.map((receiverId) => this.usersService.findOne(receiverId)),
-    );
+    const receiverIds = Array.isArray(createPostDto.receiver) ? createPostDto.receiver : [createPostDto.receiver];
+    const receivers = await Promise.all(receiverIds.map((id) => this.usersService.findOne(id)));
 
     if (receivers.some((receiver) => !receiver)) {
-      throw new Error('One or more receivers not found');
+      throw new NotFoundException('One or more receivers not found');
     }
 
-    let reservation = null;
-    if (createPostDto.reservationId) {
-      reservation = await this.reservationsService.findOne(createPostDto.reservationId);
-      if (!reservation) {
-        throw new Error('Reservation not found');
-      }
-    }
+    // Check if there is an associated reservation
+    const reservation = createPostDto.reservationId
+      ? await this.reservationsService.findOne(createPostDto.reservationId)
+      : null;
 
+    // Create and save the post with isRead set to false initially
     const newPost = this.messageRepository.create({
       ...createPostDto,
       reservation,
@@ -75,10 +68,47 @@ export class MessagesService {
       receivers,
       media_url: mediaUrl,
       type: MessageType.POST,
+      isRead: false, // The post starts as unread
     });
 
-    // Use a single save method to reduce database queries
-    return await this.messageRepository.save(newPost);
+    await this.messageRepository.save(newPost);
+
+    // Handle receivers' connection status (mark as read or send notifications)
+    await this.handleReceiversStatus(receivers, sender, newPost);
+
+    this.postGateway.emitNewPost(newPost);
+
+    return newPost;  // Still return the new post at the end for the caller to use
+  };
+
+
+  // Function to handle connected users and send notifications for disconnected ones
+  async handleReceiversStatus(
+    receivers: User[],
+    sender: User,
+    newPost: Message
+  ): Promise<void> {
+    // Get the list of connected users
+    const connectedUserIds = this.postGateway.getConnectedUsers();
+
+    // Check if the receivers are connected
+    for (const receiver of receivers) {
+      if (connectedUserIds.includes(receiver.id)) {
+        // If receiver is connected, mark the post as read
+        newPost.isRead = true;  // Mark as read
+        await this.messageRepository.save(newPost);  // Update the post with isRead = true
+      } else {
+        // If receiver is not connected, send a notification
+        const createNotificationDto: CreateNotificationDto = {
+          message: `${sender.name} made a post. Go to your feed to see it.`,
+          isRead: false,
+          type: NotificationType.POST,
+          userId: receiver.id,
+        };
+
+        await this.notificationsService.create(createNotificationDto);
+      }
+    }
   }
 
   // Create a new chat message
@@ -87,7 +117,7 @@ export class MessagesService {
       ...createChatDto,
     });
     return this.messageRepository.save(newChatMessage);
-  }
+  };
 
   // Find all received post messages for a user
   async findReceivedMessagesByUser(userId: string): Promise<Message[]> {
@@ -100,7 +130,7 @@ export class MessagesService {
       relations: ['sender', 'receivers', 'reservation'],
       order: { timestamp: 'ASC' },
     });
-  }
+  };
 
   // Find all messages
   async findAll(): Promise<Message[]> {
@@ -108,7 +138,7 @@ export class MessagesService {
       where: { deleted_at: IsNull() },
       relations: ['sender', 'receivers'],
     });
-  }
+  };
 
   // Find a single message by its ID
   async findOne(id: string): Promise<Message> {
@@ -116,7 +146,7 @@ export class MessagesService {
       where: { id },
       relations: ['sender', 'receivers'],
     });
-  }
+  };
 
   // Update an existing post message, optionally with a new file
   async updatePost(id: string, updatePostDto: UpdatePostDto, file?: Express.Multer.File) {
@@ -167,7 +197,7 @@ export class MessagesService {
 
     // Save the updated message
     return await this.messageRepository.save(existingMessage);
-  }
+  };
 
   // Find messages related to a reservation for a specific user
   async findMessagesByReservationUser(userId: string, userClientId: string): Promise<Message[]> {
@@ -196,7 +226,7 @@ export class MessagesService {
     }
 
     return messages;
-  }
+  };
 
   // Find chat messages by reservation ID
   async findChatMessagesByReservationId(reservationId: string): Promise<Message[]> {
@@ -216,7 +246,7 @@ export class MessagesService {
     }
 
     return messages;
-  }
+  };
 
   // Check if a message is unread by a specific receiver
   async findUnreadMessageByReceiver(messageId: string, receiverId: string): Promise<boolean> {
@@ -229,7 +259,7 @@ export class MessagesService {
     });
 
     return message?.receivers.some((receiver) => receiver.id === receiverId) ?? false;
-  }
+  };
 
   // Update the read status of a message for a specific user
   async updateMessageStatus(messageId: string, userId: string, isRead: boolean): Promise<void> {
@@ -252,7 +282,7 @@ export class MessagesService {
     await this.messageRepository.update({ id: messageId }, { isRead });
 
     console.log(`Message ${messageId} marked as ${isRead ? 'read' : 'unread'} by user ${userId}`);
-  }
+  };
 
   // Soft delete a message by setting the deleted_at field
   async remove(id: string): Promise<Message> {
@@ -264,5 +294,5 @@ export class MessagesService {
 
     message.deleted_at = new Date();
     return this.messageRepository.save(message);
-  }
+  };
 }

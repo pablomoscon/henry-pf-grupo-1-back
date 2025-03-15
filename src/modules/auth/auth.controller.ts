@@ -8,18 +8,20 @@ import {
   Res,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInAuthDto } from './dto/signin-auth.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { SignupAuthDto } from './dto/signup-auth.dto';
 import { Response } from 'express';
-import { oauth2Client } from 'src/config/google-auth.config';
 import { SignupResponseDto } from './dto/response-signup.dto';
 import { CaretakerSignupAuthDto } from './dto/caretaker-signup-auth.dto';
 import * as dotenv from 'dotenv';
 import * as cookieParser from 'cookie-parser';
 import { Request } from 'express';
+import { User } from '../users/entities/user.entity';
+import { GoogleAuthGuard } from 'src/guards/googleAuth/google-auth.guard';
 
 dotenv.config();
 
@@ -57,56 +59,30 @@ export class AuthController {
   }
 
   @Get('google')
+  @UseGuards(GoogleAuthGuard)  
   async redirectToGoogle(@Res() res: Response) {
-    const authUrl = await oauth2Client.generateAuthUrl({
-      access_type: 'offline',
-      scope: [
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/user.phonenumbers.read',
-        'https://www.googleapis.com/auth/user.addresses.read',
-      ],
-    });
-
-    return res.redirect(authUrl);
+  
   }
 
   @Get('google/callback')
-  async handleGoogleCallback(
-    @Query('code') code: string,
-    @Res() res: Response,
-  ) {
-    console.log('Received Google callback with code:', code);
-
-    try {
-      const { token, user } = await this.authService.googleSignUp(code);
-      console.log('Generated token and user:', { token, user });
-
-      res.cookie('auth', JSON.stringify({ token, user }), {
-        httpOnly: true,
-        secure: true,
-        maxAge: 60 * 60 * 1000,
-        sameSite: 'none'
-      });
-
-      console.log('res.cookie:', res.cookie);
-
-
-      console.log(
-        'Cookie set, redirecting to:',
-        `${process.env.FRONTEND_URL}/loading`,
-      );
-
-      res.on('finish', () => {
-        console.log('Response headers:', res.getHeaders());
-      });
-
-      res.redirect(`${process.env.FRONTEND_URL}/loading`);
-    } catch (error) {
-      console.error('Error in Google callback:', error);
-      throw error;
+  @UseGuards(GoogleAuthGuard)
+  async handleGoogleCallback(@Req() req: Request, @Res() res: Response) {
+    if (!req.user) {
+      return res.status(400).json({ message: 'User not found in request' });
     }
-  };
+
+    const { user, token } = req.user as { user: User, token: string };
+
+    res.cookie('auth', JSON.stringify({ token, user }), {
+      httpOnly: true,
+      secure: true,
+      maxAge: 60 * 60 * 1000, // 1 hora
+      sameSite: 'lax',
+    });
+
+    res.redirect(`${process.env.FRONTEND_URL}/loading`);
+  }
+
 
   @Get('me')
   async getAuthUser(@Req() req: Request) {
