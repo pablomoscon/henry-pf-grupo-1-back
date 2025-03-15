@@ -1,5 +1,6 @@
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { Notification } from './entities/notification.entity';
 
 @WebSocketGateway({ cors: { origin: '*' }, namespace: 'messages/notifications' })
 export class NotificationsGateway {
@@ -14,7 +15,7 @@ export class NotificationsGateway {
     }
 
     // Sends a notification to the specified user
-    sendNotificationToUser(userId: string, notification: any) {
+    sendNotificationToUser(userId: string, notification: Notification) {
         console.log(`Sending notification to ${userId}`);
         this.server.to(userId).emit('new_notification', notification);  // Emits only to that user
     }
