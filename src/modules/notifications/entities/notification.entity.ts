@@ -61,6 +61,6 @@ export class Notification {
     example: 'chat123',
   })
   @IsOptional()
-  chatId?: string;  // ChatId opcional
+  chatId?: string;  
 
 }

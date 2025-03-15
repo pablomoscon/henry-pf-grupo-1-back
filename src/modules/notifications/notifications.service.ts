@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { Notification } from './entities/notification.entity';
@@ -6,6 +6,8 @@ import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
 import { NotificationsGateway } from './notifications.gateway';
 import { NotificationType } from 'src/enums/notification-type.enum';
+import { User } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class NotificationsService {
@@ -13,17 +15,27 @@ export class NotificationsService {
     @InjectRepository(Notification)
     private readonly notificationsRepository: Repository<Notification>,
     private readonly notificationsGateway: NotificationsGateway,
+    private readonly usersService: UsersService
   ) { }
 
   async create(createNotificationDto: CreateNotificationDto) {
-    const notification = this.notificationsRepository.create(createNotificationDto);
+    const { userId, ...notificationData } = createNotificationDto;
+
+    const user = await this.usersService.findOne(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    const notification = this.notificationsRepository.create({
+      ...notificationData,
+      user,
+    });
+
     const savedNotification = await this.notificationsRepository.save(notification);
 
-    // Sends the notification through WebSocket to the user
     this.notificationsGateway.sendNotificationToUser(savedNotification.user.id, savedNotification);
 
     return savedNotification;
-  };
+  }
 
   async findAll() {
     return await this.notificationsRepository.find({
@@ -35,20 +47,32 @@ export class NotificationsService {
   async findOne(id: string) {
     const notification = await this.notificationsRepository.findOne({
       where: { id, deleted_at: IsNull() },
+      relations: ['user'],
     });
     if (!notification) throw new NotFoundException('Notification not found');
     return notification;
   };
-
+  
   async update(id: string, updateNotificationDto: UpdateNotificationDto) {
-    await this.notificationsRepository.update(id, updateNotificationDto);
-    const updatedNotification = await this.findOne(id);
+    try {
+      const notification = await this.findOne(id);
 
-    // Sends the updated notification through WebSocket to the user
-    this.notificationsGateway.sendNotificationToUser(updatedNotification.user.id, updatedNotification);
+      if (!notification) {
+        throw new NotFoundException(`Notification with ID ${id} not found`);
+      }
 
-    return updatedNotification;
-  };
+      await this.notificationsRepository.update(id, updateNotificationDto);
+      const updatedNotification = await this.findOne(id);
+
+      // Enviar la notificación actualizada al usuario a través de WebSocket
+      this.notificationsGateway.sendNotificationToUser(updatedNotification.user.id, updatedNotification);
+
+      return updatedNotification;
+    } catch (error) {
+      console.error("Error updating notification:", error); // Registra el error completo para depuración
+      throw new InternalServerErrorException(`Failed to update notification: ${error.message}`);
+    }
+  }
 
   async remove(id: string) {
     const notification = await this.findOne(id);
@@ -76,8 +100,8 @@ export class NotificationsService {
     };
   };
 
-  async notifyUnreadChat(userId: string, chatId: string): Promise<Notification | null> {
-    const message = `You have unread messages in chat`;
+  async notifyUnreadChat(userId: string, chatId: string, sender: User): Promise<Notification | null> {
+    const message = `You’ve got a message in the chat from ${sender.name}.`
 
     // Checks if there is already an unread notification with the same message
     const existingNotification = await this.notificationsRepository.findOne({
@@ -105,10 +129,16 @@ export class NotificationsService {
     return savedNotification;
   };
 
-  async markChatNotificationsAsRead(userId: string, chatId: string) {
-    await this.notificationsRepository.update(
-      { user: { id: userId }, message: `You have unread messages in chat`, isRead: false, chatId: chatId },
-      { isRead: true }
-    );
+  async markNotificationAsRead(id: string) {
+    const notification = await this.notificationsRepository.findOne({
+      where: { id, deleted_at: IsNull() },
+    });
+
+    if (!notification) {
+      throw new NotFoundException('Notification not found');
+    }
+
+    notification.isRead = true;
+    return await this.notificationsRepository.save(notification);
   };
 }

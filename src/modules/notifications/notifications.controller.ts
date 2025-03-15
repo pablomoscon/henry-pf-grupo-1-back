@@ -6,19 +6,27 @@ import {
   Patch,
   Param,
   Delete,
-  Query
+  Query,
+  UseGuards,
+  HttpCode,
+  HttpStatus
 } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { UpdateNotificationDto } from './dto/update-notification.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { NotificationType } from 'src/enums/notification-type.enum';
+import { AuthGuard } from 'src/guards/auth/auth.guard';
 
 @Controller('notifications')
 @ApiTags('notifications')
 export class NotificationsController {
-  constructor(private readonly notificationsService: NotificationsService) {}
+  constructor(private readonly notificationsService: NotificationsService) { }
 
   @Post()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createNotificationDto: CreateNotificationDto) {
     return this.notificationsService.create(createNotificationDto);
   }

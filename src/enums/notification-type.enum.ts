@@ -1,6 +1,6 @@
 export enum NotificationType {
   REMINDER = 'reminder',
-  POST = 'new post',
+  POST = 'post',
   ANNIVERSARY = 'anniversary',
   CHAT = 'chat'
 }
