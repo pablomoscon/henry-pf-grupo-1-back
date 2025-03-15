@@ -76,13 +76,12 @@ export class AuthController {
     res.cookie('auth', JSON.stringify({ token, user }), {
       httpOnly: true,
       secure: true,
-      maxAge: 60 * 60 * 1000, // 1 hora
-      sameSite: 'lax',
+      maxAge: 60 * 60 * 1000,
+      sameSite: 'none',
     });
 
     res.redirect(`${process.env.FRONTEND_URL}/loading`);
-  }
-
+  };
 
   @Get('me')
   async getAuthUser(@Req() req: Request) {
@@ -92,15 +91,10 @@ export class AuthController {
     const authCookie = req.cookies['auth'];
 
     if (authCookie) {
-      try {
         const { token, user } = JSON.parse(authCookie);
         return { token, user };
-      } catch (error) {
-        console.error('Error parsing cookie:', error);
-        return { message: 'Error parsing cookie data' };
-      }
     } else {
       return { message: 'No auth cookie found' };
     }
-  }
+  };
 }
