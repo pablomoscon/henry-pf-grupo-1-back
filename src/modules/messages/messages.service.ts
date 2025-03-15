@@ -109,7 +109,7 @@ export class MessagesService {
         await this.notificationsService.create(createNotificationDto);
       }
     }
-  }
+  };
 
   // Create a new chat message
   async createChatMessage(createChatDto: CreateChatDto): Promise<Message> {

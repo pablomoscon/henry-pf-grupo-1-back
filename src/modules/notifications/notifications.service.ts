@@ -32,10 +32,13 @@ export class NotificationsService {
 
     const savedNotification = await this.notificationsRepository.save(notification);
 
+    if (savedNotification.type === NotificationType.POST) {
+
     this.notificationsGateway.sendNotificationToUser(savedNotification.user.id, savedNotification);
 
-    return savedNotification;
-  }
+      return savedNotification;
+      }
+  };
 
   async findAll() {
     return await this.notificationsRepository.find({
@@ -64,7 +67,6 @@ export class NotificationsService {
       await this.notificationsRepository.update(id, updateNotificationDto);
       const updatedNotification = await this.findOne(id);
 
-      // Enviar la notificación actualizada al usuario a través de WebSocket
       this.notificationsGateway.sendNotificationToUser(updatedNotification.user.id, updatedNotification);
 
       return updatedNotification;

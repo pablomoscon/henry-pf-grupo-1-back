@@ -27,37 +27,41 @@ export class MessagesGateway {
     handleConnection(socket: Socket) {
         console.log("Socket conectado:", socket.id);
     };
-    // Maneja el evento "joinRoom" donde se verifica si el usuario ya está en la sala
+    // Handles the "joinRoom" event, where a user joins a chat room.
+    // It checks if the user is already in the room before adding them.
     @SubscribeMessage('joinRoom')
     async handleJoinRoom(@ConnectedSocket() socket: Socket, @MessageBody() data: { chatRoomId: string, currentUser: User }) {
         const { chatRoomId, currentUser } = data;
 
+        // Verify that the required data is provided
         if (!chatRoomId || !currentUser?.id) {
             return this.sendError(socket, 'chatRoomId or currentUser not provided.');
         }
 
-        // Verificar si el socket ya está en la sala antes de unirse
+        // Check if the socket is already in the room before joining
         if (!socket.rooms.has(chatRoomId)) {
-            // Si no está en la sala, añadir al socket a la sala
+            // If not in the room, add the socket to the room
             socket.join(chatRoomId);
-            console.log(`User ${currentUser.id} joined room: ${chatRoomId}`);
         } else {
-            console.log(`User ${currentUser.id}  is already in room: ${chatRoomId}`);
+            console.log(`User ${currentUser.id} is already in room: ${chatRoomId}`);
         }
 
-        // Recuperar mensajes previos y emitirlos
+        // Update the status of messages to mark them as read by the user
         await this.updateMessagesStatus(chatRoomId, currentUser.id);
+
+        // Retrieve previous chat messages
         const messages = await this.messagesService.findChatMessagesByReservationId(chatRoomId);
+
+        // Add sender and receiver names to the messages
         const messagesWithUsernames = messages.map(message => ({
             ...message,
             senderName: message.sender.name,
             receiversNames: message.receivers.map(receiver => receiver.name)
         }));
 
-        // Emitir los mensajes iniciales al cliente
+        // Send the initial messages to the user joining the room
         socket.emit('initial_messages', { messages: messagesWithUsernames, chatRoomName: chatRoomId });
     };
-
 
     // Handles sending a chat message from a user
     @SubscribeMessage('send_message')
@@ -87,7 +91,7 @@ export class MessagesGateway {
 
             this.sendChatMessage(socket, createChatDto.chatRoom, newChatMessage, receiversIds);
             await this.updateMessageStatusForReceivers(createChatDto.chatRoom, receiversIds, newChatMessage);
-            await this.sendUnreadNotification(receiversIds, createChatDto.chatRoom, sender);
+            await this.sendUnreadChatNotification(receiversIds, createChatDto.chatRoom, sender);
         } catch (error) {
             console.error('Error sending message:', error);
             this.sendError(socket, 'An error occurred while sending your message.');
@@ -149,14 +153,15 @@ export class MessagesGateway {
     };
 
     // Sends a notification to users who haven't read the new message
-    private async sendUnreadNotification(receiversIds: string[], chatRoomId: string, sender: User) {
+    private async sendUnreadChatNotification(receiversIds: string[], chatRoomId: string, sender: User) {
         await Promise.all(receiversIds.map(async (receiverId) => {
             const isInRoom = this.chatRooms[chatRoomId]?.has(receiverId);
-            if (!isInRoom) {
+            if (!isInRoom && !receiversIds.includes(receiverId)) {
                 await this.notificationsService.notifyUnreadChat(receiverId, chatRoomId, sender);
             }
         }));
-    }
+    };
+
 
     // Handle disconnections: remove the user from the chat room
     handleDisconnect(socket: Socket) {
