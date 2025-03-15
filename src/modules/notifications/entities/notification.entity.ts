@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, UpdateDateColumn } from 'typeorm';
 import { User } from 'src/modules/users/entities/user.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { NotificationType } from 'src/enums/notification-type.enum';
@@ -58,9 +58,15 @@ export class Notification {
   @Column({ type: 'varchar', nullable: true })
   @ApiProperty({
     description: 'Optional chat ID associated with the notification',
-    example: 'chat123',
+    example: '123e4567-e89b-12d3-a456-426614174001',
   })
   @IsOptional()
-  chatId?: string;  
-
+  chatId?: string; 
+  
+  @UpdateDateColumn({ type: 'timestamp', nullable: true })
+  @ApiProperty({
+    description: 'The date when the notification was last updated',
+    example: '2025-03-15T12:00:00Z',
+  })
+  updatedAt?: Date;
 }

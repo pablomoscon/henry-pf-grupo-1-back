@@ -38,10 +38,16 @@ export class MessagesGateway {
             return this.sendError(socket, 'chatRoomId or currentUser not provided.');
         }
 
+        socket.data.currentUser = currentUser;
+
         // Check if the socket is already in the room before joining
         if (!socket.rooms.has(chatRoomId)) {
             // If not in the room, add the socket to the room
             socket.join(chatRoomId);
+            if (!this.chatRooms[chatRoomId]) {
+                this.chatRooms[chatRoomId] = new Set();
+            }
+            this.chatRooms[chatRoomId].add(currentUser.id);
         } else {
             console.log(`User ${currentUser.id} is already in room: ${chatRoomId}`);
         }
@@ -156,7 +162,7 @@ export class MessagesGateway {
     private async sendUnreadChatNotification(receiversIds: string[], chatRoomId: string, sender: User) {
         await Promise.all(receiversIds.map(async (receiverId) => {
             const isInRoom = this.chatRooms[chatRoomId]?.has(receiverId);
-            if (!isInRoom && !receiversIds.includes(receiverId)) {
+            if (!isInRoom) {
                 await this.notificationsService.notifyUnreadChat(receiverId, chatRoomId, sender);
             }
         }));
@@ -165,10 +171,15 @@ export class MessagesGateway {
 
     // Handle disconnections: remove the user from the chat room
     handleDisconnect(socket: Socket) {
+        const userId = socket.data.currentUser?.id;
+        if (!userId) return;
+
         for (const chatRoomId in this.chatRooms) {
-            if (this.chatRooms[chatRoomId].has(socket.data.currentUser?.id)) {
-                this.chatRooms[chatRoomId].delete(socket.data.currentUser?.id);
-                socket.leave(chatRoomId);
+            if (this.chatRooms[chatRoomId].has(userId)) {
+                this.chatRooms[chatRoomId].delete(userId);
+                if (this.chatRooms[chatRoomId].size === 0) {
+                    delete this.chatRooms[chatRoomId];
+                }
             }
         }
     };

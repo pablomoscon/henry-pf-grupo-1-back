@@ -25,6 +25,17 @@ export class NotificationsService {
     if (!user) {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
+
+    // Use the helper method to check or update existing notification before creating
+    const existingNotification = await this.updateUnreadNotification(userId, notificationData.message);
+
+    if (existingNotification) {
+      // Return updated notification if already exists
+      this.notificationsGateway.sendNotificationToUser(userId, existingNotification);
+      return existingNotification;
+    }
+
+    // If no existing notification, create a new one
     const notification = this.notificationsRepository.create({
       ...notificationData,
       user,
@@ -32,12 +43,9 @@ export class NotificationsService {
 
     const savedNotification = await this.notificationsRepository.save(notification);
 
-    if (savedNotification.type === NotificationType.POST) {
-
     this.notificationsGateway.sendNotificationToUser(savedNotification.user.id, savedNotification);
 
-      return savedNotification;
-      }
+    return savedNotification;
   };
 
   async findAll() {
@@ -55,7 +63,7 @@ export class NotificationsService {
     if (!notification) throw new NotFoundException('Notification not found');
     return notification;
   };
-  
+
   async update(id: string, updateNotificationDto: UpdateNotificationDto) {
     try {
       const notification = await this.findOne(id);
@@ -74,7 +82,27 @@ export class NotificationsService {
       console.error("Error updating notification:", error); // Registra el error completo para depuración
       throw new InternalServerErrorException(`Failed to update notification: ${error.message}`);
     }
-  }
+  };
+
+ async updateUnreadNotification(userId: string, message: string): Promise<Notification | null> {
+    // Check if there's an existing unread notification with the same message and chatId
+    const existingNotification = await this.notificationsRepository.findOne({
+      where: { 
+        user: { id: userId }, 
+        message
+      },
+      relations: ['user'],
+    });
+
+    if (existingNotification) {
+      // If it exists, mark it as unread and update the timestamp
+      existingNotification.isRead = false;
+      existingNotification.updatedAt = new Date(); // Update the last updated time
+      return await this.notificationsRepository.save(existingNotification); // Save and return updated notification
+    }
+
+    return null; // Return null if no existing notification is found
+  };
 
   async remove(id: string) {
     const notification = await this.findOne(id);
@@ -103,29 +131,28 @@ export class NotificationsService {
   };
 
   async notifyUnreadChat(userId: string, chatId: string, sender: User): Promise<Notification | null> {
-    const message = `You’ve got a message in the chat from ${sender.name}.`
+    const message = `You’ve got a message in the chat from ${sender.name}.`;
 
-    // Checks if there is already an unread notification with the same message
-    const existingNotification = await this.notificationsRepository.findOne({
-      where: { user: { id: userId }, message, isRead: false },
-    });
+    // Use the helper method to find or update existing unread notification
+    const existingNotification = await this.updateUnreadNotification(userId, message);
 
     if (existingNotification) {
-      console.log(`User ${userId} already has an unread notificationfor chat ${chatId}`);
-      return null;  // If it already exists, no need to create a new one
+      // Send the updated notification if it was found and updated
+      this.notificationsGateway.sendNotificationToUser(userId, existingNotification);
+      return existingNotification;
     }
 
-    // Creates a new notification if none exists
+    // If no existing notification, create a new one
     const notification = this.notificationsRepository.create({
       message,
       user: { id: userId },
       type: NotificationType.CHAT,
-      chatId: chatId,
+      chatId,
     });
 
     const savedNotification = await this.notificationsRepository.save(notification);
 
-    // Sends the new notification through WebSocket
+    // Send the new notification
     this.notificationsGateway.sendNotificationToUser(userId, savedNotification);
 
     return savedNotification;
