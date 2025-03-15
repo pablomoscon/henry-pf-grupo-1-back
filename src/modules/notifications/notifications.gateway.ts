@@ -12,11 +12,11 @@ export class NotificationsGateway {
     handleJoin(@MessageBody() userId: string, @ConnectedSocket() socket: Socket) {
         console.log(`User ${userId} joined the notifications channel`);
         socket.join(userId);  // The user joins their own channel
-    }
+    };
 
     // Sends a notification to the specified user
     sendNotificationToUser(userId: string, notification: Notification) {
         console.log(`Sending notification to ${userId}`);
         this.server.to(userId).emit('new_notification', notification);  // Emits only to that user
-    }
+    };
 }
