@@ -75,8 +75,6 @@ export class NotificationsService {
       await this.notificationsRepository.update(id, updateNotificationDto);
       const updatedNotification = await this.findOne(id);
 
-      this.notificationsGateway.sendNotificationToUser(updatedNotification.user.id, updatedNotification);
-
       return updatedNotification;
     } catch (error) {
       console.error("Error updating notification:", error); // Registra el error completo para depuración
